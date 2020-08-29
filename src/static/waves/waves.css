@@ -90,8 +90,8 @@
   z-index: 1;
 }
 .waves-button {
-  padding: 0.85em 1.1em;
-  border-radius: 0.2em;
+  /* padding: 0.85em 1.1em; */
+  /* border-radius: 0.2em; */
 }
 .waves-button-input {
   margin: 0;

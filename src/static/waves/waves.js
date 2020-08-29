@@ -7,12 +7,14 @@
  * https://github.com/fians/Waves/blob/master/LICENSE
  */
 
-;(function(window, factory) {
+(function(window, factory) {
     'use strict';
 
     // AMD. Register as an anonymous module.  Wrap in function so we have access
     // to root via `this`.
+    // eslint-disable-next-line no-undef
     if (typeof define === 'function' && define.amd) {
+        // eslint-disable-next-line no-undef
         define([], function() {
             window.Waves = factory.call(window);
             return window.Waves;
@@ -61,6 +63,7 @@
 
         if (stringRepr === '[object String]') {
             return $$(nodes);
+        // eslint-disable-next-line no-prototype-builtins
         } else if (isObject(nodes) && /^\[object (Array|HTMLCollection|NodeList|Object)\]$/.test(stringRepr) && nodes.hasOwnProperty('length')) {
             return nodes;
         } else if (isDOMNode(nodes)) {
@@ -91,6 +94,7 @@
         var style = '';
 
         for (var prop in styleObj) {
+            // eslint-disable-next-line no-prototype-builtins
             if (styleObj.hasOwnProperty(prop)) {
                 style += (prop + ':' + styleObj[prop] + ';');
             }

@@ -11,17 +11,55 @@
             </div>
         </div>
         <div id="nav-right">
-            <button class="login-and-signup login">登录</button>
-            <button class="login-and-signup signup">注册</button>
-            <i class="icon-menu"></i>
+            <button class="login-and-signup login waves">登录</button>
+            <button class="login-and-signup signup waves">注册</button>
+            <i class="icon-menu waves" @click="ShowSideBar"></i>
         </div>
+        <transition name="side-bar-fade">
+            <div id="nav-side-bar" v-show="ShowMaskAndSideBar">
+                <a href="https://baidu.com" target="_blank" class="side-bar-route">首页</a>
+                <a class="side-bar-route">论坛</a>
+                <a class="side-bar-route">关于</a>
+                <a class="side-bar-route">友链</a>
+                <a class="side-bar-route">联系我</a>
+                <button class="login-and-signup login waves">登录</button>
+                <button class="login-and-signup signup waves">注册</button>
+            </div>
+        </transition>
+
+        <transition name="mask-fade">
+            <div id="side-bar-mask" v-show="ShowMaskAndSideBar" @click="HideSideBarAndMask"></div>
+        </transition>
+
     </div>
 </template>
 <script>
+import Waves from '../static/waves/waves'
 export default {
+    data() {
+        return {
+            Waves,
+            ShowMaskAndSideBar: false
+        }
+    },
+    mounted() {
+        this.Waves.attach('.waves', ['waves-button', /* 'waves-float' */]);
+        Waves.init();
+    },
+    methods: {
+        ShowSideBar() {
+            // this.$refs.NavSideBar.style.left = '0'
+            this.ShowMaskAndSideBar = !this.ShowMaskAndSideBar
+        },
+        HideSideBarAndMask() {
+            // this.$refs.NavSideBar.style.left = '-260px'
+            this.ShowMaskAndSideBar = !this.ShowMaskAndSideBar
+        }
+    },
 }
 </script>
 <style lang="stylus" scoped>
+@import '../static/waves/waves.css'
 #nav {
     width 100%
     height 80px
@@ -94,19 +132,101 @@ export default {
             background url('../assets/menu.png') no-repeat
             background-size contain
             border-radius 50%
+            display none
             
         }
         .icon-menu:hover {
-            background-color rgb(220, 220, 220)
+            // background-color rgb(220, 220, 220)
             cursor pointer
         }
-        @media screen and (max-width: 850px) {
-            .login-and-signup {
-                // display none
-                color red
-            }
-       }
     }
 
+    // 侧边栏
+    #nav-side-bar {
+        width 260px
+        height 100vh
+        position fixed
+        left 0
+        background-color white
+        z-index 2
+        display flex
+        flex-direction column
+
+        .side-bar-route {
+            display block
+            text-decoration none
+            border-bottom 1px solid LightGrey
+            height 50px
+            line-height 50px
+            text-align left
+            padding 0 16px
+        }
+        .side-bar-route:visited {
+            color rgb(44, 62, 80)
+        }
+
+        .login-and-signup {
+            width 90%
+            height 30px
+            margin 15px auto 0 auto
+            border-radius 3px
+            border 0.5px solid
+        }
+        .login {
+            border-color rgb(221, 221, 221)
+            background-color white
+        }
+        .signup {
+            border-color rgb(25, 221, 196)
+            background-color rgb(25, 221, 196)
+            color white
+        }
+    }
+    .side-bar-fade-enter-active, .side-bar-fade-leave-active {
+        transition: all 0.2s
+    }
+    .side-bar-fade-enter, .side-bar-fade-leave-to /* .fade-leave-active, 2.1.8 版本以下 */ {
+        transform translateX(-260px)
+    }
+
+    // 侧边栏展开时的蒙版
+    #side-bar-mask {
+        position fixed
+        left 0
+        width 100%
+        height 100vh
+        box-sizing border-box
+        background-color rgba(0, 0, 0, 0.85)
+        z-index 1
+    }
+    .mask-fade-enter-active, .mask-fade-leave-active {
+        transition: all 0.2s
+    }
+    .mask-fade-enter, .mask-fade-leave-to /* .fade-leave-active, 2.1.8 版本以下 */ {
+        opacity: 0
+    }
+}
+
+@media screen and (max-width: 850px) {
+    #nav {
+        #nav-left {
+            // 改变宽度，这样就能减少因为space-around造成的两端的空白
+            width 50%
+            #nav-route {
+                display none
+            }
+        }
+        #nav-right {
+            // 改变宽度，这样就能减少因为space-around造成的两端的空白
+            width 40%
+            .login-and-signup {
+                display none
+                // color red
+            }
+            .icon-menu {
+                display block
+            }
+        }
+    }
 }
 </style>
