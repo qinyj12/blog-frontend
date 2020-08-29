@@ -11,11 +11,16 @@
             </div>
         </div>
         <div id="nav-right">
-            <button class="login-and-signup">登录</button>
-            <button class="login-and-signup">注册</button>
+            <button class="login-and-signup login">登录</button>
+            <button class="login-and-signup signup">注册</button>
+            <i class="icon-menu"></i>
         </div>
     </div>
 </template>
+<script>
+export default {
+}
+</script>
 <style lang="stylus" scoped>
 #nav {
     width 100%
@@ -67,12 +72,35 @@
         justify-content flex-end
 
         .login-and-signup {
-            width 100px
+            width 90px
             height 30px
             margin-right 10px
+            border-radius 4px
+            border 0.5px solid
         }
-        
-        @media screen and (max-width: 850px){
+        .login {
+            border-color rgb(221, 221, 221)
+            background-color white
+        }
+        .signup {
+            border-color rgb(25, 221, 196)
+            background-color rgb(25, 221, 196)
+            color white
+        }
+        .icon-menu {
+            display block
+            width 30px
+            height 30px
+            background url('../assets/menu.png') no-repeat
+            background-size contain
+            border-radius 50%
+            
+        }
+        .icon-menu:hover {
+            background-color rgb(220, 220, 220)
+            cursor pointer
+        }
+        @media screen and (max-width: 850px) {
             .login-and-signup {
                 // display none
                 color red
