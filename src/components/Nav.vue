@@ -69,6 +69,8 @@ export default {
     box-shadow 0px 1px 4px 0px rgba(0, 0, 0, 0.15)
     background-color rgba(255, 255, 255, 0.9)
     backdrop-filter blur(10px)
+    -webkit-backdrop-filter blur(10px)
+    // filter blur(3px)
     position sticky
     top 0
 
