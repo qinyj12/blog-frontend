@@ -1,18 +1,19 @@
 <template>
     <div id="app">
         <Nav />
-        <div>
-            <router-link to="/">Home</router-link>|
-            <router-link to="/about">About</router-link>
-        </div>
+        <!-- <Cover /> -->
+        <!-- <router-link to="/">Home</router-link>| -->
         <router-view />
     </div>
 </template>
 <script>
 import Nav from '@/components/Nav.vue';
+import Cover from '@/components/Cover.vue';
 export default {
     components: {
-        Nav
+        Nav,
+        // eslint-disable-next-line vue/no-unused-components
+        Cover
     }
 }
 </script>

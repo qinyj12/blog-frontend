@@ -35,16 +35,31 @@
 </template>
 <script>
 import Waves from '../static/waves/waves'
+import TouchJs from '../static/touch.js/touch-0.2.14.min.js'
 export default {
     data() {
         return {
             Waves,
+            TouchJs,
             ShowMaskAndSideBar: false
         }
     },
     mounted() {
+        // 使用waves.js，给.waves添加水波效果
         this.Waves.attach('.waves', ['waves-button', /* 'waves-float' */]);
         Waves.init();
+
+        // 使用touch.js，监测到#nav-side-bar左滑就关闭side-bar
+        this.TouchJs.on(
+            '#nav-side-bar', // 监测#nav-side-bar
+            'swipeleft', // 监测左滑事件
+            ev => {
+            if (ev.type == 'swipeleft') {
+                this.ShowMaskAndSideBar = !this.ShowMaskAndSideBar
+            }
+
+        }
+        )
     },
     methods: {
         ShowSideBar() {
@@ -67,10 +82,17 @@ export default {
     display flex
     justify-content space-around
     box-shadow 0px 1px 4px 0px rgba(0, 0, 0, 0.15)
-    background-color rgba(255, 255, 255, 0.9)
-    backdrop-filter blur(10px)
-    -webkit-backdrop-filter blur(10px)
-    // filter blur(3px)
+
+    // 如果支持backdrop-filter
+    @supports (backdrop-filter: blur(5px)) or (-webkit-backdrop-filter blur(5px)) {
+        backdrop-filter blur(5px)
+        -webkit-backdrop-filter blur(5px)
+        background-color rgba(255, 255, 255, 0.9)
+    }
+    // 如果不支持backdrop-filter
+    @supports not (backdrop-filter: blur(5px) or (-webkit-backdrop-filter blur(5px))) {
+        background-color rgba(255, 255, 255, 0.99)
+    }
     position sticky
     top 0
 
