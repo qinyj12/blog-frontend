@@ -5,7 +5,6 @@
 </template>
 <style lang="stylus" scoped>
 * {
-    // border 1px solid 
     box-sizing border-box
 }
 #cover {
