@@ -1,7 +1,7 @@
 <template>
     <div id="article-card-area">
         <ul>
-            <li v-for="index in 4" :key="index">
+            <li v-for="index in 5" :key="index">
                 <div class="single-card">
                     <div class="featured-image"></div>
                     <div class="content-wrap">
@@ -38,12 +38,13 @@
         display flex
         flex-direction row
         flex-wrap wrap
-        justify-content space-around
+        justify-content space-between
+        width 75%
+        min-width 1100px
+        margin 0 auto
 
         li {
-            display flex
-            flex-direction column
-            // margin-right calc((100% - 1035px) / 3)
+            margin-bottom 60px
 
             .single-card {
                 width 345px
