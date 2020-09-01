@@ -14,7 +14,12 @@ export default {
         Nav,
         // eslint-disable-next-line vue/no-unused-components
         Cover
-    }
+    },
+    mounted() {
+        // 使用waves.js，给.waves添加水波效果。waves.js已挂载到vue原型链上，waves.css已在main.js里引入
+        this.$Waves.attach('.waves', ['waves-button', /* 'waves-float' */]);
+        this.$Waves.init();
+    },
 }
 </script>
 <style lang="stylus">

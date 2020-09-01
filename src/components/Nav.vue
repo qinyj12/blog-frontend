@@ -34,21 +34,15 @@
     </div>
 </template>
 <script>
-import Waves from '../static/waves/waves'
 import TouchJs from '../static/touch.js/touch-0.2.14.min.js'
 export default {
     data() {
         return {
-            Waves,
             TouchJs,
             ShowMaskAndSideBar: false
         }
     },
     mounted() {
-        // 使用waves.js，给.waves添加水波效果
-        this.Waves.attach('.waves', ['waves-button', /* 'waves-float' */]);
-        Waves.init();
-
         // 使用touch.js，监测到#nav-side-bar左滑就关闭side-bar
         this.TouchJs.on(
             '#nav-side-bar', // 监测#nav-side-bar
@@ -179,6 +173,7 @@ export default {
         .side-bar-route {
             display block
             text-decoration none
+            color black
             border-bottom 1px solid LightGrey
             height 50px
             line-height 50px
