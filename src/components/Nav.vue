@@ -68,7 +68,6 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
-@import '../static/waves/waves.css'
 #nav {
     width 100%
     height 80px
@@ -76,6 +75,8 @@ export default {
     display flex
     justify-content space-around
     box-shadow 0px 1px 4px 0px rgba(0, 0, 0, 0.15)
+    // 如果不给导航栏设置z-index的话，其他元素用了.waves就会排在他前面
+    z-index 1
 
     // 如果支持backdrop-filter
     @supports (backdrop-filter: blur(5px)) or (-webkit-backdrop-filter blur(5px)) {

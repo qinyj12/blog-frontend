@@ -1,13 +1,13 @@
 <template>
     <div id="article-card-area">
         <ul>
-            <li v-for="index in 5" :key="index">
-                <div class="single-card">
-                    <div class="featured-image"></div>
+            <li v-for="(item, index) in counts" :key="item.index">
+                <div class="single-card waves" @click="ClickCard(index)">
+                    <div class="featured-image" :class="{'featured-image-unclicked': !item.active}" ref="FeaturedImages"></div>
                     <div class="content-wrap">
                         <div class="entry-header">
                             <span class="category">案例</span>
-                            <h3 class="title">这是{{index}}个案例</h3>
+                            <h3 class="title">这是{{item.index}}个案例</h3>
                         </div>
                         <div class="entry-footer">
                             <div class="author">
@@ -22,8 +22,29 @@
         </ul>
     </div>
 </template>
+<script>
+export default {
+    data() {
+        return {
+            counts: [{index: '一'}, {index: '二'}, {index: '三'}, {index: '四'}, {index: '五'}, ]
+        }
+    },
+    methods: {
+        // eslint-disable-next-line no-unused-vars
+        ClickCard(index) {
+            // console.log(this.$refs.FeaturedImages[index])
+            // this.$refs.FeaturedImages[index].item.forbidden = !this.$refs.FeaturedImages[index].item.forbidden
+            let item = this.counts[index];
+            item.active = !item.active;
+            this.$set(this.counts, index, item)
+        },
+        MoveFeaturedImages() {
+
+        }
+    },
+}
+</script>
 <style lang="stylus" scoped>
-// @import '../static/waves/waves.css'
 #article-card-area {
     width 100%
 
@@ -50,8 +71,13 @@
                 .featured-image {
                     width 100%
                     height 224px
-                    background url('../assets/featured-image.png') no-repeat
+                    // background-image url('../assets/featured-image.png')
+                    background-repeat no-repeat
                     background-size cover
+                }
+
+                .featured-image-unclicked {
+                    background-image url('../assets/featured-image.png')
                 }
 
                 .content-wrap {
