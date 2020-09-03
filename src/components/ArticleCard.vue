@@ -1,13 +1,17 @@
 <template>
-    <div id="article-card-area">
+    <div id="article-card-area" ref="ArticleCardArea">
         <ul>
             <li v-for="(item, index) in counts" :key="item.index">
-                <div class="single-card waves" @click="ClickCard(index)">
-                    <div class="featured-image" :class="{'featured-image-unclicked': !item.active}" ref="FeaturedImages"></div>
+                <div class="single-card waves" @click="HideFeaturedImg(index)">
+                    <div class="featured-image" 
+                        :class="{'featured-image-unclicked': !item.active, 'featured-image-clicked': item.active}" 
+                        ref="FeaturedImages"
+                    >
+                    </div>
                     <div class="content-wrap">
                         <div class="entry-header">
                             <span class="category">案例</span>
-                            <h3 class="title">这是{{item.index}}个案例</h3>
+                            <h3 class="title">这是第{{item.index}}个案例</h3>
                         </div>
                         <div class="entry-footer">
                             <div class="author">
@@ -20,33 +24,81 @@
                 </div>
             </li>
         </ul>
+
+        <div v-show="IfShowCopiedImg" ref="FeaturedImgCopied" class="featured-img-copied"></div>
     </div>
 </template>
 <script>
 export default {
     data() {
         return {
-            counts: [{index: '一'}, {index: '二'}, {index: '三'}, {index: '四'}, {index: '五'}, ]
+            counts: [{index: '一'}, {index: '二'}, {index: '三'}, {index: '四'}, {index: '五'}, ],
+            IfShowCopiedImg: false
         }
     },
     methods: {
-        // eslint-disable-next-line no-unused-vars
-        ClickCard(index) {
-            // console.log(this.$refs.FeaturedImages[index])
-            // this.$refs.FeaturedImages[index].item.forbidden = !this.$refs.FeaturedImages[index].item.forbidden
-            let item = this.counts[index];
-            item.active = !item.active;
-            this.$set(this.counts, index, item)
-        },
-        MoveFeaturedImages() {
+        // 点击卡片，隐藏FeaturedImage
+        HideFeaturedImg(index) {
+            this.CopyFeaturedImg(index);
+            let TargetItem = this.counts[index];
+            TargetItem.active = !TargetItem.active;
+            this.$set(this.counts, index, TargetItem);
 
+            // 延时后移动图片
+            // setTimeout(() => {
+            //     this.MovedImgCopied()
+            // }, 0);
+
+            // 卡片区域整体下沉
+            this.MoveArticleCardArea()
+        },
+
+        // 在当前卡片的头图位置复制一份一模一样的图片
+        CopyFeaturedImg(index) {
+            // 先获取background属性，因为是外联样式所以不能用ref
+            let TargetStyle = window.getComputedStyle(this.$refs.FeaturedImages[index]);
+            let TargetBgImg = TargetStyle.backgroundImage;
+            let TargetBgSize = TargetStyle.backgroundSize;
+
+            // 给这个copied图片赋值background-image
+            this.$refs.FeaturedImgCopied.style.backgroundImage = TargetBgImg;
+            this.$refs.FeaturedImgCopied.style.backgroundSize = TargetBgSize;
+
+            // 给这个copied图片赋值坐标
+            let TargetDomRect = this.$refs.FeaturedImages[index].getBoundingClientRect();
+            this.$refs.FeaturedImgCopied.style.height = TargetDomRect.height + 'px';
+            this.$refs.FeaturedImgCopied.style.width = TargetDomRect.width + 'px';
+            this.$refs.FeaturedImgCopied.style.left = TargetDomRect.left + 'px';
+            this.$refs.FeaturedImgCopied.style.top = TargetDomRect.top + 'px';
+
+            // 显示copied图片，并且fixed
+            this.IfShowCopiedImg = !this.IfShowCopiedImg;
+            this.$refs.FeaturedImgCopied.style.position = 'fixed';
+        },
+
+        // 复制图片后，移动图片
+        MovedImgCopied() {
+            this.$refs.FeaturedImgCopied.style.width = '100%';
+            this.$refs.FeaturedImgCopied.style.height = '450px';
+            this.$refs.FeaturedImgCopied.style.left = '0px';
+            this.$refs.FeaturedImgCopied.style.top = '80px';
+            this.$refs.FeaturedImgCopied.style.backgroundPosition = '50% 50%'
+        },
+
+        // 所有卡片整体下沉
+        MoveArticleCardArea() {
+            // this.$refs.ArticleCardArea.style.position = 'relative';
+            this.$refs.ArticleCardArea.style.top = '200px'
         }
+
     },
 }
 </script>
 <style lang="stylus" scoped>
 #article-card-area {
     width 100%
+    position relative
+    transition all 0.3s
 
     ul {
         list-style none
@@ -74,10 +126,14 @@ export default {
                     // background-image url('../assets/featured-image.png')
                     background-repeat no-repeat
                     background-size cover
+                    background-position 50% 50%
                 }
 
                 .featured-image-unclicked {
                     background-image url('../assets/featured-image.png')
+                }
+                .featured-image-clicked {
+                    background-image url()
                 }
 
                 .content-wrap {
@@ -156,6 +212,9 @@ export default {
                 }
             }
         }
+    }
+    .featured-img-copied {
+        transition all 0.2s ease-out
     }
 }
 

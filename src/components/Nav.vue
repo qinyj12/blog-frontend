@@ -8,6 +8,7 @@
                 <div>关于</div>
                 <div>友链</div>
                 <div>联系我</div>
+                <div class="test"></div>
             </div>
         </div>
         <div id="nav-right">

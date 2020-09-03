@@ -1,6 +1,6 @@
 <template>
     <div id="cover">
-        
+        <!-- <div id="cover-featured-image"></div> -->
     </div>
 </template>
 <style lang="stylus" scoped>
