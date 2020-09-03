@@ -1,29 +1,31 @@
 <template>
-    <div id="article-card-area" ref="ArticleCardArea">
-        <ul>
-            <li v-for="(item, index) in counts" :key="item.index">
-                <div class="single-card waves" @click="HideFeaturedImg(index)">
-                    <div class="featured-image" 
-                        :class="{'featured-image-unclicked': !item.active, 'featured-image-clicked': item.active}" 
-                        ref="FeaturedImages"
-                    >
-                    </div>
-                    <div class="content-wrap">
-                        <div class="entry-header">
-                            <span class="category">案例</span>
-                            <h3 class="title">这是第{{item.index}}个案例</h3>
+    <div id="article-card-area">
+        <transition name="cards-sink">
+            <ul v-show="SinkAllCards">
+                <li v-for="(item, index) in counts" :key="item.index">
+                    <div class="single-card waves" @click="HideFeaturedImg(index)">
+                        <div class="featured-image" 
+                            :class="{'featured-image-unclicked': !item.active, 'featured-image-clicked': item.active}" 
+                            ref="FeaturedImages"
+                        >
                         </div>
-                        <div class="entry-footer">
-                            <div class="author">
-                                <div class="avatar"></div>
-                                <span class="name">测试用户</span>
+                        <div class="content-wrap">
+                            <div class="entry-header">
+                                <span class="category">案例</span>
+                                <h3 class="title">这是第{{item.index}}个案例</h3>
                             </div>
-                            <div class="published-date">August 31, 2020</div>
+                            <div class="entry-footer">
+                                <div class="author">
+                                    <div class="avatar"></div>
+                                    <span class="name">测试用户</span>
+                                </div>
+                                <div class="published-date">August 31, 2020</div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </li>
-        </ul>
+                </li>
+            </ul>
+        </transition>
 
         <div v-show="IfShowCopiedImg" ref="FeaturedImgCopied" class="featured-img-copied"></div>
     </div>
@@ -33,24 +35,26 @@ export default {
     data() {
         return {
             counts: [{index: '一'}, {index: '二'}, {index: '三'}, {index: '四'}, {index: '五'}, ],
-            IfShowCopiedImg: false
+            IfShowCopiedImg: false,
+            SinkAllCards: true
         }
     },
     methods: {
         // 点击卡片，隐藏FeaturedImage
         HideFeaturedImg(index) {
-            this.CopyFeaturedImg(index);
+            // this.CopyFeaturedImg(index);
             let TargetItem = this.counts[index];
             TargetItem.active = !TargetItem.active;
             this.$set(this.counts, index, TargetItem);
+
+            // 卡片区域整体下沉
+            this.MoveArticleCardArea()
 
             // 延时后移动图片
             // setTimeout(() => {
             //     this.MovedImgCopied()
             // }, 0);
 
-            // 卡片区域整体下沉
-            this.MoveArticleCardArea()
         },
 
         // 在当前卡片的头图位置复制一份一模一样的图片
@@ -76,19 +80,49 @@ export default {
             this.$refs.FeaturedImgCopied.style.position = 'fixed';
         },
 
+        // 把当前featured image的h、w、l、t等信息发送给兄弟组件
+        SendFeaturedImgDom(index) {
+            // 先获取background属性，因为是外联样式所以不能用ref
+            let TargetStyle = window.getComputedStyle(this.$refs.FeaturedImages[index]);
+            let TargetBgImg = TargetStyle.backgroundImage;
+            let TargetBgSize = TargetStyle.backgroundSize;
+
+            // 给这个copied图片赋值background-image
+            // this.$refs.FeaturedImgCopied.style.backgroundImage = TargetBgImg;
+            // this.$refs.FeaturedImgCopied.style.backgroundSize = TargetBgSize;
+
+            // 给这个copied图片赋值坐标
+            let TargetDomRect = this.$refs.FeaturedImages[index].getBoundingClientRect();
+
+            let res = {'TargetBgImg': TargetBgImg, 'TargetBgSize': TargetBgSize, 'TargetDomRect': TargetDomRect}
+
+            // //////////////////////////////
+            ////////////////////////////////这里要改
+            this.$messenger.$emit("toBrother", res)
+
+            // this.$refs.FeaturedImgCopied.style.height = TargetDomRect.height + 'px';
+            // this.$refs.FeaturedImgCopied.style.width = TargetDomRect.width + 'px';
+            // this.$refs.FeaturedImgCopied.style.left = TargetDomRect.left + 'px';
+            // this.$refs.FeaturedImgCopied.style.top = TargetDomRect.top + 'px';
+
+            // 显示copied图片，并且fixed
+            // this.IfShowCopiedImg = !this.IfShowCopiedImg;
+            // this.$refs.FeaturedImgCopied.style.position = 'fixed';
+
+        },
+
         // 复制图片后，移动图片
         MovedImgCopied() {
             this.$refs.FeaturedImgCopied.style.width = '100%';
             this.$refs.FeaturedImgCopied.style.height = '450px';
             this.$refs.FeaturedImgCopied.style.left = '0px';
-            this.$refs.FeaturedImgCopied.style.top = '80px';
+            this.$refs.FeaturedImgCopied.style.top = '0px';
             this.$refs.FeaturedImgCopied.style.backgroundPosition = '50% 50%'
         },
 
         // 所有卡片整体下沉
         MoveArticleCardArea() {
-            // this.$refs.ArticleCardArea.style.position = 'relative';
-            this.$refs.ArticleCardArea.style.top = '200px'
+            this.SinkAllCards = !this.SinkAllCards
         }
 
     },
@@ -97,8 +131,6 @@ export default {
 <style lang="stylus" scoped>
 #article-card-area {
     width 100%
-    position relative
-    transition all 0.3s
 
     ul {
         list-style none
@@ -126,7 +158,7 @@ export default {
                     // background-image url('../assets/featured-image.png')
                     background-repeat no-repeat
                     background-size cover
-                    background-position 50% 50%
+                    // background-position 50% 50%
                 }
 
                 .featured-image-unclicked {
@@ -213,8 +245,18 @@ export default {
             }
         }
     }
+    // 用于复制图层的动画
     .featured-img-copied {
         transition all 0.2s ease-out
+    }
+
+    // 用于卡片下沉的动画
+    .cards-sink-enter-active, .cards-sink-leave-active {
+        transition: all 0.2s
+    }
+    .cards-sink-enter, .cards-sink-leave-to /* .fade-leave-active, 2.1.8 版本以下 */ {
+        transform translateY(100px)
+        opacity 0
     }
 }
 

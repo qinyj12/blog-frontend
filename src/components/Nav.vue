@@ -49,11 +49,10 @@ export default {
             '#nav-side-bar', // 监测#nav-side-bar
             'swipeleft', // 监测左滑事件
             ev => {
-            if (ev.type == 'swipeleft') {
-                this.ShowMaskAndSideBar = !this.ShowMaskAndSideBar
+                if (ev.type == 'swipeleft') {
+                    this.ShowMaskAndSideBar = !this.ShowMaskAndSideBar
+                }
             }
-
-        }
         )
     },
     methods: {
