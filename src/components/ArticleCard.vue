@@ -42,7 +42,14 @@ export default {
     methods: {
         // 点击卡片，隐藏FeaturedImage
         HideFeaturedImg(index) {
-            // this.CopyFeaturedImg(index);
+
+            // 改变vuex的状态，显示cover组件里的copied img 元素
+            this.$store.commit('IfShowCopiedImg')
+
+            // 把点击的卡片的dom发送给vuex
+            this.SendFeaturedImgDom(index)
+
+            // 找到被点击的那一张卡片，设为白底
             let TargetItem = this.counts[index];
             TargetItem.active = !TargetItem.active;
             this.$set(this.counts, index, TargetItem);
@@ -80,34 +87,31 @@ export default {
             this.$refs.FeaturedImgCopied.style.position = 'fixed';
         },
 
-        // 把当前featured image的h、w、l、t等信息发送给兄弟组件
+        // 把当前featured image的h、w、l、t等信息发送给vuex
         SendFeaturedImgDom(index) {
             // 先获取background属性，因为是外联样式所以不能用ref
             let TargetStyle = window.getComputedStyle(this.$refs.FeaturedImages[index]);
             let TargetBgImg = TargetStyle.backgroundImage;
             let TargetBgSize = TargetStyle.backgroundSize;
 
-            // 给这个copied图片赋值background-image
-            // this.$refs.FeaturedImgCopied.style.backgroundImage = TargetBgImg;
-            // this.$refs.FeaturedImgCopied.style.backgroundSize = TargetBgSize;
-
-            // 给这个copied图片赋值坐标
+            // 再获取这个图片的w、h、t、l值
             let TargetDomRect = this.$refs.FeaturedImages[index].getBoundingClientRect();
+            let TargetDomH = TargetDomRect.height + 'px';
+            let TargetDomW = TargetDomRect.width + 'px';
+            let TargetDomL = TargetDomRect.left + 'px';
+            let TargetDomT = TargetDomRect.top + 'px';
 
-            let res = {'TargetBgImg': TargetBgImg, 'TargetBgSize': TargetBgSize, 'TargetDomRect': TargetDomRect}
+            let res = {
+                'TargetBgImg': TargetBgImg, 
+                'TargetBgSize': TargetBgSize, 
+                'TargetDomWidth': TargetDomW, 
+                'TargetDomHeight': TargetDomH, 
+                'TargetDomTop': TargetDomT, 
+                'TargetDomLeft': TargetDomL, 
+            }
 
-            // //////////////////////////////
-            ////////////////////////////////这里要改
-            this.$messenger.$emit("toBrother", res)
-
-            // this.$refs.FeaturedImgCopied.style.height = TargetDomRect.height + 'px';
-            // this.$refs.FeaturedImgCopied.style.width = TargetDomRect.width + 'px';
-            // this.$refs.FeaturedImgCopied.style.left = TargetDomRect.left + 'px';
-            // this.$refs.FeaturedImgCopied.style.top = TargetDomRect.top + 'px';
-
-            // 显示copied图片，并且fixed
-            // this.IfShowCopiedImg = !this.IfShowCopiedImg;
-            // this.$refs.FeaturedImgCopied.style.position = 'fixed';
+            // 传值给vuex
+           this.$store.commit('GetFeaturedImgDom', {CopiedDom: res})
 
         },
 

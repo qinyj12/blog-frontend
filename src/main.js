@@ -9,6 +9,8 @@ import './static/waves/waves.min.css'
 Vue.config.productionTip = false
 // 把waves.js挂载到vue原型链上
 Vue.prototype.$Waves = Waves
+// 把store挂在vue原型链上
+Vue.prototype.$Store = store
 
 new Vue({
   router,

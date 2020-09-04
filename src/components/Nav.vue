@@ -13,7 +13,7 @@
         </div>
         <div id="nav-right">
             <button class="login-and-signup login waves">登录</button>
-            <button class="login-and-signup signup waves">注册</button>
+            <button class="login-and-signup signup waves" @click="TryVuex">注册</button>
             <i class="icon-menu waves" @click="ShowSideBar"></i>
         </div>
         <transition name="side-bar-fade">
@@ -57,12 +57,13 @@ export default {
     },
     methods: {
         ShowSideBar() {
-            // this.$refs.NavSideBar.style.left = '0'
             this.ShowMaskAndSideBar = !this.ShowMaskAndSideBar
         },
         HideSideBarAndMask() {
-            // this.$refs.NavSideBar.style.left = '-260px'
             this.ShowMaskAndSideBar = !this.ShowMaskAndSideBar
+        },
+        TryVuex() {
+            console.log('123')
         }
     },
 }
