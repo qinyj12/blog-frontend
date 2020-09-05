@@ -3,7 +3,7 @@
         <div id="nav-left">
             <div id="nav-logo"><img src="../assets/logo.png" alt="LOGO"></div>
             <div id="nav-route">
-                <div>首页</div>
+                <router-link to="/"><div>首页</div></router-link>
                 <div>论坛</div>
                 <div>关于</div>
                 <div>友链</div>
@@ -11,11 +11,13 @@
                 <div class="test"></div>
             </div>
         </div>
+        <!-- 这是普通的注册、登录按钮，平时启用，窄屏时隐藏 -->
         <div id="nav-right">
-            <button class="login-and-signup login waves">登录</button>
-            <button class="login-and-signup signup waves" @click="TryVuex">注册</button>
+            <button class="login-and-signup login waves" @click="ChangeStyle">登录</button>
+            <button class="login-and-signup signup waves" ref="DemoColor">注册</button>
             <i class="icon-menu waves" @click="ShowSideBar"></i>
         </div>
+        <!-- 这是侧边栏，平时隐藏，宽屏时启用 -->
         <transition name="side-bar-fade">
             <div id="nav-side-bar" v-show="ShowMaskAndSideBar">
                 <a href="https://baidu.com" target="_blank" class="side-bar-route">首页</a>
@@ -62,8 +64,9 @@ export default {
         HideSideBarAndMask() {
             this.ShowMaskAndSideBar = !this.ShowMaskAndSideBar
         },
-        TryVuex() {
-            console.log('123')
+        // 这是临时定义的用来测试js改变css外联样式的方法
+        ChangeStyle() {
+            this.$refs.DemoColor.style.setProperty('--DemoColor', 'black')
         }
     },
 }
@@ -95,6 +98,7 @@ export default {
     * {
         // border 1px solid
         // box-sizing border-box
+        --DemoColor green
     }
 
     #nav-left {
@@ -142,7 +146,8 @@ export default {
         }
         .signup {
             border-color rgb(25, 221, 196)
-            background-color rgb(25, 221, 196)
+            // background-color rgb(25, 221, 196)
+            background-color var(--DemoColor)
             color white
         }
         .icon-menu {

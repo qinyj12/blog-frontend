@@ -3,26 +3,31 @@
         <transition name="cards-sink">
             <ul v-show="SinkAllCards">
                 <li v-for="(item, index) in counts" :key="item.index">
-                    <div class="single-card waves" @click="HideFeaturedImg(index)">
-                        <div class="featured-image" 
-                            :class="{'featured-image-unclicked': !item.active, 'featured-image-clicked': item.active}" 
-                            ref="FeaturedImages"
-                        >
-                        </div>
-                        <div class="content-wrap">
-                            <div class="entry-header">
-                                <span class="category">案例</span>
-                                <h3 class="title">这是第{{item.index}}个案例</h3>
+
+                    <!-- 加一层路由 -->
+                    <router-link :to="'/Content/' + item.index">
+                        <div class="single-card waves" @click="HideFeaturedImg(index)">
+                            <div class="featured-image" 
+                                :class="{'featured-image-unclicked': !item.active, 'featured-image-clicked': item.active}" 
+                                ref="FeaturedImages"
+                            >
                             </div>
-                            <div class="entry-footer">
-                                <div class="author">
-                                    <div class="avatar"></div>
-                                    <span class="name">测试用户</span>
+                            <div class="content-wrap">
+                                <div class="entry-header">
+                                    <span class="category">案例</span>
+                                    <h3 class="title">这是第{{item.index}}个案例</h3>
                                 </div>
-                                <div class="published-date">August 31, 2020</div>
+                                <div class="entry-footer">
+                                    <div class="author">
+                                        <div class="avatar"></div>
+                                        <span class="name">测试用户</span>
+                                    </div>
+                                    <div class="published-date">August 31, 2020</div>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </router-link>
+
                 </li>
             </ul>
         </transition>
@@ -55,12 +60,10 @@ export default {
             this.$set(this.counts, index, TargetItem);
 
             // 卡片区域整体下沉
-            this.MoveArticleCardArea()
+            this.MoveArticleCardArea();
 
-            // 延时后移动图片
-            // setTimeout(() => {
-            //     this.MovedImgCopied()
-            // }, 0);
+            // 告诉vuex点击的卡片是什么图片
+            this.$store.commit('ChangeHomepageCover', {TargetArticleCover: window.getComputedStyle(this.$refs.FeaturedImages[index]).backgroundImage})
 
         },
 
