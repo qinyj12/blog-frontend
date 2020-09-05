@@ -1,7 +1,9 @@
 <template>
     <div id="cover">
         <div class="homepage-cover"></div>
-        <div class="featured-image-cover" :style="CopyStyle" v-show="ShowCopiedImg"></div>
+        <transition name="move-copied-img">
+            <div v-show="ShowCopiedImg" class="featured-image-cover" :style="CopyStyle"></div>
+        </transition>
     </div>
 </template>
 <script>
@@ -24,6 +26,17 @@ export default {
         // 这个值是用来控制<div :style="xxx">这个元素要不要显示出来的
         ShowCopiedImg: function() {
             return this.$store.state.IfShowCopiedImg
+        },
+        
+        // 释放一个信号，判断要不要移动被复制的图层
+        MoveCopiedImg: function() {
+            // 如果这个图层show了出来，释放true的信号
+            if (this.ShowCopiedImg) {
+                return 'width:100%'
+            // 如果这个图层没有show出来，释放false的信号
+            } else {
+                return ''
+            }
         }
     },
 }
@@ -39,6 +52,13 @@ export default {
         background url('../assets/cover.png') no-repeat
         background-size cover
         background-position 50% 50%
+    }
+
+    .move-copied-img-enter-active, .move-copied-img-leave-active {
+        transition: all 0.2s
+    }
+    .move-copied-img-enter-to, .move-copied-img-leave /* .fade-leave-active, 2.1.8 版本以下 */ {
+        transform translateX(-260px)
     }
 
 }
