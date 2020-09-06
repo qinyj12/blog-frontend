@@ -19,6 +19,7 @@ export default {
         },
         // 这个值是用来控制homepage cover要不要隐藏的
         HideHomepageCover: function() {
+            console.log(this.$store.state.HideHomepageCover);
             return this.$store.state.HideHomepageCover
         }
     },
@@ -42,7 +43,7 @@ export default {
         // 监测vuex的HomepageCover是否变化，点击卡片 => 传输卡片图片给vuex => 本组件监测到 => 动态改变homepageCove元素的外联样式
         '$store.state.HomepageCover': function() {
             // home => content时需要在首页展示动画，所以留0.5s
-            if (this.$store.state.HomeToContent == 'forward') {
+            if (this.$store.state.HomeToContent == true) {
                 setTimeout(() => {
                     // 这里就是根据vuex里的值，动态修改homepage cover
                     this.$refs.HomepageCover.style.setProperty('--CoverBgImg', 'url("'+this.$store.state.HomepageCover+'")');
@@ -57,7 +58,7 @@ export default {
             setTimeout(() => {
                 this.$refs.ImgCopied.style.display = 'none';
                 // 隐藏copied img之后，显示homepage cover元素，即把这个元素的hide-homepage-cover的外联样式删除
-                this.$store.commit('ShowHomepageCover')
+                this.$store.commit('ShowHomepageCover');
             // copied img多存在0.1s，防止和homepage cover中间有一个空白时间差
             }, 400);
         }

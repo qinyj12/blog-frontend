@@ -18,7 +18,7 @@ export default new Vuex.Store({
         HideHomepageCover: false,
 
         // 下面两个值是用来告诉组件路由是从 home => content 还是 content => home
-        HomeToContent: 'forward'
+        HomeToContent: false
 
     },
     mutations: {
@@ -52,11 +52,8 @@ export default new Vuex.Store({
         },
 
         // 调用此方法，告诉组件路由是从 home => content
-        HomeToContent(state) {
-            state.HomeToContent = 'forward'
-        },
-        ContentToHome(state) {
-            state.HomeToContent = 'reverse'
+        HomeToContent(state, value) {
+            state.HomeToContent = value
         }
     },
     actions: {},

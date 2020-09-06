@@ -2,7 +2,6 @@
     <div id="app">
         <Nav />
         <Cover />
-        <!-- <router-link to="/">Home</router-link>| -->
         <router-view />
     </div>
 </template>

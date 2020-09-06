@@ -7,7 +7,7 @@
                 <div>论坛</div>
                 <div>关于</div>
                 <div>友链</div>
-                <div>联系我</div>
+                <router-link to="/test"><div>测试页</div></router-link>
                 <div class="test"></div>
             </div>
         </div>

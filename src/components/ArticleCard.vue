@@ -1,13 +1,13 @@
 <template>
     <div id="article-card-area">
+        <!-- 这里要记住article-card组件的滚动条位置，所以要keep-alive -->
         <keep-alive>
             <transition name="cards-sink">
                 <ul v-show="SinkAllCards">
                     <li v-for="(item, index) in counts" :key="item.index">
-
                         <!-- 加一层路由 -->
                         <router-link :to="'/Content/' + item.index">
-                            <div class="single-card waves" @click="HideFeaturedImg(index)">
+                            <div class="single-card waves" @click="ClickCardToContent(index)">
                                 <div class="featured-image" 
                                     :class="{'featured-image-unclicked': !item.active, 'featured-image-clicked': item.active}" 
                                     ref="FeaturedImages"
@@ -32,8 +32,6 @@
                     </li>
                 </ul>
             </transition>
-
-            <div v-show="IfShowCopiedImg" ref="FeaturedImgCopied" class="featured-img-copied"></div>
         </keep-alive>
 
     </div>
@@ -43,54 +41,22 @@ export default {
     data() {
         return {
             counts: [{index: '一'}, {index: '二'}, {index: '三'}, {index: '四'}, {index: '五'}, ],
-            IfShowCopiedImg: false,
             SinkAllCards: true
         }
     },
     methods: {
-        // 点击卡片，隐藏FeaturedImage
-        HideFeaturedImg(index) {
-
+        // 点击卡片后的一系列动画
+        ClickCardToContent(index) {
             // 改变vuex的状态，显示cover组件里的copied img 元素
-            this.$store.commit('IfShowCopiedImg')
-
+            this.$store.commit('IfShowCopiedImg');
             // 把点击的卡片的dom发送给vuex
-            this.SendFeaturedImgDom(index)
-
+            this.SendFeaturedImgDom(index);
             // 找到被点击的那一张卡片，设为白底
-            let TargetItem = this.counts[index];
-            TargetItem.active = !TargetItem.active;
-            this.$set(this.counts, index, TargetItem);
-
+            this.CardClickedToBlank(index);
             // 卡片区域整体下沉
             this.MoveArticleCardArea();
-
             // 告诉vuex点击的卡片是什么图片
             this.$store.commit('ChangeHomepageCover', {TargetArticleCover: window.getComputedStyle(this.$refs.FeaturedImages[index]).backgroundImage})
-
-        },
-
-        // 在当前卡片的头图位置复制一份一模一样的图片
-        CopyFeaturedImg(index) {
-            // 先获取background属性，因为是外联样式所以不能用ref
-            let TargetStyle = window.getComputedStyle(this.$refs.FeaturedImages[index]);
-            let TargetBgImg = TargetStyle.backgroundImage;
-            let TargetBgSize = TargetStyle.backgroundSize;
-
-            // 给这个copied图片赋值background-image
-            this.$refs.FeaturedImgCopied.style.backgroundImage = TargetBgImg;
-            this.$refs.FeaturedImgCopied.style.backgroundSize = TargetBgSize;
-
-            // 给这个copied图片赋值坐标
-            let TargetDomRect = this.$refs.FeaturedImages[index].getBoundingClientRect();
-            this.$refs.FeaturedImgCopied.style.height = TargetDomRect.height + 'px';
-            this.$refs.FeaturedImgCopied.style.width = TargetDomRect.width + 'px';
-            this.$refs.FeaturedImgCopied.style.left = TargetDomRect.left + 'px';
-            this.$refs.FeaturedImgCopied.style.top = TargetDomRect.top + 'px';
-
-            // 显示copied图片，并且fixed
-            this.IfShowCopiedImg = !this.IfShowCopiedImg;
-            this.$refs.FeaturedImgCopied.style.position = 'fixed';
         },
 
         // 把当前featured image的h、w、l、t等信息发送给vuex
@@ -118,21 +84,18 @@ export default {
 
             // 传值给vuex
            this.$store.commit('GetFeaturedImgDom', {CopiedDom: res})
-
-        },
-
-        // 复制图片后，移动图片
-        MovedImgCopied() {
-            this.$refs.FeaturedImgCopied.style.width = '100%';
-            this.$refs.FeaturedImgCopied.style.height = '450px';
-            this.$refs.FeaturedImgCopied.style.left = '0px';
-            this.$refs.FeaturedImgCopied.style.top = '0px';
-            this.$refs.FeaturedImgCopied.style.backgroundPosition = '50% 50%'
         },
 
         // 所有卡片整体下沉
         MoveArticleCardArea() {
-            this.SinkAllCards = !this.SinkAllCards
+            this.SinkAllCards = false
+        },
+
+        // 找到被点击的那一张卡片，设为白底
+        CardClickedToBlank(index) {
+            let TargetItem = this.counts[index];
+            TargetItem.active = !TargetItem.active;
+            this.$set(this.counts, index, TargetItem);
         }
 
     },

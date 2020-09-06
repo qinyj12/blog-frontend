@@ -1,2 +1,4 @@
 ## 开荒一个博客前端
-- [ ] 首页和详情页动画完成，下一步：详情页loading、footer组件、注册组件、登陆组件
+- [x] 详情页loading
+- [ ] content=>home=>content时，cover动画会有错误
+- [ ] 下一步：footer组件、注册组件、登陆组件、作者信息组件
