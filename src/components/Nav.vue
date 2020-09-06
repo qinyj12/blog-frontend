@@ -1,7 +1,7 @@
 <template>
     <div id="nav">
         <div id="nav-left">
-            <div id="nav-logo"><img src="../assets/logo.png" alt="LOGO"></div>
+            <router-link to="/"><div id="nav-logo"><img src="../assets/logo.png" alt="LOGO"></div></router-link>
             <div id="nav-route">
                 <router-link to="/"><div>首页</div></router-link>
                 <div>论坛</div>

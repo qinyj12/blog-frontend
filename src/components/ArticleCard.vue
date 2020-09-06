@@ -1,38 +1,41 @@
 <template>
     <div id="article-card-area">
-        <transition name="cards-sink">
-            <ul v-show="SinkAllCards">
-                <li v-for="(item, index) in counts" :key="item.index">
+        <keep-alive>
+            <transition name="cards-sink">
+                <ul v-show="SinkAllCards">
+                    <li v-for="(item, index) in counts" :key="item.index">
 
-                    <!-- 加一层路由 -->
-                    <router-link :to="'/Content/' + item.index">
-                        <div class="single-card waves" @click="HideFeaturedImg(index)">
-                            <div class="featured-image" 
-                                :class="{'featured-image-unclicked': !item.active, 'featured-image-clicked': item.active}" 
-                                ref="FeaturedImages"
-                            >
-                            </div>
-                            <div class="content-wrap">
-                                <div class="entry-header">
-                                    <span class="category">案例</span>
-                                    <h3 class="title">这是第{{item.index}}个案例</h3>
+                        <!-- 加一层路由 -->
+                        <router-link :to="'/Content/' + item.index">
+                            <div class="single-card waves" @click="HideFeaturedImg(index)">
+                                <div class="featured-image" 
+                                    :class="{'featured-image-unclicked': !item.active, 'featured-image-clicked': item.active}" 
+                                    ref="FeaturedImages"
+                                >
                                 </div>
-                                <div class="entry-footer">
-                                    <div class="author">
-                                        <div class="avatar"></div>
-                                        <span class="name">测试用户</span>
+                                <div class="content-wrap">
+                                    <div class="entry-header">
+                                        <span class="category">案例</span>
+                                        <h3 class="title">这是第{{item.index}}个案例</h3>
                                     </div>
-                                    <div class="published-date">August 31, 2020</div>
+                                    <div class="entry-footer">
+                                        <div class="author">
+                                            <div class="avatar"></div>
+                                            <span class="name">测试用户</span>
+                                        </div>
+                                        <div class="published-date">August 31, 2020</div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </router-link>
+                        </router-link>
 
-                </li>
-            </ul>
-        </transition>
+                    </li>
+                </ul>
+            </transition>
 
-        <div v-show="IfShowCopiedImg" ref="FeaturedImgCopied" class="featured-img-copied"></div>
+            <div v-show="IfShowCopiedImg" ref="FeaturedImgCopied" class="featured-img-copied"></div>
+        </keep-alive>
+
     </div>
 </template>
 <script>

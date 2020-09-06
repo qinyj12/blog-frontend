@@ -1,6 +1,6 @@
 <template>
     <div id="main-content">
-        <div>123</div>
+        <h1>这是文章详情页</h1>
     </div>
 </template>
 <script>
@@ -9,7 +9,6 @@ export default {
 </script>
 <style lang="stylus" scoped>
 #main-content {
-    border 1px solid
     height 500px
 }
 </style>
