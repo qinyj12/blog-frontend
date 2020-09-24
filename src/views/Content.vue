@@ -1,5 +1,6 @@
 <template>
     <div id="main-content">
+        <!-- 这是loading图标 -->
         <div class="loading" v-show="!LoadFinished"></div>
         <transition name="article-show">
             <div class="main-article" v-show="LoadFinished">

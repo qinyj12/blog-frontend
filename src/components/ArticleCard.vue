@@ -2,17 +2,21 @@
     <div id="article-card-area">
         <!-- 这里要记住article-card组件的滚动条位置，所以要keep-alive -->
         <keep-alive>
+            <!-- 套一个动画， -->
             <transition name="cards-sink">
-                <ul v-show="SinkAllCards">
+                <!-- 这是所有的卡片列表 -->
+                <ul v-show="!SinkAllCards">
                     <li v-for="(item, index) in counts" :key="item.index">
                         <!-- 加一层路由 -->
-                        <router-link :to="'/Content/' + item.index">
+                        <!-- <router-link :to="'/Content/' + item.index"> -->
                             <div class="single-card waves" @click="ClickCardToContent(index)">
+                                <!-- 这是卡片的头图 -->
                                 <div class="featured-image" 
                                     :class="{'featured-image-unclicked': !item.active, 'featured-image-clicked': item.active}" 
                                     ref="FeaturedImages"
                                 >
                                 </div>
+                                <!-- 这是头图下方的文字部分 -->
                                 <div class="content-wrap">
                                     <div class="entry-header">
                                         <span class="category">案例</span>
@@ -27,12 +31,14 @@
                                     </div>
                                 </div>
                             </div>
-                        </router-link>
+                        <!-- </router-link> -->
 
                     </li>
                 </ul>
             </transition>
         </keep-alive>
+        <!-- 这是点击卡片后复制的图片 -->
+        <div id="copied-img" ref="CopiedImg"></div>
 
     </div>
 </template>
@@ -41,54 +47,23 @@ export default {
     data() {
         return {
             counts: [{index: '一'}, {index: '二'}, {index: '三'}, {index: '四'}, {index: '五'}, ],
-            SinkAllCards: true
+            SinkAllCards: false
         }
     },
     methods: {
         // 点击卡片后的一系列动画
         ClickCardToContent(index) {
-            // 改变vuex的状态，显示cover组件里的copied img 元素
-            this.$store.commit('IfShowCopiedImg');
-            // 把点击的卡片的dom发送给vuex
-            this.SendFeaturedImgDom(index);
             // 找到被点击的那一张卡片，设为白底
             this.CardClickedToBlank(index);
+
+            // 拿到点击的那张图片，以及宽、高、位置
+            let TargetImgDom = this.GetClickedImgDom(index);
+
+            // 把上面拿到的宽、高、位置赋值给 #copied-img
+            this.CopyClickedImg(TargetImgDom);
+
             // 卡片区域整体下沉
             this.MoveArticleCardArea();
-            // 告诉vuex点击的卡片是什么图片
-            this.$store.commit('ChangeHomepageCover', {TargetArticleCover: window.getComputedStyle(this.$refs.FeaturedImages[index]).backgroundImage})
-        },
-
-        // 把当前featured image的h、w、l、t等信息发送给vuex
-        SendFeaturedImgDom(index) {
-            // 先获取background属性，因为是外联样式所以不能用ref
-            let TargetStyle = window.getComputedStyle(this.$refs.FeaturedImages[index]);
-            let TargetBgImg = TargetStyle.backgroundImage;
-            let TargetBgSize = TargetStyle.backgroundSize;
-
-            // 再获取这个图片的w、h、t、l值
-            let TargetDomRect = this.$refs.FeaturedImages[index].getBoundingClientRect();
-            let TargetDomH = TargetDomRect.height + 'px';
-            let TargetDomW = TargetDomRect.width + 'px';
-            let TargetDomL = TargetDomRect.left + 'px';
-            let TargetDomT = TargetDomRect.top + 'px';
-
-            let res = {
-                'TargetBgImg': TargetBgImg, 
-                'TargetBgSize': TargetBgSize, 
-                'TargetDomWidth': TargetDomW, 
-                'TargetDomHeight': TargetDomH, 
-                'TargetDomTop': TargetDomT, 
-                'TargetDomLeft': TargetDomL, 
-            }
-
-            // 传值给vuex
-           this.$store.commit('GetFeaturedImgDom', {CopiedDom: res})
-        },
-
-        // 所有卡片整体下沉
-        MoveArticleCardArea() {
-            this.SinkAllCards = false
         },
 
         // 找到被点击的那一张卡片，设为白底
@@ -96,7 +71,47 @@ export default {
             let TargetItem = this.counts[index];
             TargetItem.active = !TargetItem.active;
             this.$set(this.counts, index, TargetItem);
-        }
+        },
+
+        // 获取被点击卡片的头图的各种参数
+        GetClickedImgDom(index) {
+            // 用getBoundingClientRect方法，直接获取目标的大小和相对视口的位置，间接获取目标的宽、高
+            let TargetImgDom = this.$refs.FeaturedImages[index].getBoundingClientRect();
+            let TargetImgTop = TargetImgDom['top'];
+            let TargetImgBottom = TargetImgDom['bottom'];
+            let TargetImgLeft = TargetImgDom['left'];
+            let TargetImgRight = TargetImgDom['right'];
+            // 有些浏览器没有width和top属性，所以用right-left和bottom-top来处理
+            let TargetImgWidth = TargetImgDom['width']||TargetImgRight - TargetImgLeft;
+            let TargetImgHeight = TargetImgDom['height']||TargetImgBottom - TargetImgTop;
+            // 返回这个目标的dom属性，上面拿到的所有属性都是int，要 +"px" 转成str
+            return {
+                'width': TargetImgWidth +'px', 
+                'height': TargetImgHeight +'px', 
+                'left': TargetImgLeft +'px', 
+                'top': TargetImgTop +'px' 
+            }
+        },
+
+        // 复制被点击的图片，生成一模一样的图片
+        CopyClickedImg(TargetDom) {
+            let CopiedImg = this.$refs.CopiedImg;
+            CopiedImg.style['display'] ='block';
+            CopiedImg.style['width'] = TargetDom['width'];
+            CopiedImg.style['height'] = TargetDom['height'];
+            CopiedImg.style['left'] = TargetDom['left'];
+            CopiedImg.style['top'] = TargetDom['top'];
+            // 因为是开发环境，都用本地图片就好了
+            CopiedImg.style['background-image'] = 'url("' + require('../assets/featured-image.png') + '")'
+        },
+
+        // 所有卡片整体下沉
+        MoveArticleCardArea() {
+            // 这是用来清除所有卡片的，会有一个下沉的动画
+            this.SinkAllCards = true
+        },
+        // 点击卡片=》生成新图片=》新图片动画=》sleep后卡片下沉=》卡片消失
+
 
     },
 }
@@ -104,6 +119,14 @@ export default {
 <style lang="stylus" scoped>
 #article-card-area {
     width 100%
+
+    // 这是点击卡片后复制的一模一样的图片，默认不显示，并且要针对视口fixed定位
+    #copied-img {
+        display none
+        position fixed
+        background-repeat no-repeat
+        background-size cover
+    }
 
     ul {
         list-style none
