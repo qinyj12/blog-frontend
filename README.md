@@ -1,4 +1,4 @@
 ## 开荒一个博客前端
 - [x] 详情页loading
-- [ ] content=>home=>content时，cover动画会有错误
+- [ ] 复制卡片的移动动画不应该用<transition>，也不应该直接ref，而是应该动态改变class
 - [ ] 下一步：footer组件、注册组件、登陆组件、作者信息组件

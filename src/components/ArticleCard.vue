@@ -32,13 +32,15 @@
                                 </div>
                             </div>
                         <!-- </router-link> -->
-
                     </li>
                 </ul>
             </transition>
         </keep-alive>
-        <!-- 这是点击卡片后复制的图片 -->
-        <div id="copied-img" ref="CopiedImg"></div>
+        <transition name="move-copied-img">
+            <!-- 这是点击卡片后复制的图片 -->
+            <div id="copied-img"  ref="CopiedImg" v-show="ShowCopiedImg"></div>
+        </transition>
+
 
     </div>
 </template>
@@ -47,12 +49,13 @@ export default {
     data() {
         return {
             counts: [{index: '一'}, {index: '二'}, {index: '三'}, {index: '四'}, {index: '五'}, ],
-            SinkAllCards: false
+            SinkAllCards: false,
+            ShowCopiedImg: false
         }
     },
     methods: {
         // 点击卡片后的一系列动画
-        ClickCardToContent(index) {
+        async ClickCardToContent(index) {
             // 找到被点击的那一张卡片，设为白底
             this.CardClickedToBlank(index);
 
@@ -60,10 +63,14 @@ export default {
             let TargetImgDom = this.GetClickedImgDom(index);
 
             // 把上面拿到的宽、高、位置赋值给 #copied-img
-            this.CopyClickedImg(TargetImgDom);
+            await this.CopyClickedImg(TargetImgDom);
+
+            // 移动复制的图片
+            // await this.MoveCopiedImg(this.$refs.CopiedImg);
 
             // 卡片区域整体下沉
-            this.MoveArticleCardArea();
+            // this.MoveArticleCardArea()
+
         },
 
         // 找到被点击的那一张卡片，设为白底
@@ -93,16 +100,32 @@ export default {
             }
         },
 
-        // 复制被点击的图片，生成一模一样的图片
+        // 复制被点击的图片，生成一模一样的图片。做成promise对象
         CopyClickedImg(TargetDom) {
             let CopiedImg = this.$refs.CopiedImg;
-            CopiedImg.style['display'] ='block';
-            CopiedImg.style['width'] = TargetDom['width'];
-            CopiedImg.style['height'] = TargetDom['height'];
-            CopiedImg.style['left'] = TargetDom['left'];
-            CopiedImg.style['top'] = TargetDom['top'];
-            // 因为是开发环境，都用本地图片就好了
-            CopiedImg.style['background-image'] = 'url("' + require('../assets/featured-image.png') + '")'
+            return new Promise((reslove) => {
+                reslove(
+                    this.ShowCopiedImg = true,
+                    CopiedImg.style['display'] ='block',
+                    CopiedImg.style['width'] = TargetDom['width'],
+                    CopiedImg.style['height'] = TargetDom['height'],
+                    CopiedImg.style['left'] = TargetDom['left'],
+                    CopiedImg.style['top'] = TargetDom['top'],
+                    // 因为是开发环境，都用本地图片就好了
+                    CopiedImg.style['background-image'] = 'url("' + require('../assets/featured-image.png') + '")'
+                )
+            })
+
+        },
+
+        // 移动复制的图片，做成promise对象
+        MoveCopiedImg(target) {
+            return new Promise((resolve) => {
+                resolve(
+                    target.style['left'] = '0',
+                    target.style['top'] = '0'
+                )
+            })
         },
 
         // 所有卡片整体下沉
@@ -122,10 +145,17 @@ export default {
 
     // 这是点击卡片后复制的一模一样的图片，默认不显示，并且要针对视口fixed定位
     #copied-img {
-        display none
+        // display none
         position fixed
         background-repeat no-repeat
         background-size cover
+    }
+    .move-copied-img-enter-active {
+        transition all 1s
+    }
+    .move-copied-img-enter {
+        transform translateX(100px)
+        opacity 0
     }
 
     ul {
@@ -240,10 +270,6 @@ export default {
                 }
             }
         }
-    }
-    // 用于复制图层的动画
-    .featured-img-copied {
-        transition all 0.2s ease-out
     }
 
     // 用于卡片下沉的动画
