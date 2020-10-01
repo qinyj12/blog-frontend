@@ -1,8 +1,12 @@
 <template>
     <div id="article-card-area">
+        <!-- 引入cover组件，随卡片区域一起消失 -->
+        <transition name="cover-sink">
+            <Cover v-show="!SinkAllCards" />
+        </transition>
+
         <!-- 这里要记住article-card组件的滚动条位置，所以要keep-alive -->
         <keep-alive>
-            <!-- 套一个动画， -->
             <transition name="cards-sink">
                 <!-- 这是所有的卡片列表 -->
                 <ul v-show="!SinkAllCards">
@@ -36,22 +40,32 @@
                 </ul>
             </transition>
         </keep-alive>
-        <transition name="move-copied-img">
-            <!-- 这是点击卡片后复制的图片 -->
-            <div id="copied-img"  ref="CopiedImg" v-show="ShowCopiedImg"></div>
-        </transition>
 
-
+        <!-- 这是点击卡片后复制的图片 -->
+        <div id="copied-img" ref="CopiedImg" 
+            :class="{
+                'copied-img-default': true,
+                'copied-img-start': ShowCopiedImg, 
+                'copied-img-move': CopiedImgMoved, 
+            }"
+        >
+        </div>
     </div>
 </template>
+
 <script>
+import Cover from '@/components/Cover.vue';
 export default {
     data() {
         return {
             counts: [{index: '一'}, {index: '二'}, {index: '三'}, {index: '四'}, {index: '五'}, ],
             SinkAllCards: false,
-            ShowCopiedImg: false
+            ShowCopiedImg: false,
+            CopiedImgMoved: false,
         }
+    },
+    components: {
+        Cover
     },
     methods: {
         // 点击卡片后的一系列动画
@@ -62,15 +76,16 @@ export default {
             // 拿到点击的那张图片，以及宽、高、位置
             let TargetImgDom = this.GetClickedImgDom(index);
 
-            // 把上面拿到的宽、高、位置赋值给 #copied-img
+            // 把上面拿到的宽、高、位置赋值给 #copied-img，copied-img显示出来
             await this.CopyClickedImg(TargetImgDom);
 
-            // 移动复制的图片
-            // await this.MoveCopiedImg(this.$refs.CopiedImg);
+            // 卡片区域整体下沉，cover消失
+            await this.MoveArticleCardArea();
 
-            // 卡片区域整体下沉
-            // this.MoveArticleCardArea()
-
+            // 100ms后移动copied-img
+            setTimeout(() => {
+                this.MoveCopiedImg()
+            }, 300);
         },
 
         // 找到被点击的那一张卡片，设为白底
@@ -105,59 +120,81 @@ export default {
             let CopiedImg = this.$refs.CopiedImg;
             return new Promise((reslove) => {
                 reslove(
-                    this.ShowCopiedImg = true,
-                    CopiedImg.style['display'] ='block',
-                    CopiedImg.style['width'] = TargetDom['width'],
-                    CopiedImg.style['height'] = TargetDom['height'],
-                    CopiedImg.style['left'] = TargetDom['left'],
-                    CopiedImg.style['top'] = TargetDom['top'],
-                    // 因为是开发环境，都用本地图片就好了
-                    CopiedImg.style['background-image'] = 'url("' + require('../assets/featured-image.png') + '")'
+                    CopiedImg.style.setProperty('--CopiedImgBg', 'url("' + require('../assets/featured-image.png') + '")'),
+                    CopiedImg.style.setProperty('--CopiedImgWidth', TargetDom['width']),
+                    CopiedImg.style.setProperty('--CopiedImgHeight', TargetDom['height']),
+                    CopiedImg.style.setProperty('--CopiedImgLeft', TargetDom['left']),
+                    CopiedImg.style.setProperty('--CopiedImgTop', TargetDom['top']),
+                    // 显示copied-img
+                    this.ShowCopiedImg = true
                 )
             })
-
         },
 
         // 移动复制的图片，做成promise对象
-        MoveCopiedImg(target) {
+        MoveCopiedImg() {
             return new Promise((resolve) => {
                 resolve(
-                    target.style['left'] = '0',
-                    target.style['top'] = '0'
+                    this.CopiedImgMoved = true
                 )
             })
         },
 
-        // 所有卡片整体下沉
+        // 所有卡片整体下沉，cover组件也下沉
         MoveArticleCardArea() {
-            // 这是用来清除所有卡片的，会有一个下沉的动画
-            this.SinkAllCards = true
+            return new Promise((resolve) => {
+                resolve(
+                    this.SinkAllCards = true
+                )
+            })
         },
-        // 点击卡片=》生成新图片=》新图片动画=》sleep后卡片下沉=》卡片消失
-
-
     },
 }
 </script>
 <style lang="stylus" scoped>
+// 卡片和cover下沉的时间
+sink-time = 0.2s
 #article-card-area {
     width 100%
 
     // 这是点击卡片后复制的一模一样的图片，默认不显示，并且要针对视口fixed定位
     #copied-img {
-        // display none
-        position fixed
         background-repeat no-repeat
         background-size cover
+        background-position 50% 50%
+        transition all 0.3s
     }
-    .move-copied-img-enter-active {
-        transition all 1s
+    .copied-img-default {
+        position fixed
     }
-    .move-copied-img-enter {
-        transform translateX(100px)
+
+    // 点击卡片后，给copied-img设置初始值，就是完全复制被点击卡片的属性
+    .copied-img-start {
+        // display block
+        background-image var(--CopiedImgBg)
+        width var(--CopiedImgWidth)
+        height var(--CopiedImgHeight)
+        left var(--CopiedImgLeft)
+        top var(--CopiedImgTop)
+    }
+    // 移动卡片到指定位置，并缩放大小
+    .copied-img-move {
+        left 0
+        top 80px
+        width 100%
+        height 450px
+    }
+
+    // cover区域的动画
+    .cover-sink-leave-active {
+        transition: all sink-time
+    }
+    .cover-sink-leave-to /* .fade-leave-active, 2.1.8 版本以下 */ {
+        transform translateY(100px)
         opacity 0
     }
 
+    // 卡片区域
     ul {
         list-style none
         padding 0
@@ -186,10 +223,11 @@ export default {
                     background-size cover
                     // background-position 50% 50%
                 }
-
+                // 没点击卡片时，正常展示图片
                 .featured-image-unclicked {
                     background-image url('../assets/featured-image.png')
                 }
+                // 点击卡片后，设为白底
                 .featured-image-clicked {
                     background-image url()
                 }
@@ -273,10 +311,10 @@ export default {
     }
 
     // 用于卡片下沉的动画
-    .cards-sink-enter-active, .cards-sink-leave-active {
-        transition: all 0.2s
+    .cards-sink-leave-active {
+        transition: all sink-time
     }
-    .cards-sink-enter, .cards-sink-leave-to /* .fade-leave-active, 2.1.8 版本以下 */ {
+    .cards-sink-leave-to /* .fade-leave-active, 2.1.8 版本以下 */ {
         transform translateY(100px)
         opacity 0
     }
@@ -286,14 +324,11 @@ export default {
 // 当屏幕宽度<992时，卡片变成三列
 @media screen and (min-width 992px) {
     #article-card-area {
-        // 屏幕越宽，两边的留白越大
-        padding 64px 4%
-        // 如果父元素不设置border-box，子元素width=100%时不会把父元素的padding考虑在内。
-        box-sizing border-box
-
         ul {
             width 100%
             margin 0 auto
+            // 屏幕越宽，卡片区域两边的留白越大
+            padding 64px 4%
 
             li {
                 // 屏幕越宽，卡片越宽
@@ -310,15 +345,12 @@ export default {
 // 当屏幕宽度<1100时，卡片变成双列
 @media screen and (max-width 992px) {
     #article-card-area {
-        // 因为子元素ul已经设置了固定宽度，所以父元素不设置padding也没关系，两边依然能有留白
-        padding 64px 0
-        // 如果父元素不设置border-box，子元素width=100%时不会把父元素的padding考虑在内。
-        box-sizing border-box
-
         ul {
             // 设置双列以后，父元素width恒定为720px，卡片大小不变，只是两边留白自适应
             width 720px
             margin 0 auto
+            padding 64px 0
+
             // 父元素用了flex，为了在子元素间距相等的同时，保证最后一行的元素居左，就不能使用space-between，而是要让手动设置margin
             li:not(:nth-child(2n)) {
                 margin-right calc((100% - (345 * 2) * 1px)/1)
@@ -330,16 +362,13 @@ export default {
 // 当屏幕宽度<(345*2+15*2=720)时，卡片变成单列，并且卡片width=100%。此处只需要把父元素li改成100%
 @media screen and (max-width 768px) {
     #article-card-area {
-        // 随便变成了单列，两边仍然要留出15px空白
-        padding 64px 15px
-        // 如果父元素不设置border-box，子元素width=100%时不会把父元素的padding考虑在内。
-        box-sizing border-box
-
         ul {
             // 因为父元素已经有15px的padding，所以子元素直接100%接到头就好
             width 100%
             // 因为变成了单列，所以纵向陈列
             flex-direction column
+            // 即便变成了单列，两边仍然要留出15px空白
+            padding 64px 15px
 
             li {
                 // 因为是单列，所以直接100%
