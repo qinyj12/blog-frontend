@@ -86,6 +86,8 @@ export default {
             setTimeout(() => {
                 this.MoveCopiedImg()
             }, 300);
+
+            this.$router.push('Content/123')
         },
 
         // 找到被点击的那一张卡片，设为白底
@@ -154,6 +156,7 @@ export default {
 <style lang="stylus" scoped>
 // 卡片和cover下沉的时间
 sink-time = 0.2s
+
 #article-card-area {
     width 100%
 
