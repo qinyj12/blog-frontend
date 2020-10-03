@@ -50,6 +50,11 @@
             }"
         >
         </div>
+
+        <!-- 这是loading动画 -->
+        <div id="loading" v-show="ShowLoading">
+
+        </div>
     </div>
 </template>
 
@@ -62,6 +67,7 @@ export default {
             SinkAllCards: false,
             ShowCopiedImg: false,
             CopiedImgMoved: false,
+            Showloading: false
         }
     },
     components: {
@@ -82,12 +88,16 @@ export default {
             // 卡片区域整体下沉，cover消失
             await this.MoveArticleCardArea();
 
-            // 100ms后移动copied-img
+            // 200ms后移动copied-img，一定要加一个settimeout，不然就不会有动画，而是瞬移
             setTimeout(() => {
-                this.MoveCopiedImg()
-            }, 300);
+                this.MoveCopiedImg();
+                this.data.Showloading = true
+            }, 200);
 
-            this.$router.push('Content/123')
+            // 200+300=500ms之后，触发路由
+            // setTimeout(() => {
+            //     this.$router.push('Content/123')
+            // }, 500);
         },
 
         // 找到被点击的那一张卡片，设为白底
@@ -195,6 +205,25 @@ sink-time = 0.2s
     .cover-sink-leave-to /* .fade-leave-active, 2.1.8 版本以下 */ {
         transform translateY(100px)
         opacity 0
+    }
+
+    #loading {
+        width 50px
+        height 50px
+        margin 50px
+        background-image url('../assets/loading.png')
+        background-size cover
+        background-repeat no-repeat
+        animation loading 1s linear infinite
+
+        @keyframes loading {
+            from {
+                transform rotate(0deg)
+            }
+            to {
+                transform rotate(360deg)
+            }
+        }
     }
 
     // 卡片区域
