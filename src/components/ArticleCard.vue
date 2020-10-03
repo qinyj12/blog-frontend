@@ -47,14 +47,15 @@
                 'copied-img-default': true,
                 'copied-img-start': ShowCopiedImg, 
                 'copied-img-move': CopiedImgMoved, 
+                'copied-img-end': CopiedImgEnd
             }"
         >
         </div>
 
         <!-- 这是loading动画 -->
-        <div id="loading" v-show="ShowLoading">
-
-        </div>
+        <transition name="loading-appear">
+            <div id="loading" v-show="ShowLoading"></div>
+        </transition>
     </div>
 </template>
 
@@ -67,7 +68,8 @@ export default {
             SinkAllCards: false,
             ShowCopiedImg: false,
             CopiedImgMoved: false,
-            Showloading: false
+            CopiedImgEnd: false,
+            ShowLoading: false
         }
     },
     components: {
@@ -90,9 +92,16 @@ export default {
 
             // 200ms后移动copied-img，一定要加一个settimeout，不然就不会有动画，而是瞬移
             setTimeout(() => {
-                this.MoveCopiedImg();
-                this.data.Showloading = true
+                this.MoveCopiedImg()
             }, 200);
+
+            // 500ms时的一系列动画，200ms（copied-img等待200ms后开始动画）+300ms（copied-img动画总共持续300ms）
+            setTimeout(() => {
+                // 500ms后，触发copied-img-end，取消copied-img的fixed定位
+                this.CopiedImgEnd = true;
+                // 500ms后，触发loading动画
+                this.ShowLoading = true
+            }, 500);
 
             // 200+300=500ms之后，触发路由
             // setTimeout(() => {
@@ -166,6 +175,8 @@ export default {
 <style lang="stylus" scoped>
 // 卡片和cover下沉的时间
 sink-time = 0.2s
+// copied-img的动画时间
+copied-img-time = 0.3s
 
 #article-card-area {
     width 100%
@@ -175,15 +186,14 @@ sink-time = 0.2s
         background-repeat no-repeat
         background-size cover
         background-position 50% 50%
-        transition all 0.3s
+        transition all copied-img-time
     }
+    // copied-img出现时，默认是以fixed定位
     .copied-img-default {
         position fixed
     }
-
-    // 点击卡片后，给copied-img设置初始值，就是完全复制被点击卡片的属性
+    // 点击卡片后，给copied-img设置初始值，就是完全复制被点击卡片的属性，此时仍是fixed定位
     .copied-img-start {
-        // display block
         background-image var(--CopiedImgBg)
         width var(--CopiedImgWidth)
         height var(--CopiedImgHeight)
@@ -197,6 +207,10 @@ sink-time = 0.2s
         width 100%
         height 450px
     }
+    // 卡片动画结束时，取消fixed定位，改为static定位，不受top、left的影响，因此之前设置了top、left都不用改
+    .copied-img-end {
+        position static
+    }
 
     // cover区域的动画
     .cover-sink-leave-active {
@@ -206,11 +220,19 @@ sink-time = 0.2s
         transform translateY(100px)
         opacity 0
     }
+    // loading出现时的动画
+    .loading-appear-enter-active {
+        transition all 0.3s
+    }
+    .loading-appear-enter {
+        opacity 0
+    }
 
+    // loading
     #loading {
         width 50px
         height 50px
-        margin 50px
+        margin 50px auto
         background-image url('../assets/loading.png')
         background-size cover
         background-repeat no-repeat
