@@ -98,7 +98,6 @@ export default {
     * {
         // border 1px solid
         // box-sizing border-box
-        --DemoColor green
     }
 
     #nav-left {
@@ -138,7 +137,7 @@ export default {
             height 30px
             margin-right 10px
             border-radius 4px
-            border 0.5px solid
+            border 1px solid
         }
         .login {
             border-color rgb(221, 221, 221)
@@ -146,8 +145,7 @@ export default {
         }
         .signup {
             border-color rgb(25, 221, 196)
-            // background-color rgb(25, 221, 196)
-            background-color var(--DemoColor)
+            background-color rgb(25, 221, 196)
             color white
         }
         .icon-menu {

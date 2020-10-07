@@ -257,6 +257,7 @@ copied-img-time = 0.3s
         flex-wrap wrap
         max-width 1140px
         box-sizing border-box
+        border 1px solid
 
         li {
             margin-bottom 60px
@@ -375,7 +376,7 @@ copied-img-time = 0.3s
 }
 
 // 这一部分是处理自适应的
-// 当屏幕宽度<992时，卡片变成三列
+// 当屏幕宽度>992时，卡片变成三列
 @media screen and (min-width 992px) {
     #article-card-area {
         ul {
@@ -396,7 +397,7 @@ copied-img-time = 0.3s
     }
 }
 
-// 当屏幕宽度<1100时，卡片变成双列
+// 当屏幕宽度<992时，卡片变成双列
 @media screen and (max-width 992px) {
     #article-card-area {
         ul {
@@ -413,7 +414,7 @@ copied-img-time = 0.3s
     }
 }
 
-// 当屏幕宽度<(345*2+15*2=720)时，卡片变成单列，并且卡片width=100%。此处只需要把父元素li改成100%
+// 当屏幕宽度<768时，卡片变成单列，并且卡片width=100%。此处只需要把父元素li改成100%
 @media screen and (max-width 768px) {
     #article-card-area {
         ul {
