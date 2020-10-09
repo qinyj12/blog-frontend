@@ -26,6 +26,8 @@ export default {
 }
 </script>
 <style lang="stylus">
+@import url('https://cdn.bootcdn.net/ajax/libs/font-awesome/5.9.0/css/all.min.css')
+
 body {
     margin 0;
     padding 0;

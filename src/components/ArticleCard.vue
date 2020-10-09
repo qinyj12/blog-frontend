@@ -255,9 +255,8 @@ copied-img-time = 0.3s
         display flex
         flex-direction row
         flex-wrap wrap
-        max-width 1140px
+        max-width 1240px
         box-sizing border-box
-        border 1px solid
 
         li {
             margin-bottom 60px

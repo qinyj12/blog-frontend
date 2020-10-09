@@ -1,22 +1,27 @@
 <template>
     <div id="nav">
-        <div id="nav-left">
-            <router-link to="/"><div id="nav-logo"><img src="../assets/logo.png" alt="LOGO"></div></router-link>
-            <div id="nav-route">
-                <router-link to="/"><div>首页</div></router-link>
-                <div>论坛</div>
-                <div>关于</div>
-                <div>友链</div>
-                <router-link to="/test"><div>测试页</div></router-link>
-                <div class="test"></div>
+        <!-- 包一个father class，这样就能和卡片区域保持在一条线上了 -->
+        <div class="nav-left-right-father">
+            <div id="nav-left">
+                <router-link to="/"><div id="nav-logo"><img src="../assets/logo.png" alt="LOGO"></div></router-link>
+                <div id="nav-route">
+                    <router-link to="/"><div>首页</div></router-link>
+                    <div>论坛</div>
+                    <div>关于</div>
+                    <div>友链</div>
+                    <router-link to="/test"><div>测试页</div></router-link>
+                    <div class="test"></div>
+                </div>
+            </div>
+            <!-- 这是普通的注册、登录按钮，平时启用，窄屏时隐藏 -->
+            <div id="nav-right">
+                <button class="login-and-signup login waves" @click="ChangeStyle">登录</button>
+                <button class="login-and-signup signup waves" ref="DemoColor">注册</button>
+                <i class="icon-menu waves" @click="ShowSideBar"></i>
             </div>
         </div>
-        <!-- 这是普通的注册、登录按钮，平时启用，窄屏时隐藏 -->
-        <div id="nav-right">
-            <button class="login-and-signup login waves" @click="ChangeStyle">登录</button>
-            <button class="login-and-signup signup waves" ref="DemoColor">注册</button>
-            <i class="icon-menu waves" @click="ShowSideBar"></i>
-        </div>
+
+
         <!-- 这是侧边栏，平时隐藏，宽屏时启用 -->
         <transition name="side-bar-fade">
             <div id="nav-side-bar" v-show="ShowMaskAndSideBar">
@@ -95,72 +100,92 @@ export default {
     position sticky
     top 0
 
-    * {
-        // border 1px solid
-        // box-sizing border-box
-    }
-
-    #nav-left {
-        width 40%
-        height 80px
+    .nav-left-right-father {
+        width 100%
+        max-width 1240px
         display flex
+        justify-content space-between
+        // 这是和卡片区域保持一致，对齐
+        padding 0 4%
 
-        #nav-logo {
-            width 80px
+        #nav-left {
+            width 40%
             height 80px
+            display flex
 
-            img {
+            #nav-logo {
                 width 80px
                 height 80px
-                transform scale(0.7)
+
+                img {
+                    width 80px
+                    height 80px
+                    transform scale(0.7)
+                }
+            }
+
+            #nav-route {
+                width 100%
+                display flex
+                justify-content space-around
+                align-items center
+                font-size large
             }
         }
 
-        #nav-route {
-            width 100%
+        #nav-right {
+            width 30%
+            height 80px
             display flex
-            justify-content space-around
             align-items center
-            font-size large
+            justify-content flex-end
+
+            .login-and-signup {
+                width 90px
+                height 30px
+                margin-left 10px
+                border-radius 4px
+                border 1px solid
+            }
+            .login {
+                border-color rgb(221, 221, 221)
+                background-color white
+            }
+            .signup {
+                border-color rgb(25, 221, 196)
+                background-color rgb(25, 221, 196)
+                color white
+            }
+            .icon-menu {
+                display block
+                width 30px
+                height 30px
+                background url('../assets/menu.png') no-repeat
+                background-size contain
+                border-radius 50%
+                display none
+            }
+            .icon-menu:hover {
+                // background-color rgb(220, 220, 220)
+                cursor pointer
+            }
         }
     }
 
-    #nav-right {
-        width 30%
-        height 80px
-        display flex
-        align-items center
-        justify-content flex-end
+    // 当卡片区域2列、1列时，导航栏也要和卡片保持一致
+    @media screen and (max-width 992px) {
+        .nav-left-right-father {
+            width 720px
+            padding 0
 
-        .login-and-signup {
-            width 90px
-            height 30px
-            margin-right 10px
-            border-radius 4px
-            border 1px solid
+            #nav-left {
+                flex 0.8
+            }
         }
-        .login {
-            border-color rgb(221, 221, 221)
-            background-color white
-        }
-        .signup {
-            border-color rgb(25, 221, 196)
-            background-color rgb(25, 221, 196)
-            color white
-        }
-        .icon-menu {
-            display block
-            width 30px
-            height 30px
-            background url('../assets/menu.png') no-repeat
-            background-size contain
-            border-radius 50%
-            display none
-            
-        }
-        .icon-menu:hover {
-            // background-color rgb(220, 220, 220)
-            cursor pointer
+    }
+    @media screen and (max-width 768px) {
+        .nav-left-right-father {
+            padding 0 15px
         }
     }
 
@@ -233,22 +258,24 @@ export default {
 
 @media screen and (max-width: 850px) {
     #nav {
-        #nav-left {
-            // 改变宽度，这样就能减少因为space-around造成的两端的空白
-            width 50%
-            #nav-route {
-                display none
+        .nav-left-right-father {
+            #nav-left {
+                // 改变宽度，这样就能减少因为space-around造成的两端的空白
+                width 50%
+                #nav-route {
+                    display none
+                }
             }
-        }
-        #nav-right {
-            // 改变宽度，这样就能减少因为space-around造成的两端的空白
-            width 40%
-            .login-and-signup {
-                display none
-                // color red
-            }
-            .icon-menu {
-                display block
+            #nav-right {
+                // 改变宽度，这样就能减少因为space-around造成的两端的空白
+                width 40%
+                .login-and-signup {
+                    display none
+                    // color red
+                }
+                .icon-menu {
+                    display block
+                }
             }
         }
     }
