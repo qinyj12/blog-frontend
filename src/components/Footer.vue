@@ -76,8 +76,9 @@ export default {
                     position absolute
                     background-image linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3))
                     display flex
-                    // align-items flex-end
+                    align-items flex-end
                     padding 10px
+                    box-sizing border-box
 
                     h4 {
                         margin 0
