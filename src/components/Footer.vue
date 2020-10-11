@@ -3,12 +3,20 @@
         <div id="footer-top">
             <div class="footer-top-son footer-top-recommend">
                 <h3>热门</h3>
-                <div class="hot-article">
-                    <div class="hot-article-mask">
-                        <h4>第x个案例</h4>
-                        <div>123</div>
+                
+                <ul v-swiper:mySwiper="swiperOption">
+                    <div class="swiper-wrapper">
+                        <li class="hot-article swiper-slide" v-for="(item, index) in HotArticles" :key="index">
+                            <div class="hot-article-mask">
+                                <div class="hot-article-introduction">
+                                    <h4>{{item.title}}</h4>
+                                    <div>123</div>
+                                </div>
+                            </div>
+                        </li>
                     </div>
-                </div>
+                </ul>
+
             </div>
 
             <div class="footer-top-son footer-top-tags">
@@ -40,7 +48,14 @@
 export default {
     data() {
         return {
-            tags: ['案例', '生活', '旅游', '技术', '玩乐']
+            tags: ['案例', '生活', '旅游', '技术', '玩乐'],
+            HotArticles: [
+                {title:'第一篇', time:'2020年10月11日', comments:'3', pageviews: '50'}, 
+                {title:'第二篇', time:'2020年10月10日', comments:'1', pageviews: '100'}, 
+            ],
+
+            swiperOption: {
+            }
         }
     },
 }
@@ -60,38 +75,41 @@ export default {
         }
 
         .footer-top-recommend {
-            .hot-article {
-                box-sizing border-box
-                border-radius 10px
-                width 100%
-                padding-bottom 65%
-                background-image url('../assets/featured-image.png')
-                background-size cover
-                position relative
 
-                .hot-article-mask {
-                    border 1px solid
-                    width 100%
-                    height 100%
-                    position absolute
-                    background-image linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3))
-                    display flex
-                    align-items flex-end
-                    padding 10px
+            ul {
+                list-style none
+                padding 0
+
+                .hot-article {
                     box-sizing border-box
+                    border-radius 10px
+                    width 100%
+                    padding-bottom 65%
+                    background-image url('../assets/featured-image.png')
+                    background-size cover
+                    position relative
 
-                    h4 {
-                        margin 0
-                        color white
+                    .hot-article-mask {
                         border 1px solid
-                    }
+                        width 100%
+                        height 100%
+                        position absolute
+                        background-image linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3))
+                        display flex
+                        align-items flex-end
+                        padding 10px
+                        box-sizing border-box
+                        color white
 
-                    div {
-                        color white
-                        border 1px solid
+                        .hot-article-introduction {
+                            h4 {
+                                margin 0
+                            }
+                        }
                     }
                 }
             }
+
 
         }
 
