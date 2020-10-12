@@ -5,8 +5,14 @@
                 <div class="footer-top-recommend-wrap">
                     <h3 class="recommend-wrap-title">热门</h3>
                     <span class="recommend-wrap-arrow">
-                        <i class="far fa-arrow-alt-circle-left"></i>
-                        <i class="far fa-arrow-alt-circle-right"></i>
+                        <i class="far fa-arrow-alt-circle-left" 
+                            :class="{'gray-icon': RecommendedTurnGray == 'first'}" 
+                            @click="SwitchRecommended('pre')"
+                        ></i>
+                        <i class="far fa-arrow-alt-circle-right" 
+                            :class="{'gray-icon': RecommendedTurnGray == 'last'}" 
+                            @click="SwitchRecommended('next')"
+                        ></i>
                     </span>
                 </div>
 
@@ -65,15 +71,47 @@ export default {
             tags: ['案例', '生活', '旅游', '技术', '玩乐'],
             HotArticles: [
                 {title:'第一篇', time:'2020年10月11日', comments:'3', pageviews: '50'}, 
-                {title:'第二篇', time:'2020年10月10日', comments:'1', pageviews: '100'}, 
+                // {title:'第二篇', time:'2020年10月10日', comments:'1', pageviews: '100'}, 
+                // {title:'第三篇', time:'2020年10月12日', comments:'2', pageviews: '70'}, 
             ],
 
             swiperOption: {
+            },
+            // 这个参数是用来判断哪个arrow icon变成灰色的
+            RecommendedTurnGray: 'first'
+        }
+    },
+    methods: {
+        SwitchRecommended(key) {
+
+            if (key == 'pre') {
+                this.mySwiper.slidePrev();
+                console.log(this.mySwiper.progress);
+                // 用来判断哪个arrow icon 变为灰色
+                if (this.mySwiper.progress == 0) {
+                    this.RecommendedTurnGray = 'first'
+                } else {
+                    this.RecommendedTurnGray = 'none'
+                }
+
+            } else if (key == 'next') {
+                this.mySwiper.slideNext();
+                console.log(this.mySwiper.progress);
+                // 用来判断哪个arrow icon 变为灰色
+                if (this.mySwiper.progress == 1) {
+                    this.RecommendedTurnGray = 'last'
+                } else {
+                    this.RecommendedTurnGray = 'none'
+                }
+
+            } else {
+                alert('错误')
             }
         }
     },
 }
 </script>
+
 <style lang="stylus" scoped>
 #site-footer {
     #footer-top {
@@ -110,6 +148,10 @@ export default {
                     .fa-arrow-alt-circle-left, .fa-arrow-alt-circle-right {
                         font-size 25px
                         margin-left 5px
+                    }
+
+                    .gray-icon {
+                        color gray
                     }
 
                 }
