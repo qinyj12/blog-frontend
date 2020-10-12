@@ -2,15 +2,29 @@
     <div id="site-footer">
         <div id="footer-top">
             <div class="footer-top-son footer-top-recommend">
-                <h3>热门</h3>
-                
+                <div class="footer-top-recommend-wrap">
+                    <h3 class="recommend-wrap-title">热门</h3>
+                    <span class="recommend-wrap-arrow">
+                        <i class="far fa-arrow-alt-circle-left"></i>
+                        <i class="far fa-arrow-alt-circle-right"></i>
+                    </span>
+                </div>
+
+
                 <ul v-swiper:mySwiper="swiperOption">
                     <div class="swiper-wrapper">
                         <li class="hot-article swiper-slide" v-for="(item, index) in HotArticles" :key="index">
                             <div class="hot-article-mask">
                                 <div class="hot-article-introduction">
                                     <h4>{{item.title}}</h4>
-                                    <div>123</div>
+                                    <div class="hot-article-introduction-bottom">
+                                        <!-- <i class="far fa-calendar-alt"></i> -->
+                                        <span>{{item.time}}</span>
+                                        <i class="far fa-comment"></i>
+                                        <span>{{item.comments}}</span>
+                                        <i class="far fa-eye"></i>
+                                        <span>{{item.pageviews}}</span>
+                                    </div>
                                 </div>
                             </div>
                         </li>
@@ -67,14 +81,40 @@ export default {
         display flex
         justify-content space-between
         padding 0 4%
+        max-width 1240px
+        margin 0 auto
+        box-sizing border-box
 
         .footer-top-son {
             border 1px solid
             width 31%
             overflow hidden
+
         }
 
         .footer-top-recommend {
+            
+            .footer-top-recommend-wrap {
+                width 100%
+                display flex
+                align-items center
+
+                .recommend-wrap-title {
+                    flex 1
+                    overflow hidden
+                }
+
+                .recommend-wrap-arrow {
+                    // border 1px solid
+
+                    .fa-arrow-alt-circle-left, .fa-arrow-alt-circle-right {
+                        font-size 25px
+                        margin-left 5px
+                    }
+
+                }
+            }
+
 
             ul {
                 list-style none
@@ -94,7 +134,7 @@ export default {
                         width 100%
                         height 100%
                         position absolute
-                        background-image linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3))
+                        background-image linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.4))
                         display flex
                         align-items flex-end
                         padding 10px
@@ -102,9 +142,37 @@ export default {
                         color white
 
                         .hot-article-introduction {
+                            margin 0 0 5% 5%
+
                             h4 {
-                                margin 0
+                                margin 0 0 10px
                             }
+
+                            .hot-article-introduction-bottom {
+                                display flex
+                                align-items center
+                                height 20px
+
+                                * {
+                                    margin-right 8px
+                                }
+
+                                span {
+                                    display flex
+                                    align-items center
+                                    height 20px
+                                }
+
+                                span:not(:last-child):after {
+                                    display inline-block
+                                    content ''
+                                    border-right 1px solid
+                                    height 50%
+                                    margin-left 10px
+                                }
+                            }
+
+
                         }
                     }
                 }
