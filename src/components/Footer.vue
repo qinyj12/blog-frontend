@@ -16,7 +16,6 @@
                     </span>
                 </div>
 
-
                 <ul v-swiper:mySwiper="swiperOption">
                     <div class="swiper-wrapper">
                         <li class="hot-article swiper-slide" v-for="(item, index) in HotArticles" :key="index">
@@ -36,20 +35,22 @@
                         </li>
                     </div>
                 </ul>
-
             </div>
 
-            <div class="footer-top-son footer-top-tags">
-                <h3>标签</h3>
-                <ul>
-                    <li v-for="(item, index) in tags" :key="index"># {{item}}</li>
-                </ul>
+            <div class="tags-about-wrap">
+                <div class="footer-top-son footer-top-tags">
+                    <h3>标签</h3>
+                    <ul>
+                        <li v-for="(item, index) in tags" :key="index"># {{item}}</li>
+                    </ul>
+                </div>
+                
+                <div class="footer-top-son footer-top-about">
+                    <h3>关于</h3>
+                    <p>记录我们的生活，记录我们的生活，记录我们的生活，记录我们的生活，记录我们的生活，记录我们的生活，记录我们的生活，记录我们的生活，</p>
+                </div>
             </div>
-            
-            <div class="footer-top-son footer-top-about">
-                <h3>关于</h3>
-                <p>记录我们的生活，记录我们的生活，记录我们的生活，记录我们的生活，记录我们的生活，记录我们的生活，记录我们的生活，记录我们的生活，</p>
-            </div>
+
         </div>
 
         <div id="footer-bottom">
@@ -68,7 +69,7 @@
 export default {
     data() {
         return {
-            tags: ['案例', '生活', '旅游', '技术', '玩乐', '美食', '见闻'],
+            tags: ['案例', '生活', '旅游', '技术', '玩乐', '美食', '见闻', '读书', '照片'],
             HotArticles: [
                 {title:'第一篇', time:'2020年10月11日', comments:'3', pageviews: '50'}, 
                 {title:'第二篇', time:'2020年10月10日', comments:'1', pageviews: '100'}, 
@@ -145,22 +146,29 @@ export default {
 
 <style lang="stylus" scoped>
 #site-footer {
+    width 100%
+    border 1px solid
+    // border-top 1px solid #dddddd
+    box-sizing border-box
+
     #footer-top {
-        border-top 1px solid #dddddd
         display flex
         justify-content space-between
         padding 32px 4%
         max-width 1240px
         margin 0 auto
         box-sizing border-box
+        // position relative
 
         .footer-top-son {
-            // border 1px solid 
-            width 31%
+            border 1px solid 
+            // width 31%
             overflow hidden
         }
 
         .footer-top-recommend {
+            border 1px solid
+            width 31%
             
             .footer-top-recommend-wrap {
                 width 100%
@@ -259,34 +267,44 @@ export default {
 
         }
 
-        .footer-top-tags {
-            ul {
-                list-style none
-                padding 0
-                display flex
-                flex-wrap wrap
+        .tags-about-wrap {
+            border 1px solid
+            display flex
+            width 33%
 
-                li {
-                    display inline-block
-                    color #999999
-                    border 1px solid
-                    border-radius 3px
-                    margin 0 8px 8px 0
-                    padding 0 13px
-                    transition all 0.1s
-                }
+            .footer-top-tags {
+                flex 1
 
-                li:hover {
-                    background-color #19DDC4
-                    color white
-                    border 1px solid #19DDC4
+                ul {
+                    list-style none
+                    padding 0
+                    display flex
+                    flex-wrap wrap
+
+                    li {
+                        display inline-block
+                        color #999999
+                        border 1px solid
+                        border-radius 3px
+                        margin 0 8px 8px 0
+                        padding 0 13px
+                        transition all 0.1s
+                    }
+
+                    li:hover {
+                        background-color #19DDC4
+                        color white
+                        border 1px solid #19DDC4
+                    }
                 }
+            }
+
+            .footer-top-about {
+                color #999999
+                flex 1
             }
         }
 
-        .footer-top-about {
-            color #999999
-        }
 
         * {
             text-align left 
@@ -304,7 +322,7 @@ export default {
                 top 50%
                 content ''
                 width 100%
-                height 1px
+                height .5px
                 background-color #222222
             }
         }
@@ -360,7 +378,15 @@ export default {
 
     @media screen and (max-width 992px) {
         #footer-top {
-            
+            width 720px
+            padding 32px 0
+            display block
+            position relative
+
+            .footer-top-recommend {
+                width 345px
+            }
+
         }
     }
 
