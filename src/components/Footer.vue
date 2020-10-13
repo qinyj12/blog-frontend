@@ -6,11 +6,11 @@
                     <h3 class="recommend-wrap-title">热门</h3>
                     <span class="recommend-wrap-arrow">
                         <i class="far fa-arrow-alt-circle-left" 
-                            :class="{'gray-icon': RecommendedTurnGray == 'first'}" 
+                            :class="{'gray-icon': RecommendedTurnGray == 'first' || RecommendedTurnGray == 'all'}" 
                             @click="SwitchRecommended('pre')"
                         ></i>
                         <i class="far fa-arrow-alt-circle-right" 
-                            :class="{'gray-icon': RecommendedTurnGray == 'last'}" 
+                            :class="{'gray-icon': RecommendedTurnGray == 'last' || RecommendedTurnGray == 'all'}" 
                             @click="SwitchRecommended('next')"
                         ></i>
                     </span>
@@ -48,7 +48,7 @@
             
             <div class="footer-top-son footer-top-about">
                 <h3>关于</h3>
-                <p>记录我们的生活</p>
+                <p>记录我们的生活，记录我们的生活，记录我们的生活，记录我们的生活，记录我们的生活，记录我们的生活，记录我们的生活，记录我们的生活，</p>
             </div>
         </div>
 
@@ -68,46 +68,77 @@
 export default {
     data() {
         return {
-            tags: ['案例', '生活', '旅游', '技术', '玩乐'],
+            tags: ['案例', '生活', '旅游', '技术', '玩乐', '美食', '见闻'],
             HotArticles: [
                 {title:'第一篇', time:'2020年10月11日', comments:'3', pageviews: '50'}, 
-                // {title:'第二篇', time:'2020年10月10日', comments:'1', pageviews: '100'}, 
-                // {title:'第三篇', time:'2020年10月12日', comments:'2', pageviews: '70'}, 
+                {title:'第二篇', time:'2020年10月10日', comments:'1', pageviews: '100'}, 
+                {title:'第三篇', time:'2020年10月12日', comments:'2', pageviews: '70'}, 
             ],
 
             swiperOption: {
             },
             // 这个参数是用来判断哪个arrow icon变成灰色的
-            RecommendedTurnGray: 'first'
+            RecommendedTurnGray: ''
         }
     },
     methods: {
         SwitchRecommended(key) {
 
+            // 点击后退icon
             if (key == 'pre') {
+                // 触发swiper的后退
                 this.mySwiper.slidePrev();
-                console.log(this.mySwiper.progress);
+
                 // 用来判断哪个arrow icon 变为灰色
-                if (this.mySwiper.progress == 0) {
-                    this.RecommendedTurnGray = 'first'
+                // 当热门文章只有1篇时
+                if (this.HotArticles.length <= 1) {
+                    // 啥也不干，用mounted的RecommendedTurnGray默认值就好
                 } else {
-                    this.RecommendedTurnGray = 'none'
+                    // 当后退到第一篇，动态改变后退icon为灰色
+                    if (this.mySwiper.progress == 0) {
+                        this.RecommendedTurnGray = 'first'
+                    // 当没有后退到头，前进和后退icon都不需要有什么变化
+                    } else {
+                        this.RecommendedTurnGray = 'none'
+                    }
                 }
 
+            // 点击前进icon
             } else if (key == 'next') {
+                // 触发swiper的前进
                 this.mySwiper.slideNext();
-                console.log(this.mySwiper.progress);
+
                 // 用来判断哪个arrow icon 变为灰色
-                if (this.mySwiper.progress == 1) {
-                    this.RecommendedTurnGray = 'last'
+                // 当热门文章只有1篇时
+                if (this.HotArticles.length <= 1) {
+                    // 啥也不干，用mounted的RecommendedTurnGray默认值就好
                 } else {
-                    this.RecommendedTurnGray = 'none'
+                    // 当前进到最后一篇，动态改变前进icon为灰色
+                    if (this.mySwiper.progress == 1) {
+                        this.RecommendedTurnGray = 'last'
+                    // 当没有前进到头，前进和后退icon都不需要有什么变化
+                    } else {
+                        this.RecommendedTurnGray = 'none'
+                    }
                 }
 
             } else {
                 alert('错误')
             }
+        },
+        // 判断热门文章是否只有一篇
+        IfSingleRecommended() {
+            // 如果只有一篇的话，前进后退两个icon都设置为灰色
+            if (this.HotArticles.length <= 1) {
+                this.RecommendedTurnGray = 'all'
+            // 如果超过一篇，后退icon设置为灰色
+            } else {
+                this.RecommendedTurnGray = 'first'
+            }
         }
+    },
+    mounted() {
+        this.IfSingleRecommended()
     },
 }
 </script>
@@ -115,19 +146,18 @@ export default {
 <style lang="stylus" scoped>
 #site-footer {
     #footer-top {
-        border 1px solid
+        border-top 1px solid #dddddd
         display flex
         justify-content space-between
-        padding 0 4%
+        padding 32px 4%
         max-width 1240px
         margin 0 auto
         box-sizing border-box
 
         .footer-top-son {
-            border 1px solid
+            // border 1px solid 
             width 31%
             overflow hidden
-
         }
 
         .footer-top-recommend {
@@ -143,15 +173,20 @@ export default {
                 }
 
                 .recommend-wrap-arrow {
-                    // border 1px solid
+                    margin-left 15px
 
-                    .fa-arrow-alt-circle-left, .fa-arrow-alt-circle-right {
+                    i {
                         font-size 25px
                         margin-left 5px
+                        color #222222
+                    }
+
+                    i:hover {
+                        cursor pointer
                     }
 
                     .gray-icon {
-                        color gray
+                        color #dddddd
                     }
 
                 }
@@ -161,10 +196,11 @@ export default {
             ul {
                 list-style none
                 padding 0
+                margin 0
+                border-radius 10px
 
                 .hot-article {
                     box-sizing border-box
-                    border-radius 10px
                     width 100%
                     padding-bottom 65%
                     background-image url('../assets/featured-image.png')
@@ -172,7 +208,7 @@ export default {
                     position relative
 
                     .hot-article-mask {
-                        border 1px solid
+                        // border 1px solid
                         width 100%
                         height 100%
                         position absolute
@@ -232,8 +268,8 @@ export default {
 
                 li {
                     display inline-block
-                    color gray
-                    border 1px solid gray
+                    color #999999
+                    border 1px solid
                     border-radius 3px
                     margin 0 8px 8px 0
                     padding 0 13px
@@ -246,6 +282,10 @@ export default {
                     border 1px solid #19DDC4
                 }
             }
+        }
+
+        .footer-top-about {
+            color #999999
         }
 
         * {
@@ -271,9 +311,10 @@ export default {
     }
 
     #footer-bottom {
+        border-top 1px solid #dddddd
         // 和卡片区域的样式保持一致
         max-width 1140px
-        padding 20px 4%
+        padding 32px 4%
         box-sizing border-box
         margin 0 auto
         // flex布局
@@ -314,6 +355,12 @@ export default {
                 color black
                 cursor pointer
             }
+        }
+    }
+
+    @media screen and (max-width 992px) {
+        #footer-top {
+            
         }
     }
 
