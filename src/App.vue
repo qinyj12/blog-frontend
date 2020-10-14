@@ -2,12 +2,12 @@
     <div id="app">
         <Nav />
         <router-view />
-        <Footer />
+        <!-- <Footer /> -->
     </div>
 </template>
 <script>
 import Nav from '@/components/Nav.vue';
-import Footer from '@/components/Footer.vue';
+// import Footer from '@/components/Footer.vue';
 export default {
     data() {
         return {
@@ -16,7 +16,7 @@ export default {
     },
     components: {
         Nav,
-        Footer
+        // Footer
     },
     mounted() {
         // 使用waves.js，给.waves添加水波效果。waves.js已挂载到vue原型链上，waves.css已在main.js里引入

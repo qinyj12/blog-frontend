@@ -13,7 +13,7 @@
                     <li v-for="(item, index) in counts" :key="item.index">
                         <!-- 加一层路由 -->
                         <!-- <router-link :to="'/Content/' + item.index"> -->
-                            <div class="single-card waves" @click="ClickCardToContent(index)">
+                            <div class="single-card waves" @click="ClickCard(index)">
                                 <!-- 这是卡片的头图 -->
                                 <div class="featured-image" 
                                     :class="{'featured-image-unclicked': !item.active, 'featured-image-clicked': item.active}" 
@@ -56,11 +56,17 @@
         <transition name="loading-appear">
             <div id="loading" v-show="ShowLoading"></div>
         </transition>
+
+        <transition name="footer-sink">
+            <Footer v-show="!SinkAllCards" />
+        </transition>
+        
     </div>
 </template>
 
 <script>
 import Cover from '@/components/Cover.vue';
+import Footer from '@/components/Footer.vue';
 export default {
     data() {
         return {
@@ -73,11 +79,12 @@ export default {
         }
     },
     components: {
-        Cover
+        Cover,
+        Footer
     },
     methods: {
         // 点击卡片后的一系列动画
-        async ClickCardToContent(index) {
+        async ClickCard(index) {
             // 找到被点击的那一张卡片，设为白底
             this.CardClickedToBlank(index);
 
@@ -372,6 +379,15 @@ copied-img-time = 0.3s
         transform translateY(100px)
         opacity 0
     }
+
+    // 用于footer下沉的动画
+    .footer-sink-leave-active {
+        transition: all sink-time
+    }
+    .footer-sink-leave-to /* .fade-leave-active, 2.1.8 版本以下 */ {
+        transform translateY(100px)
+        opacity 0
+    }
 }
 
 // 这一部分是处理自适应的
@@ -422,7 +438,7 @@ copied-img-time = 0.3s
             // 因为变成了单列，所以纵向陈列
             flex-direction column
             // 即便变成了单列，两边仍然要留出15px空白
-            padding 64px 15px
+            padding 32px 15px
 
             li {
                 // 因为是单列，所以直接100%
