@@ -2,7 +2,6 @@
     <div id="app">
         <Nav />
         <router-view />
-        <!-- <Footer /> -->
     </div>
 </template>
 <script>
@@ -16,7 +15,6 @@ export default {
     },
     components: {
         Nav,
-        // Footer
     },
     mounted() {
         // 使用waves.js，给.waves添加水波效果。waves.js已挂载到vue原型链上，waves.css已在main.js里引入

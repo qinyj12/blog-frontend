@@ -2,7 +2,7 @@
     <div id="article-card-area">
         <!-- 引入cover组件，随卡片区域一起消失 -->
         <transition name="cover-sink">
-            <Cover v-show="!SinkAllCards" />
+            <Cover v-show="!SinkAllCards" :CoverImg="CoverValue" />
         </transition>
 
         <!-- 这里要记住article-card组件的滚动条位置，所以要keep-alive -->
@@ -12,7 +12,7 @@
                 <ul v-show="!SinkAllCards">
                     <li v-for="(item, index) in counts" :key="item.index">
                         <!-- 加一层路由 -->
-                        <!-- <router-link :to="'/Content/' + item.index"> -->
+                        <router-link :to="'/content/' + item.index">
                             <div class="single-card waves" @click="ClickCard(index)">
                                 <!-- 这是卡片的头图 -->
                                 <div class="featured-image" 
@@ -35,7 +35,7 @@
                                     </div>
                                 </div>
                             </div>
-                        <!-- </router-link> -->
+                        </router-link>
                     </li>
                 </ul>
             </transition>
@@ -57,6 +57,7 @@
             <div id="loading" v-show="ShowLoading"></div>
         </transition>
 
+        <!-- 这是footer栏以及动画 -->
         <transition name="footer-sink">
             <Footer v-show="!SinkAllCards" />
         </transition>
@@ -75,7 +76,9 @@ export default {
             ShowCopiedImg: false,
             CopiedImgMoved: false,
             CopiedImgEnd: false,
-            ShowLoading: false
+            ShowLoading: false,
+            // 传值给cover组件
+            CoverValue: require('../assets/cover.png')
         }
     },
     components: {
@@ -97,23 +100,14 @@ export default {
             // 卡片区域整体下沉，cover消失
             await this.MoveArticleCardArea();
 
-            // 200ms后移动copied-img，一定要加一个settimeout，不然就不会有动画，而是瞬移
-            setTimeout(() => {
-                this.MoveCopiedImg()
-            }, 200);
+            // 移动copied-img
+            await this.MoveCopiedImg();
 
-            // 500ms时的一系列动画，200ms（copied-img等待200ms后开始动画）+300ms（copied-img动画总共持续300ms）
-            setTimeout(() => {
-                // 500ms后，触发copied-img-end，取消copied-img的fixed定位
-                this.CopiedImgEnd = true;
-                // 500ms后，触发loading动画
-                this.ShowLoading = true
-            }, 500);
+            // img移动动画结束，展示loading动画
+            await this.MoveEndLoadingStart();
 
-            // 200+300=500ms之后，触发路由
-            // setTimeout(() => {
-            //     this.$router.push('Content/123')
-            // }, 500);
+            // 触发路由，进入content
+            // await this.ToContent()
         },
 
         // 找到被点击的那一张卡片，设为白底
@@ -162,9 +156,12 @@ export default {
         // 移动复制的图片，做成promise对象
         MoveCopiedImg() {
             return new Promise((resolve) => {
-                resolve(
-                    this.CopiedImgMoved = true
-                )
+                // 一定要加一个settimeout，不然就不会有动画，而是瞬移
+                setTimeout(() => {
+                    resolve(
+                        this.CopiedImgMoved = true
+                    )
+                }, 200)
             })
         },
 
@@ -176,6 +173,29 @@ export default {
                 )
             })
         },
+
+        // 500ms后，触发copied-img-end，取消copied-img的fixed定位
+        MoveEndLoadingStart() {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve(
+                        // 500ms后，触发copied-img-end，取消copied-img的fixed定位
+                        this.CopiedImgEnd = true,
+                        // 500ms后，触发loading动画
+                        this.ShowLoading = true
+                    )
+                }, 500)
+            })
+        },
+
+        // home => content时，因为要给loading动画留足时间，什么时候让content的内容展示出来
+        // ToContent() {
+        //     return new Promise((resolve) => {
+        //         resolve(
+        //             this.$store.commit('ShowContent')
+        //         )
+        //     })
+        // }
     },
 }
 </script>
