@@ -1,4 +1,5 @@
 module.exports = {
     publicPath: './',
-    filenameHashing: false
+    filenameHashing: false,
+    transpileDependencies: ['vue-clamp', 'resize-detector']
 }
