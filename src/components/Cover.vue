@@ -1,3 +1,4 @@
+// 头图，放在首页和文章详情页
 <template>
     <div id="cover">
         <div class="homepage-cover" :style="{backgroundImage: 'url(' + CoverImg + ')'}"></div>
@@ -16,7 +17,6 @@ export default {
     .homepage-cover {
         width 100%
         height 450px
-        // background-image url('../assets/cover.png')
         background-repeat no-repeat
         background-size cover
         background-position 50% 50%

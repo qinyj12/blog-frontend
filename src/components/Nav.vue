@@ -1,3 +1,4 @@
+// 导航条
 <template>
     <div id="nav">
         <!-- 包一个father class，这样就能和卡片区域保持在一条线上了 -->

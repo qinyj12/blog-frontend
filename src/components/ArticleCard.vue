@@ -1,3 +1,4 @@
+// 首页的文章卡片区域
 <template>
     <div id="article-card-area">
         <!-- 引入cover组件，随卡片区域一起消失 -->

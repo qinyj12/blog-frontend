@@ -7,6 +7,7 @@ import Waves from './static/waves/waves'
 import './static/waves/waves.min.css'
 import VueAwesomeSwiper from 'vue-awesome-swiper'
 import 'swiper/swiper-bundle.css'
+import VClamp from 'vue-clamp';
 
 Vue.config.productionTip = false
 // 把waves.js挂载到vue原型链上
@@ -16,6 +17,8 @@ Vue.prototype.$Store = store
 
 // 使用swiper
 Vue.use(VueAwesomeSwiper)
+// 全局注册VClamp组件
+Vue.component('v-clamp', VClamp)
 
 new Vue({
   router,
