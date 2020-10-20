@@ -30,6 +30,11 @@ body {
     margin 0;
     padding 0;
 }
+
+// 全局动画
+* {
+    transition:300ms
+}
 </style>
 <style lang="stylus" scoped>
 #app {

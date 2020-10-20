@@ -26,6 +26,8 @@
 
             <ArticlesRecommended />
 
+            <Comments />
+
         </div>
 
         <Footer />
@@ -37,12 +39,14 @@ import Cover from '@/components/Cover.vue';
 import Footer from '@/components/Footer.vue';
 import AuthorCard from '@/components/AuthorCard.vue';
 import ArticlesRecommended from '@/components/ArticlesRecommended.vue';
+import Comments from '@/components/Comments.vue'
 export default {
     components: {
         Cover,
         Footer,
         AuthorCard,
-        ArticlesRecommended
+        ArticlesRecommended,
+        Comments
     },
     data() {
         return {

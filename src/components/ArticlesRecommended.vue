@@ -85,16 +85,17 @@ export default {
                 flex-direction column
 
                 .article-recommended-tag-wrap {
-                    height 24px
+                    tag-height = 24px
+                    height tag-height
                     margin-bottom 10px
 
                     .article-recommended-tag {
                         display inline-block
+                        line-height tag-height // 达到居中的效果
                         border-radius 12px
                         padding 0 15px
                         background-color #009CFF
                         color white
-                        height 100%
                     }
                 }
 
