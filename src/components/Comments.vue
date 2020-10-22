@@ -11,11 +11,33 @@
                 </div>
             </div>
 
-            <div class="comments-edit">
+            <!-- <div class="comments-edit">
                 <div class="comments-edit-avatar"></div>
                 <div class="comments-edit-function">
-                    <textarea ref="TextArea" v-model="CommentInputted"></textarea>
+                    <textarea 
+                        placeholder="说点什么" 
+                        :style="{'height': TextAreaHeight}" 
+                        ref="TextArea" 
+                        v-model="CommentInputted"
+                    >
+                    </textarea>
                 </div>
+            </div> -->
+
+            <div id="lv-container" data-id="city" data-uid="undefined">
+                <script type="text/javascript">
+                    (function(d, s) {
+                        var j, e = d.getElementsByTagName(s)[0];
+
+                        if (typeof LivereTower === 'function') { return; }
+
+                        j = d.createElement(s);
+                        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+                        j.async = true;
+
+                        e.parentNode.insertBefore(j, e);
+                    })(document, 'script');
+                </script>
             </div>
 
             <div class="comments-list"></div>
@@ -26,24 +48,19 @@
 export default {
     data() {
         return {
-            CommentInputted: ''
+            CommentInputted: '',
+            TextAreaHeight: '50px'
         }
     },
-    mounted() {
-        // ///////////wach这里，动态改变textarea的高度
-        this.$watch(
-            () => {
-                return this.$refs.TextArea.scrollHeight
-            },
-            (val) => {
-                console.log(val)
-            }
-        )
+    methods: {
+        getTextAreaHeight() {
+        }
     },
     watch: {
-        CommentInputted: function() {
-            console.log(this.$refs.TextArea.scrollHeight)
+        CommentInputted() {
+
         }
+
     },
 
 }
@@ -100,6 +117,10 @@ export default {
 
                 textarea {
                     resize none
+                    overflow hidden
+                    width 100%
+                    box-sizing border-box
+                    padding 8px
                 }
             }
         }
