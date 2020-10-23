@@ -3,7 +3,7 @@
     <div id="article-card-area">
         <!-- 引入cover组件，随卡片区域一起消失 -->
         <transition name="cover-sink">
-            <Cover v-show="!SinkAllCards" :CoverImg="CoverValue" />
+            <Cover v-show="!SinkAllCards" v-bind="{CoverImg: CoverImg, CoverShowDetail: false}"/>
         </transition>
 
         <!-- 这里要记住article-card组件的滚动条位置，所以要keep-alive -->
@@ -14,7 +14,7 @@
                     <li v-for="(item, index) in counts" :key="item.index">
                         <!-- 加一层路由 -->
                         <router-link :to="'/content/' + item.index">
-                            <div class="single-card waves" @click="ClickCard(index)">
+                            <div class="single-card " @click="ClickCard(index)">
                                 <!-- 这是卡片的头图 -->
                                 <div class="featured-image" 
                                     :class="{'featured-image-unclicked': !item.active, 'featured-image-clicked': item.active}" 
@@ -28,10 +28,13 @@
                                         <h3 class="title">这是第{{item.index}}个案例</h3>
                                     </div>
                                     <div class="entry-footer">
-                                        <div class="author">
+                                        
+                                        <!-- stop阻止click冒泡，prevent阻止router-link -->
+                                        <div class="author" @click.stop.prevent="ClickAuthor(index)">
                                             <div class="avatar"></div>
                                             <span class="name">测试用户</span>
                                         </div>
+
                                         <div class="published-date">August 31, 2020</div>
                                     </div>
                                 </div>
@@ -53,10 +56,10 @@
         >
         </div>
 
-        <!-- 这是loading动画 -->
-        <transition name="loading-appear">
+        <!-- 这是loading动画，暂时不要loading动画了 -->
+        <!-- <transition name="loading-appear">
             <div id="loading" v-show="ShowLoading"></div>
-        </transition>
+        </transition> -->
 
         <!-- 这是footer栏以及动画 -->
         <transition name="footer-sink">
@@ -79,7 +82,7 @@ export default {
             CopiedImgEnd: false,
             ShowLoading: false,
             // 传值给cover组件
-            CoverValue: require('../assets/cover.png')
+            CoverImg: require('../assets/cover.png')
         }
     },
     components: {
@@ -89,6 +92,9 @@ export default {
     methods: {
         // 点击卡片后的一系列动画
         async ClickCard(index) {
+            // 改变vuex仓库，当router:from.name==home 时，给500ms的缓冲时间，就是500ms之后才会触发路由
+            this.$store.commit('ChangeHomeBuffer', 500)
+
             // 找到被点击的那一张卡片，设为白底
             this.CardClickedToBlank(index);
 
@@ -105,10 +111,10 @@ export default {
             await this.MoveCopiedImg();
 
             // img移动动画结束，展示loading动画
-            await this.MoveEndLoadingStart();
+            // await this.MoveEndLoadingStart();
 
-            // 触发路由，进入content
-            // await this.ToContent()
+            // body的滚动条常显，防止cover高度太小，滚动条不显示，然后在进入content后动画会撕裂
+            this.$store.commit('ChangeBodyScrollStatus', 'scroll');
         },
 
         // 找到被点击的那一张卡片，设为白底
@@ -117,6 +123,11 @@ export default {
             TargetItem.active = !TargetItem.active;
             this.$set(this.counts, index, TargetItem);
         },
+
+        // 找到被点击的那个头像，设为白底
+        // AvatarClickedToBlank(index) {
+        //     le
+        // },
 
         // 获取被点击卡片的头图的各种参数
         GetClickedImgDom(index) {
@@ -189,17 +200,18 @@ export default {
             })
         },
 
-        // home => content时，因为要给loading动画留足时间，什么时候让content的内容展示出来
-        // ToContent() {
-        //     return new Promise((resolve) => {
-        //         resolve(
-        //             this.$store.commit('ShowContent')
-        //         )
-        //     })
-        // }
+        // 点击用户名字和头像后的一系列动画
+        ClickAuthor(index) {
+            console.log(index)
+        }
     },
 }
 </script>
+<style lang="stylus">
+body {
+    overflow-y auto
+}
+</style>
 <style lang="stylus" scoped>
 // 卡片和cover下沉的时间
 sink-time = 0.2s
@@ -219,6 +231,7 @@ copied-img-time = 0.3s
     // copied-img出现时，默认是以fixed定位
     .copied-img-default {
         position fixed
+        border-radius 4px
     }
     // 点击卡片后，给copied-img设置初始值，就是完全复制被点击卡片的属性，此时仍是fixed定位
     .copied-img-start {
@@ -227,6 +240,7 @@ copied-img-time = 0.3s
         height var(--CopiedImgHeight)
         left var(--CopiedImgLeft)
         top var(--CopiedImgTop)
+        // border-radius 4px
     }
     // 移动卡片到指定位置，并缩放大小
     .copied-img-move {
@@ -234,6 +248,7 @@ copied-img-time = 0.3s
         top 80px
         width 100%
         height 450px
+        border-radius 0px
     }
     // 卡片动画结束时，取消fixed定位，改为static定位，不受top、left的影响，因此之前设置了top、left都不用改
     .copied-img-end {
@@ -303,7 +318,7 @@ copied-img-time = 0.3s
                     // background-image url('../assets/featured-image.png')
                     background-repeat no-repeat
                     background-size cover
-                    // background-position 50% 50%
+                    background-position 50% 50%
                 }
                 // 没点击卡片时，正常展示图片
                 .featured-image-unclicked {

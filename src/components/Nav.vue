@@ -16,7 +16,7 @@
             </div>
             <!-- 这是普通的注册、登录按钮，平时启用，窄屏时隐藏 -->
             <div id="nav-right">
-                <button class="login-and-signup login waves" @click="ChangeStyle">登录</button>
+                <button class="login-and-signup login waves">登录</button>
                 <button class="login-and-signup signup waves" ref="DemoColor">注册</button>
                 <i class="icon-menu waves" @click="ShowSideBar"></i>
             </div>
@@ -70,10 +70,6 @@ export default {
         HideSideBarAndMask() {
             this.ShowMaskAndSideBar = !this.ShowMaskAndSideBar
         },
-        // 这是临时定义的用来测试js改变css外联样式的方法
-        ChangeStyle() {
-            this.$refs.DemoColor.style.setProperty('--DemoColor', 'black')
-        }
     },
 }
 </script>

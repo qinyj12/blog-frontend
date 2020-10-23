@@ -1,6 +1,7 @@
 <template>
     <div id="main-content">
-        <Cover :CoverImg="CoverValue"/>
+        <Cover v-bind="{CoverImg: CoverImg, CoverShowDetail: true}"/>
+
         <div class="component-wrap">
             <transition name="content-rise">
                 <div class="content-area" v-show="ShowContent">
@@ -51,12 +52,16 @@ export default {
     data() {
         return {
             // 传值给cover组件
-            CoverValue: require('../assets/featured-image.png'),
+            CoverImg: require('../assets/featured-image.png'),
             ShowContent: false,
         }
     },
     mounted() {
-        this.ShowContent = true
+        this.ShowContent = true;
+        // 从home=>content时的瞬间变成的scroll，目的是防止动画撕裂。进入content后，重新变成auto
+        this.$store.commit('ChangeBodyScrollStatus', 'auto');
+        // 从home=>content时会给home组件留500ms的缓冲时间，目的是给home留一些动画时间。进入content后清零
+        this.$store.commit('ChangeHomeBuffer', 0)
     },
 }
 </script>
