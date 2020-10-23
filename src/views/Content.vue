@@ -94,7 +94,7 @@ sink-time = 0.2s
         .content-rise-enter {
             transform translateY(100px)
             opacity 0
-    }
+        }
     }
 
 

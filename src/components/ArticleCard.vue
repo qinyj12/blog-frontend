@@ -17,7 +17,7 @@
                             <div class="single-card " @click="ClickCard(index)">
                                 <!-- 这是卡片的头图 -->
                                 <div class="featured-image" 
-                                    :class="{'featured-image-unclicked': !item.active, 'featured-image-clicked': item.active}" 
+                                    :class="{'featured-image-unclicked': !item.HideFeaturedImg, 'featured-image-clicked': item.HideFeaturedImg}" 
                                     ref="FeaturedImages"
                                 >
                                 </div>
@@ -28,13 +28,17 @@
                                         <h3 class="title">这是第{{item.index}}个案例</h3>
                                     </div>
                                     <div class="entry-footer">
-                                        
+                                        <router-link to="/author/测试用户">
                                         <!-- stop阻止click冒泡，prevent阻止router-link -->
-                                        <div class="author" @click.stop.prevent="ClickAuthor(index)">
-                                            <div class="avatar"></div>
+                                        <div class="author" @click.stop="ClickAuthor(index)">
+                                            <div class="avatar"
+                                                :class="{'avatar-unclicked': !item.HideAvatar, 'avatar-clicked': item.HideAvatar}"
+                                                ref="avatar"
+                                            >
+                                            </div>
                                             <span class="name">测试用户</span>
                                         </div>
-
+                                        </router-link>
                                         <div class="published-date">August 31, 2020</div>
                                     </div>
                                 </div>
@@ -45,12 +49,23 @@
             </transition>
         </keep-alive>
 
-        <!-- 这是点击卡片后复制的图片 -->
+        <!-- 这是点击卡片后复制的头图 -->
         <div id="copied-img" ref="CopiedImg" 
             :class="{
-                'copied-img-default': true,
+                'copied-featured-default': true,
                 'copied-img-start': ShowCopiedImg, 
-                'copied-img-move': CopiedImgMoved, 
+                'copied-featured-move': CopiedFeaturedMoved, 
+                'copied-img-end': CopiedImgEnd
+            }"
+        >
+        </div>
+
+        <!-- 这是点击头像后复制的头像 -->
+        <div id="copied-img" ref="CopiedAvatar" 
+            :class="{
+                'copied-avatar-default': true,
+                'copied-img-start': ShowCopiedImg, 
+                'copied-avatar-move': CopiedAvatarMoved, 
                 'copied-img-end': CopiedImgEnd
             }"
         >
@@ -78,7 +93,8 @@ export default {
             counts: [{index: '一'}, {index: '二'}, {index: '三'}, {index: '四'}, {index: '五'}, ],
             SinkAllCards: false,
             ShowCopiedImg: false,
-            CopiedImgMoved: false,
+            CopiedFeaturedMoved: false,
+            CopiedAvatarMoved: false,
             CopiedImgEnd: false,
             ShowLoading: false,
             // 传值给cover组件
@@ -95,20 +111,20 @@ export default {
             // 改变vuex仓库，当router:from.name==home 时，给500ms的缓冲时间，就是500ms之后才会触发路由
             this.$store.commit('ChangeHomeBuffer', 500)
 
-            // 找到被点击的那一张卡片，设为白底
+            // 找到被点击的那一张卡片，设卡片头图为白底
             this.CardClickedToBlank(index);
 
-            // 拿到点击的那张图片，以及宽、高、位置
-            let TargetImgDom = this.GetClickedImgDom(index);
+            // 拿到点击的那张卡片的头图，以及宽、高、位置
+            let TargetImgDom = this.GetClickedImgDom(this.$refs.FeaturedImages[index]);
 
             // 把上面拿到的宽、高、位置赋值给 #copied-img，copied-img显示出来
-            await this.CopyClickedImg(TargetImgDom);
+            await this.CopyClickedImg(TargetImgDom, this.$refs.CopiedImg, require('../assets/featured-image.png'));
 
             // 卡片区域整体下沉，cover消失
             await this.MoveArticleCardArea();
 
-            // 移动copied-img
-            await this.MoveCopiedImg();
+            // 移动copied-featured
+            await this.MoveCopiedFeatured();
 
             // img移动动画结束，展示loading动画
             // await this.MoveEndLoadingStart();
@@ -117,22 +133,47 @@ export default {
             this.$store.commit('ChangeBodyScrollStatus', 'scroll');
         },
 
+        // 点击用户名字和头像后的一系列动画
+        async ClickAuthor(index) {
+            // 改变vuex仓库，当router:from.name==home 时，给500ms的缓冲时间，就是500ms之后才会触发路由
+            this.$store.commit('ChangeHomeBuffer', 500)
+
+            // 找到被点击的那一张卡片，设用户头像为白底
+            this.AvatarClickedToBlank(index);
+
+            // 拿到点击的那张卡片的头像，以及宽、高、位置
+            let TargetImgDom = this.GetClickedImgDom(this.$refs.avatar[index]);
+
+            // 把上面拿到的宽、高、位置赋值给 #copied-avatar，copied-avatar显示出来
+            await this.CopyClickedImg(TargetImgDom, this.$refs.CopiedAvatar, require('../assets/avatar.png'));
+
+            // 卡片区域整体下沉，cover消失
+            await this.MoveArticleCardArea();
+
+            // 移动copied-avatar
+            await this.MoveCopiedAvatar();
+
+        },
+
         // 找到被点击的那一张卡片，设为白底
         CardClickedToBlank(index) {
             let TargetItem = this.counts[index];
-            TargetItem.active = !TargetItem.active;
+            TargetItem.HideFeaturedImg = !TargetItem.HideFeaturedImg;
             this.$set(this.counts, index, TargetItem);
         },
 
         // 找到被点击的那个头像，设为白底
-        // AvatarClickedToBlank(index) {
-        //     le
-        // },
+        AvatarClickedToBlank(index) {
+            let TargetItem = this.counts[index];
+            TargetItem.HideAvatar = !TargetItem.HideAvatar;
+            this.$set(this.counts, index, TargetItem);
+        },
 
         // 获取被点击卡片的头图的各种参数
-        GetClickedImgDom(index) {
+        GetClickedImgDom(target) {
             // 用getBoundingClientRect方法，直接获取目标的大小和相对视口的位置，间接获取目标的宽、高
-            let TargetImgDom = this.$refs.FeaturedImages[index].getBoundingClientRect();
+            // let TargetImgDom = this.$refs.FeaturedImages[index].getBoundingClientRect();
+            let TargetImgDom = target.getBoundingClientRect();
             let TargetImgTop = TargetImgDom['top'];
             let TargetImgBottom = TargetImgDom['bottom'];
             let TargetImgLeft = TargetImgDom['left'];
@@ -150,28 +191,42 @@ export default {
         },
 
         // 复制被点击的图片，生成一模一样的图片。做成promise对象
-        CopyClickedImg(TargetDom) {
-            let CopiedImg = this.$refs.CopiedImg;
+        // 第二个参数CopiedDom是用来判断复制的是featured-img还是avatar，即点击的是卡片（home=>content）还是头像（home=>author）
+        CopyClickedImg(TargetDom, CopiedDom, TargetImg) {
+            let CopiedImg = CopiedDom;
+            
             return new Promise((reslove) => {
                 reslove(
-                    CopiedImg.style.setProperty('--CopiedImgBg', 'url("' + require('../assets/featured-image.png') + '")'),
+                    CopiedImg.style.setProperty('--CopiedImgBg', 'url("' + TargetImg + '")'),
                     CopiedImg.style.setProperty('--CopiedImgWidth', TargetDom['width']),
                     CopiedImg.style.setProperty('--CopiedImgHeight', TargetDom['height']),
                     CopiedImg.style.setProperty('--CopiedImgLeft', TargetDom['left']),
                     CopiedImg.style.setProperty('--CopiedImgTop', TargetDom['top']),
                     // 显示copied-img
-                    this.ShowCopiedImg = true
+                    this.ShowCopiedImg = true,
                 )
             })
         },
 
-        // 移动复制的图片，做成promise对象
-        MoveCopiedImg() {
+        // 移动复制的featured-img，做成promise对象
+        MoveCopiedFeatured() {
             return new Promise((resolve) => {
                 // 一定要加一个settimeout，不然就不会有动画，而是瞬移
                 setTimeout(() => {
                     resolve(
-                        this.CopiedImgMoved = true
+                        this.CopiedFeaturedMoved = true
+                    )
+                }, 200)
+            })
+        },
+
+        // 移动复制的avatar-img，做成promise对象
+        MoveCopiedAvatar() {
+            return new Promise((resolve) => {
+                // 一定要加一个settimeout，不然就不会有动画，而是瞬移
+                setTimeout(() => {
+                    resolve(
+                        this.CopiedAvatarMoved = true
                     )
                 }, 200)
             })
@@ -199,11 +254,6 @@ export default {
                 }, 500)
             })
         },
-
-        // 点击用户名字和头像后的一系列动画
-        ClickAuthor(index) {
-            console.log(index)
-        }
     },
 }
 </script>
@@ -229,9 +279,14 @@ copied-img-time = 0.3s
         transition all copied-img-time
     }
     // copied-img出现时，默认是以fixed定位
-    .copied-img-default {
+    .copied-featured-default {
         position fixed
         border-radius 4px
+    }
+    // copied-avatar出现时，默认是fixed定位，并且
+    .copied-avatar-default {
+        position fixed
+        border-radius 50%
     }
     // 点击卡片后，给copied-img设置初始值，就是完全复制被点击卡片的属性，此时仍是fixed定位
     .copied-img-start {
@@ -240,18 +295,27 @@ copied-img-time = 0.3s
         height var(--CopiedImgHeight)
         left var(--CopiedImgLeft)
         top var(--CopiedImgTop)
-        // border-radius 4px
     }
-    // 移动卡片到指定位置，并缩放大小
-    .copied-img-move {
+    // 移动卡片头图到指定位置，并缩放大小
+    .copied-featured-move {
         left 0
         top 80px
         width 100%
         height 450px
         border-radius 0px
     }
-    // 卡片动画结束时，取消fixed定位，改为static定位，不受top、left的影响，因此之前设置了top、left都不用改
-    .copied-img-end {
+    // 移动作者头像到指定位置，并缩放大小
+    .copied-avatar-move {
+        left calc(50% - 48px)
+        top 80px
+        width 96px
+        height 96px
+        border 4px solid black
+    }
+    
+
+    // avatar动画结束后
+    .copied-avatar-end {
         position static
     }
 
@@ -386,10 +450,19 @@ copied-img-time = 0.3s
                             .avatar {
                                 width 32px
                                 height 32px
-                                background url('../assets/avatar.png') no-repeat
+                                
                                 background-size cover
                                 border-radius 50%
                             }
+
+                            .avatar-unclicked {
+                                background-image url('../assets/avatar.png')
+                            }
+
+                            .avatar-clicked {
+                                background url('')
+                            }
+
                             .name {
                                 height 32px
                                 line-height 32px

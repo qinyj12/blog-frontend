@@ -59,7 +59,7 @@ router.beforeEach((to, from, next) => {
 
         // 如果home => content，给0.5秒动画时间
         // 本来可以在home页用settimeout router.push 来达到目的，但不能兼顾keep-alive，所以只能在路由守卫里来使用settimeout
-        if (to.name == 'Content') {
+        if (to.name == 'Content' || to.name ==  'Author') {
             setTimeout(() => {
                 next()
             // 从vuex仓库里取值，看看需要在home=>content时留多少时间用于动画效果
