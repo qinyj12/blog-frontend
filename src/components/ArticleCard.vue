@@ -31,11 +31,16 @@
                                         <router-link to="/author/测试用户">
                                         <!-- stop阻止click冒泡，prevent阻止router-link -->
                                         <div class="author" @click.stop="ClickAuthor(index)">
-                                            <div class="avatar"
-                                                :class="{'avatar-unclicked': !item.HideAvatar, 'avatar-clicked': item.HideAvatar}"
+                                            <div 
+                                                class="avatar"
+                                                :class="{
+                                                    'avatar-unclicked': !item.HideAvatar, 
+                                                    'avatar-clicked': item.HideAvatar
+                                                }"
                                                 ref="avatar"
                                             >
                                             </div>
+
                                             <span class="name">测试用户</span>
                                         </div>
                                         </router-link>
@@ -67,6 +72,17 @@
                 'copied-img-start': ShowCopiedImg, 
                 'copied-avatar-move': CopiedAvatarMoved, 
                 'copied-img-end': CopiedImgEnd
+            }"
+        >
+        </div>
+
+        <!-- 隐藏在avatar下方，点击avatar后展开 -->
+        <div 
+            :class="{
+                'avatar-back-default': true,
+                'avatar-back-start': ShowCopiedImg,
+                'avatar-back-move': CopiedAvatarMoved,
+                'avatar-back-end': CopiedImgEnd
             }"
         >
         </div>
@@ -283,12 +299,12 @@ copied-img-time = 0.3s
         position fixed
         border-radius 4px
     }
-    // copied-avatar出现时，默认是fixed定位，并且
+    // copied-avatar出现时，默认是fixed定位
     .copied-avatar-default {
         position fixed
         border-radius 50%
     }
-    // 点击卡片后，给copied-img设置初始值，就是完全复制被点击卡片的属性，此时仍是fixed定位
+    // 点击卡片或头像后，给copied-img设置初始值，就是完全复制被点击卡片的属性，此时仍是fixed定位
     .copied-img-start {
         background-image var(--CopiedImgBg)
         width var(--CopiedImgWidth)
@@ -312,10 +328,32 @@ copied-img-time = 0.3s
         height 96px
         border 4px solid black
     }
-    
-
     // avatar动画结束后
     .copied-avatar-end {
+        position static
+    }
+
+    // avatar-background的默认样式
+    .avatar-back-default {
+        position fixed
+        border-radius 50%
+    }
+    // 点击头像后，完全复制头像的初始值
+    // //////////////这里要改////////
+    // ////////////////////////////
+    ///////////////////////////////
+    .avatar-back-start {
+        width var(--CopiedImgWidth)
+        height var(--CopiedImgHeight)
+        left var(--CopiedImgLeft)
+        top var(--CopiedImgTop)
+    }
+    // 移动avatar-background到指定位置，并缩放大小
+    .avatar-back-move {
+
+    }
+    // avatar-background动画结束后
+    .avatar-back-end {
         position static
     }
 
@@ -450,7 +488,6 @@ copied-img-time = 0.3s
                             .avatar {
                                 width 32px
                                 height 32px
-                                
                                 background-size cover
                                 border-radius 50%
                             }
