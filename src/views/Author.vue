@@ -25,6 +25,7 @@ export default {
         background-size cover
         border-radius 50%
         border 4px solid black
+        box-sizing border-box
         position absolute
         top 80px
         left calc(50% - 48px)

@@ -55,7 +55,7 @@
         </keep-alive>
 
         <!-- 这是点击卡片后复制的头图 -->
-        <div id="copied-img" ref="CopiedImg" 
+        <div class="copied-img" ref="CopiedImg" 
             :class="{
                 'copied-featured-default': true,
                 'copied-img-start': ShowCopiedImg, 
@@ -66,7 +66,7 @@
         </div>
 
         <!-- 这是点击头像后复制的头像 -->
-        <div id="copied-img" ref="CopiedAvatar" 
+        <div class="copied-img" ref="CopiedAvatar" 
             :class="{
                 'copied-avatar-default': true,
                 'copied-img-start': ShowCopiedImg, 
@@ -77,26 +77,21 @@
         </div>
 
         <!-- 隐藏在avatar下方，点击avatar后展开 -->
-        <div 
+        <div class="copied-img" ref="AvatarBack"
             :class="{
                 'avatar-back-default': true,
-                'avatar-back-start': ShowCopiedImg,
+                'copied-img-start': ShowCopiedImg,
                 'avatar-back-move': CopiedAvatarMoved,
                 'avatar-back-end': CopiedImgEnd
             }"
         >
         </div>
 
-        <!-- 这是loading动画，暂时不要loading动画了 -->
-        <!-- <transition name="loading-appear">
-            <div id="loading" v-show="ShowLoading"></div>
-        </transition> -->
-
         <!-- 这是footer栏以及动画 -->
         <transition name="footer-sink">
             <Footer v-show="!SinkAllCards" />
         </transition>
-        
+
     </div>
 </template>
 
@@ -112,7 +107,6 @@ export default {
             CopiedFeaturedMoved: false,
             CopiedAvatarMoved: false,
             CopiedImgEnd: false,
-            ShowLoading: false,
             // 传值给cover组件
             CoverImg: require('../assets/cover.png')
         }
@@ -142,9 +136,6 @@ export default {
             // 移动copied-featured
             await this.MoveCopiedFeatured();
 
-            // img移动动画结束，展示loading动画
-            // await this.MoveEndLoadingStart();
-
             // body的滚动条常显，防止cover高度太小，滚动条不显示，然后在进入content后动画会撕裂
             this.$store.commit('ChangeBodyScrollStatus', 'scroll');
         },
@@ -160,8 +151,11 @@ export default {
             // 拿到点击的那张卡片的头像，以及宽、高、位置
             let TargetImgDom = this.GetClickedImgDom(this.$refs.avatar[index]);
 
-            // 把上面拿到的宽、高、位置赋值给 #copied-avatar，copied-avatar显示出来
+            // 把上面拿到的宽、高、位置赋值给 copied-avatar，copied-avatar显示出来
             await this.CopyClickedImg(TargetImgDom, this.$refs.CopiedAvatar, require('../assets/avatar.png'));
+
+            // 把上面拿到的宽、高、位置赋值给 avatar-back，avatar-back显示出来
+            await this.CopyClickedImg(TargetImgDom, this.$refs.AvatarBack, require('../assets/featured-image.png'));
 
             // 卡片区域整体下沉，cover消失
             await this.MoveArticleCardArea();
@@ -185,7 +179,7 @@ export default {
             this.$set(this.counts, index, TargetItem);
         },
 
-        // 获取被点击卡片的头图的各种参数
+        // 获取被点击对象的各种参数
         GetClickedImgDom(target) {
             // 用getBoundingClientRect方法，直接获取目标的大小和相对视口的位置，间接获取目标的宽、高
             // let TargetImgDom = this.$refs.FeaturedImages[index].getBoundingClientRect();
@@ -208,16 +202,14 @@ export default {
 
         // 复制被点击的图片，生成一模一样的图片。做成promise对象
         // 第二个参数CopiedDom是用来判断复制的是featured-img还是avatar，即点击的是卡片（home=>content）还是头像（home=>author）
-        CopyClickedImg(TargetDom, CopiedDom, TargetImg) {
-            let CopiedImg = CopiedDom;
-            
+        CopyClickedImg(TargetDom, CopiedDom, TargetImg='') {
             return new Promise((reslove) => {
                 reslove(
-                    CopiedImg.style.setProperty('--CopiedImgBg', 'url("' + TargetImg + '")'),
-                    CopiedImg.style.setProperty('--CopiedImgWidth', TargetDom['width']),
-                    CopiedImg.style.setProperty('--CopiedImgHeight', TargetDom['height']),
-                    CopiedImg.style.setProperty('--CopiedImgLeft', TargetDom['left']),
-                    CopiedImg.style.setProperty('--CopiedImgTop', TargetDom['top']),
+                    CopiedDom.style.setProperty('--CopiedImgBg', 'url("' + TargetImg + '")'),
+                    CopiedDom.style.setProperty('--CopiedImgWidth', TargetDom['width']),
+                    CopiedDom.style.setProperty('--CopiedImgHeight', TargetDom['height']),
+                    CopiedDom.style.setProperty('--CopiedImgLeft', TargetDom['left']),
+                    CopiedDom.style.setProperty('--CopiedImgTop', TargetDom['top']),
                     // 显示copied-img
                     this.ShowCopiedImg = true,
                 )
@@ -248,6 +240,19 @@ export default {
             })
         },
 
+        // 移动avatar-back，做成promise对象
+        MoveAvatarBack() {
+            return new Promise((resolve) => {
+                // 一定要加一个settimeout，不然就不会有动画，而是瞬移
+                setTimeout(() => {
+                    resolve(
+                        // 兼容CopiedAvatarMoved，不单独做成一个data字段了
+                        this.CopiedAvatarMoved = true
+                    )
+                }, 200)
+            })
+        },
+
         // 所有卡片整体下沉，cover组件也下沉
         MoveArticleCardArea() {
             return new Promise((resolve) => {
@@ -257,19 +262,6 @@ export default {
             })
         },
 
-        // 500ms后，触发copied-img-end，取消copied-img的fixed定位
-        MoveEndLoadingStart() {
-            return new Promise((resolve) => {
-                setTimeout(() => {
-                    resolve(
-                        // 500ms后，触发copied-img-end，取消copied-img的fixed定位
-                        this.CopiedImgEnd = true,
-                        // 500ms后，触发loading动画
-                        this.ShowLoading = true
-                    )
-                }, 500)
-            })
-        },
     },
 }
 </script>
@@ -288,7 +280,7 @@ copied-img-time = 0.3s
     width 100%
 
     // 这是点击卡片后复制的一模一样的图片，默认不显示，并且要针对视口fixed定位
-    #copied-img {
+    .copied-img {
         background-repeat no-repeat
         background-size cover
         background-position 50% 50%
@@ -303,7 +295,9 @@ copied-img-time = 0.3s
     .copied-avatar-default {
         position fixed
         border-radius 50%
+        box-sizing border-box
     }
+
     // 点击卡片或头像后，给copied-img设置初始值，就是完全复制被点击卡片的属性，此时仍是fixed定位
     .copied-img-start {
         background-image var(--CopiedImgBg)
@@ -323,7 +317,7 @@ copied-img-time = 0.3s
     // 移动作者头像到指定位置，并缩放大小
     .copied-avatar-move {
         left calc(50% - 48px)
-        top 80px
+        top calc(80px + (450 / 2) * 1px)
         width 96px
         height 96px
         border 4px solid black
@@ -336,12 +330,10 @@ copied-img-time = 0.3s
     // avatar-background的默认样式
     .avatar-back-default {
         position fixed
+        z-index -1
         border-radius 50%
     }
     // 点击头像后，完全复制头像的初始值
-    // //////////////这里要改////////
-    // ////////////////////////////
-    ///////////////////////////////
     .avatar-back-start {
         width var(--CopiedImgWidth)
         height var(--CopiedImgHeight)
@@ -350,7 +342,11 @@ copied-img-time = 0.3s
     }
     // 移动avatar-background到指定位置，并缩放大小
     .avatar-back-move {
-
+        left 0
+        top 80px
+        width 100%
+        height 450px
+        border-radius 0
     }
     // avatar-background动画结束后
     .avatar-back-end {
@@ -359,38 +355,11 @@ copied-img-time = 0.3s
 
     // cover区域的动画
     .cover-sink-leave-active {
-        transition: all sink-time
+        transition all sink-time
     }
     .cover-sink-leave-to /* .fade-leave-active, 2.1.8 版本以下 */ {
         transform translateY(100px)
         opacity 0
-    }
-    // loading出现时的动画
-    .loading-appear-enter-active {
-        transition all 0.3s
-    }
-    .loading-appear-enter {
-        opacity 0
-    }
-
-    // loading
-    #loading {
-        width 50px
-        height 50px
-        margin 50px auto
-        background-image url('../assets/loading.png')
-        background-size cover
-        background-repeat no-repeat
-        animation loading 1s linear infinite
-
-        @keyframes loading {
-            from {
-                transform rotate(0deg)
-            }
-            to {
-                transform rotate(360deg)
-            }
-        }
     }
 
     // 卡片区域
