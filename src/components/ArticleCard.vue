@@ -317,7 +317,7 @@ copied-img-time = 0.3s
     // 移动作者头像到指定位置，并缩放大小
     .copied-avatar-move {
         left calc(50% - 48px)
-        top calc(80px + (450 / 2) * 1px)
+        top calc(80px + (450 / 2) * 1px - 48px)
         width 96px
         height 96px
         border 4px solid black

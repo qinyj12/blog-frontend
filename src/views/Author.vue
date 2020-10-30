@@ -1,8 +1,8 @@
 <template>
     <div class="author">
-        <Cover v-bind="{CoverImg: require('../assets/featured-image.png'), CoverShowDetail: false}"/>
+        <Cover v-bind="{CoverImg: require('../assets/featured-image.png'), CoverShowDetail: false, CoverShowAvatar: true}"/>
 
-        <div class="author-avatar"></div>
+        <!-- <div class="author-avatar"></div> -->
 
         <p>author</p>
     </div>

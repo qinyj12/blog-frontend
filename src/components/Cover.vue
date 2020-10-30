@@ -14,12 +14,16 @@
                 </div>
             </transition>
 
+            <div v-show="CoverShowAvatar">
+                <div class="cover-avatar"></div>
+            </div>
+
         </div>
     </div>
 </template>
 <script>
 export default {
-    props: ['CoverImg', 'CoverShowDetail'],
+    props: ['CoverImg', 'CoverShowDetail', 'CoverShowAvatar'],
     data() {
         return {
             // 这个字段是用来触发transition动画的
@@ -102,6 +106,17 @@ export default {
         .cover-detail-rise-enter {
             transform translateY(100px)
             opacity 0
+        }
+
+        .cover-avatar {
+            width 96px
+            height 96px
+            background-image url('../assets/avatar.png')
+            background-size cover
+            border-radius 50%
+            border 4px solid black
+            box-sizing border-box
+            margin 0 auto
         }
     }
 
