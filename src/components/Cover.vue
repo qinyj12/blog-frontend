@@ -18,6 +18,23 @@
                 <div class="cover-avatar"></div>
             </div>
 
+            <div v-show="ShowAuthor=true" class="cover-author-detail">
+                <span>author</span>
+                <span>author</span>
+                <span>author</span>
+                <span>author</span>
+                <span>author</span>
+                <span>author</span>
+                <span>author</span>
+                <span>author</span>
+                <span>author</span>
+                <span>author</span>
+                <span>author</span>
+                <span>author</span>
+                <span>author</span>
+                <span>author</span>
+            </div>
+
         </div>
     </div>
 </template>
@@ -27,11 +44,13 @@ export default {
     data() {
         return {
             // 这个字段是用来触发transition动画的
-            ShowDetail: false
+            ShowDetail: false,
+            // 这个字段是当用户点击
+            ShowAuthor: false
         }
     },
     methods: {
-        ShowDetailAndtransition() {
+        ShowDetailAndTransition() {
             // DOM加载完成后
             this.$nextTick(
                 () => {
@@ -45,11 +64,23 @@ export default {
                     }
                 }
             )
+        },
+        ShowAuthorAndTransition() {
+            this.$nextTick(
+                () => {
+                    if (this.CoverShowAvatar) {
+                        this.ShowAuthor = true
+                    } else {
+                        // 啥也不干
+                    }
+                }
+            )
         }
     },
     mounted() {
         // 监听父组件的传值，然后判断要不要显示detail，如果要显示的话，在DOM渲染完成后显示transition动画
-        this.ShowDetailAndtransition()
+        this.ShowDetailAndTransition();
+        // this.ShowAuthorAndTransition()
     },
 }
 </script>
@@ -68,6 +99,7 @@ export default {
         flex-direction column
         justify-content center
         color white
+        position relative
 
         .cover-category {
             height 24px
@@ -117,6 +149,15 @@ export default {
             border 4px solid black
             box-sizing border-box
             margin 0 auto
+        }
+
+        .cover-author-detail {
+            border 1px solid
+            position absolute
+            width 80vw
+            top calc((450 / 2) * 1px + (96 / 2) * 1px + 25px)
+            left calc(50% - 40vw)
+            word-break break-all
         }
     }
 
