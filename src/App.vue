@@ -48,7 +48,7 @@ body {
 
 // 全局动画
 * {
-    transition:300ms
+    // transition:300ms
 }
 </style>
 <style lang="stylus" scoped>
