@@ -7,13 +7,16 @@ import Waves from './static/waves/waves'
 import './static/waves/waves.min.css'
 import VueAwesomeSwiper from 'vue-awesome-swiper'
 import 'swiper/swiper-bundle.css'
-import VClamp from 'vue-clamp';
+import VClamp from 'vue-clamp'
+import _ from 'lodash'
 
 Vue.config.productionTip = false
 // 把waves.js挂载到vue原型链上
 Vue.prototype.$Waves = Waves
 // 把store挂在vue原型链上
 Vue.prototype.$Store = store
+// 把lodash挂在vue原型链上
+Vue.prototype._ = _
 
 // 使用swiper
 Vue.use(VueAwesomeSwiper)

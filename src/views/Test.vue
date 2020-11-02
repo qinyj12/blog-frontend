@@ -1,15 +1,18 @@
 <template>
     <div class="test">
-        <button v-on:click="shuffle">Shuffle</button>
-        <transition-group name="flip-list" tag="ul">
-            <li v-for="item in items" v-bind:key="item">
-                {{ item }}
-            </li>
-        </transition-group>
+        <div id="list-complete-demo" class="demo">
+            <button v-on:click="shuffle">Shuffle</button>
+            <button v-on:click="add">Add</button>
+            <button v-on:click="remove">Remove</button>
+            <transition-group name="list-complete" tag="p">
+                <span v-for="item in items" v-bind:key="item" class="list-complete-item">
+                    {{ item }}
+                </span>
+            </transition-group>
+        </div>
     </div>
 </template>
 <script>
-import _ from '@/static/lodash.min.js'
     export default {
         data() {
             return {
@@ -18,14 +21,34 @@ import _ from '@/static/lodash.min.js'
             }
         },
         methods: {
+            randomIndex: function () {
+                return Math.floor(Math.random() * this.items.length)
+            },
+            add: function () {
+                this.items.splice(this.randomIndex(), 0, this.nextNum++)
+            },
+            remove: function () {
+                this.items.splice(this.randomIndex(), 1)
+            },
             shuffle: function () {
-                this.items = _.shuffle(this.items)
+                this.items = this._.shuffle(this.items)
             }
         },
     }
 </script>
 <style lang="stylus" scoped>
-    .flip-list-move {
-        transition: transform 1s;
+    .list-complete-item {
+        transition: all 1s;
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+    .list-complete-enter, .list-complete-leave-to {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    .list-complete-leave-active {
+        position: absolute;
     }
 </style>
