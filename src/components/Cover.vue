@@ -3,61 +3,49 @@
     <div id="cover">
         <div class="homepage-cover" :style="{backgroundImage: 'url(' + CoverImg + ')'}">
 
-            <transition name="cover-detail-rise">
-                <div v-show="ShowDetail">
-                    <div><span class="cover-category">案例</span></div>
-                    <h1 class="cover-title">这是文章详情页</h1>
-                    <div class="cover-author-time">
+            <!-- 以下是点击进入到文章详情页时展示的部分，包括标题、文章分类、作者、时间等 -->
+            <transition name="article-detail-rise">
+                <div v-show="_IfShowArticleDetail">
+                    <div><span class="article-category">案例</span></div>
+                    <h1 class="article-title">这是文章详情页</h1>
+                    <div class="article-author-time">
                         <span>测试用户</span>
                         <span>2020.10.23</span>
                     </div>
                 </div>
             </transition>
 
-            <div v-show="CoverShowAvatar">
-                <div class="cover-avatar"></div>
-            </div>
+            <!-- 以下是点击进入到作者页时展示的部分，包括头像、名字等 -->
+            <transition-group name="author-detail-rise" v-show="CoverShowAuthorDetail">
+                    <div class="author-avatar" key="author-avatar"></div>
+                    <span class="author-detail" key="author-detail" v-show="IfShowAuthorDetail">author</span>
+            </transition-group>
 
-            <div v-show="ShowAuthor=true" class="cover-author-detail">
-                <span>author</span>
-                <span>author</span>
-                <span>author</span>
-                <span>author</span>
-                <span>author</span>
-                <span>author</span>
-                <span>author</span>
-                <span>author</span>
-                <span>author</span>
-                <span>author</span>
-                <span>author</span>
-                <span>author</span>
-                <span>author</span>
-                <span>author</span>
-            </div>
 
         </div>
     </div>
 </template>
 <script>
 export default {
-    props: ['CoverImg', 'CoverShowDetail', 'CoverShowAvatar'],
+    props: ['CoverImg', 'CoverShowArticleDetail', 'CoverShowAuthorDetail'],
     data() {
         return {
-            // 这个字段是用来触发transition动画的
-            ShowDetail: false,
-            // 这个字段是当用户点击
-            ShowAuthor: false
+            // 这个字段是用来判断要不要显示article detail的
+            IfShowArticleDetail: false,
+            // 这个字段用来判断要不要显示author detail的
+            IfShowAuthorDetail: false
         }
     },
     methods: {
-        ShowDetailAndTransition() {
+        // 
+        ShowArticleDetail() {
             // DOM加载完成后
             this.$nextTick(
                 () => {
-                    // 如果接收到的值CoverShowDetail==true，说明要显示title、author、time等字段
-                    if (this.CoverShowDetail) {
+                    // 如果接收到的值CoverShowArticleDetail==true，说明进入的是文章详情页
+                    if (this.CoverShowArticleDetail) {
                         // 那就动态修改v-show
-                        this.ShowDetail = true
+                        this.IfShowArticleDetail = true
                     // 否则的话
                     } else {
                         // 啥也不干
@@ -65,11 +53,12 @@ export default {
                 }
             )
         },
+        // 
         ShowAuthorAndTransition() {
             this.$nextTick(
                 () => {
-                    if (this.CoverShowAvatar) {
-                        this.ShowAuthor = true
+                    if (this.CoverShowAuthorDetail) {
+                        this.IfShowAuthorDetail = true
                     } else {
                         // 啥也不干
                     }
@@ -79,8 +68,32 @@ export default {
     },
     mounted() {
         // 监听父组件的传值，然后判断要不要显示detail，如果要显示的话，在DOM渲染完成后显示transition动画
-        this.ShowDetailAndTransition();
-        // this.ShowAuthorAndTransition()
+        this.ShowArticleDetail();
+        // 
+        this.ShowAuthorAndTransition();
+
+        this.$nextTick(
+            () => {
+                console.log(this._IfShowArticleDetail)
+            }
+        )
+    },
+    // 尝试使用asyncComputed，好像跑不通
+    asyncComputed: {
+        _IfShowArticleDetail() {
+            this.$nextTick(
+                () => {
+                    if (this.CoverShowArticleDetail) {
+                        console.log(1)
+                        return true
+                    } else {
+                        console.log(2)
+                        return false
+                    }
+                }
+            )
+
+        }
     },
 }
 </script>
@@ -101,12 +114,12 @@ export default {
         color white
         position relative
 
-        .cover-category {
+        .article-category {
             height 24px
             position relative
         }
 
-        .cover-category:before, .cover-category:after {
+        .article-category:before, .article-category:after {
             content ""
             width 16px
             height 1px
@@ -114,33 +127,33 @@ export default {
             position absolute
             top 50%
         }
-        .cover-category:before {
+        .article-category:before {
             left -24px
         }
-        .cover-category:after {
+        .article-category:after {
             right -24px
         }
 
-        .cover-title {
+        .article-title {
             margin 32px 0
         }
 
-        .cover-author-time {
+        .article-author-time {
             span:not(:last-child):after {
                 content ''
                 margin 0 10px
                 border-right 1px solid 
             }
         }
-        .cover-detail-rise-enter-active {
+        .article-detail-rise-enter-active {
             transition: all 0.2s
         }
-        .cover-detail-rise-enter {
+        .article-detail-rise-enter {
             transform translateY(100px)
             opacity 0
         }
 
-        .cover-avatar {
+        .author-avatar {
             width 96px
             height 96px
             background-image url('../assets/avatar.png')
@@ -149,18 +162,24 @@ export default {
             border 4px solid black
             box-sizing border-box
             margin 0 auto
+            transition all 0.2s
         }
 
-        .cover-author-detail {
+        .author-detail {
             border 1px solid
-            position absolute
             width 80vw
-            top calc((450 / 2) * 1px + (96 / 2) * 1px + 25px)
-            left calc(50% - 40vw)
+            margin 0 auto
             word-break break-all
+            transition all 0.2s
         }
     }
 
-
+    .author-detail-rise-enter {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    .author-detail-rise-leave-active {
+        position: absolute;
+    }
 }
 </style>

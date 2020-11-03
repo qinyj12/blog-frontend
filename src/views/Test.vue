@@ -1,54 +1,58 @@
 <template>
     <div class="test">
-        <div id="list-complete-demo" class="demo">
-            <button v-on:click="shuffle">Shuffle</button>
-            <button v-on:click="add">Add</button>
-            <button v-on:click="remove">Remove</button>
-            <transition-group name="list-complete" tag="p">
-                <span v-for="item in items" v-bind:key="item" class="list-complete-item">
-                    {{ item }}
-                </span>
-            </transition-group>
-        </div>
+        <button @click="demo()">隐藏</button>
+        <transition-group name="list">
+            <!-- <h1 v-for="item in items" :key="item.item" class="list-item" v-show="!item.IfShow">{{item.item}}</h1> -->
+            <h1 key="1" class="list-item" v-show="!IfShow">1</h1>
+            <h1 key="2" class="list-item">2</h1>
+        </transition-group>
     </div>
 </template>
 <script>
     export default {
         data() {
             return {
-                items: [1, 2, 3, 4, 5, 6, 7, 8, 9],
-                nextNum: 10
+                items: [{item: 1}, {item: 2}],
+                IfShow: true
             }
         },
         methods: {
-            randomIndex: function () {
-                return Math.floor(Math.random() * this.items.length)
+            HideItem(index) {
+                let TargetItem = this.items[index];
+                TargetItem.IfShow = !TargetItem.IfShow;
+                this.$set(this.items, index, TargetItem);
             },
-            add: function () {
-                this.items.splice(this.randomIndex(), 0, this.nextNum++)
-            },
-            remove: function () {
-                this.items.splice(this.randomIndex(), 1)
-            },
-            shuffle: function () {
-                this.items = this._.shuffle(this.items)
+            demo() {
+                this.IfShow = !this.IfShow
             }
+        },
+        mounted() {
+            this.$nextTick(
+                () => {
+                    this.demo()
+                }
+            )
         },
     }
 </script>
 <style lang="stylus" scoped>
-    .list-complete-item {
-        transition: all 1s;
-        display: inline-block;
-        margin-right: 10px;
+.test {
+    border 1px solid 
+    width 100%
+    height 300px
+    box-sizing border-box
+
+    .list-item {
+        transition all 1s
     }
 
-    .list-complete-enter, .list-complete-leave-to {
+    .list-enter, .list-leave-to {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateX(30px);
     }
-
-    .list-complete-leave-active {
+    .list-leave-active {
         position: absolute;
     }
+}
+
 </style>

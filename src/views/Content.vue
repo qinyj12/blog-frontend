@@ -1,6 +1,6 @@
 <template>
     <div id="main-content">
-        <Cover v-bind="{CoverImg: CoverImg, CoverShowDetail: true}"/>
+        <Cover v-bind="{CoverImg: CoverImg, CoverShowArticleDetail: true}"/>
 
         <div class="component-wrap">
             <transition name="content-rise">

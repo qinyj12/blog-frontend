@@ -3,7 +3,7 @@
     <div id="article-card-area">
         <!-- 引入cover组件，随卡片区域一起消失 -->
         <transition name="cover-sink">
-            <Cover v-show="!SinkAllCards" v-bind="{CoverImg: CoverImg, CoverShowDetail: false}"/>
+            <Cover v-show="!SinkAllCards" v-bind="{CoverImg: CoverImg, CoverShowArticleDetail: false}"/>
         </transition>
 
         <!-- 这里要记住article-card组件的滚动条位置，所以要keep-alive -->
