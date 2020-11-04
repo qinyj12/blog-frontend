@@ -5,7 +5,7 @@
 
             <!-- 以下是点击进入到文章详情页时展示的部分，包括标题、文章分类、作者、时间等 -->
             <transition name="article-detail-rise">
-                <div v-show="_IfShowArticleDetail">
+                <div v-show="IfShowArticleDetail">
                     <div><span class="article-category">案例</span></div>
                     <h1 class="article-title">这是文章详情页</h1>
                     <div class="article-author-time">
@@ -16,11 +16,21 @@
             </transition>
 
             <!-- 以下是点击进入到作者页时展示的部分，包括头像、名字等 -->
-            <transition-group name="author-detail-rise" v-show="CoverShowAuthorDetail">
+            <div class="author-avatar-detail" v-show="CoverShowAuthorDetail">
+                <transition-group name="author-detail-rise">
                     <div class="author-avatar" key="author-avatar"></div>
-                    <span class="author-detail" key="author-detail" v-show="IfShowAuthorDetail">author</span>
-            </transition-group>
+                    <!-- 因为这个元素无论如何都会从上方飘下来，很难定位，所以干错做成一个空的占位元素 -->
+                    <div class="blank-author-detail" key="author-detail" v-show="IfShowAuthorDetail"></div>
+                    <!-- <span class="author-detail" key="author-detail" v-show="IfShowAuthorDetail">测试</span> -->
+                </transition-group>
+            </div>
 
+            <!-- 真正的元素在这里 -->
+            <transition name="true-author-detail-move">
+                <div class="true-author-detail" v-show="IfShowAuthorDetailSon">测试</div>
+            </transition>
+
+            <button @click="demo()" style="position:fixed">测试</button>
 
         </div>
     </div>
@@ -33,11 +43,13 @@ export default {
             // 这个字段是用来判断要不要显示article detail的
             IfShowArticleDetail: false,
             // 这个字段用来判断要不要显示author detail的
-            IfShowAuthorDetail: false
+            IfShowAuthorDetail: false,
+            // 在transition-group内部嵌套了一个transition，来达到平滑动画的目的
+            IfShowAuthorDetailSon: false
         }
     },
     methods: {
-        // 
+        // 监听父组件传值，用来判断要不要显示article-detail
         ShowArticleDetail() {
             // DOM加载完成后
             this.$nextTick(
@@ -53,8 +65,8 @@ export default {
                 }
             )
         },
-        // 
-        ShowAuthorAndTransition() {
+        // 监听父组件传值，用来判断要不要显示author-detail
+        ShowAuthorDetail() {
             this.$nextTick(
                 () => {
                     if (this.CoverShowAuthorDetail) {
@@ -64,36 +76,19 @@ export default {
                     }
                 }
             )
+        },
+        // 
+        demo() {
+            this.IfShowAuthorDetailSon = !this.IfShowAuthorDetailSon
         }
     },
     mounted() {
-        // 监听父组件的传值，然后判断要不要显示detail，如果要显示的话，在DOM渲染完成后显示transition动画
+        // 监听父组件传值，用来判断要不要显示article-detail
         this.ShowArticleDetail();
-        // 
-        this.ShowAuthorAndTransition();
+        // 监听父组件传值，用来判断要不要显示author-detail
+        this.ShowAuthorDetail();
 
-        this.$nextTick(
-            () => {
-                console.log(this._IfShowArticleDetail)
-            }
-        )
-    },
-    // 尝试使用asyncComputed，好像跑不通
-    asyncComputed: {
-        _IfShowArticleDetail() {
-            this.$nextTick(
-                () => {
-                    if (this.CoverShowArticleDetail) {
-                        console.log(1)
-                        return true
-                    } else {
-                        console.log(2)
-                        return false
-                    }
-                }
-            )
-
-        }
+        
     },
 }
 </script>
@@ -153,33 +148,40 @@ export default {
             opacity 0
         }
 
-        .author-avatar {
-            width 96px
-            height 96px
-            background-image url('../assets/avatar.png')
-            background-size cover
-            border-radius 50%
-            border 4px solid black
-            box-sizing border-box
-            margin 0 auto
-            transition all 0.2s
+        .author-avatar-detail {
+            // position relative
+
+            .author-avatar {
+                width 96px
+                height 96px
+                background-image url('../assets/avatar.png')
+                background-size cover
+                border-radius 50%
+                border 4px solid black
+                box-sizing border-box
+                margin 0 auto
+                transition all 0.2s
+            }
+
+            .blank-author-detail {
+                border 1px solid
+                height 150px
+                // width 80vw
+                // word-break break-all
+                transition all 0.2s
+            }
+
         }
 
-        .author-detail {
-            border 1px solid
-            width 80vw
-            margin 0 auto
-            word-break break-all
-            transition all 0.2s
+        // 这才是真正的author-detail，用absolute定位
+        .true-author-detail {
+            position absolute
+            top 0
+            left 0
+            border 1px solid green
         }
+
     }
 
-    .author-detail-rise-enter {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    .author-detail-rise-leave-active {
-        position: absolute;
-    }
 }
 </style>
