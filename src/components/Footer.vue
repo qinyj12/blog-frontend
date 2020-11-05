@@ -44,7 +44,7 @@
                 <div class="footer-top-son footer-top-tags">
                     <h3>标签</h3>
                     <ul>
-                        <li v-for="(item, index) in tags" :key="index"># {{item}}</li>
+                        <li v-for="(item, index) in tags" :key="index" @click="demo()"># {{item}}</li>
                     </ul>
                 </div>
                 
@@ -138,6 +138,9 @@ export default {
                     this.RecommendedTurnGray = 'none'
                 }
             }
+        },
+        demo() {
+            this.$router.push('/tags')
         }
     },
     mounted() {

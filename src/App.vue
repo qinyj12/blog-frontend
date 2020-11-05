@@ -48,7 +48,12 @@ body {
 
 // 全局动画
 * {
-    // transition:300ms
+    transition 0.3s
+}
+
+// 全局取消下划线
+a {
+    text-decoration none
 }
 </style>
 <style lang="stylus" scoped>

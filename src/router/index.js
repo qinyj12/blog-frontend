@@ -48,16 +48,17 @@ const router = new VueRouter({
 
 // 路由守卫
 router.beforeEach((to, from, next) => {
+    console.log(from.name, '=>', to.name)
 
     // 动态修改网页title
     document.title = to.meta.title;
 
-    // 如果home =>
-    if (from.name == 'Home') {
+    // 如果home/author =>
+    if (from.name == 'Home' || from.name == 'Author') {
         // 把首页的滚动条位置记录下来，以后返回首页时仍然可以定位到这个位置。documentElement和body需要做一个兼容方案
         from.meta.savedPosition = document.documentElement.scrollTop || document.body.scrollTop;
 
-        // 如果home => content，给0.5秒动画时间
+        // 如果home/author => content，给0.5秒动画时间
         // 本来可以在home页用settimeout router.push 来达到目的，但不能兼顾keep-alive，所以只能在路由守卫里来使用settimeout
         if (to.name == 'Content' || to.name == 'Author') {
             setTimeout(() => {

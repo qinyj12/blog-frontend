@@ -1,10 +1,6 @@
 // 首页的文章卡片区域
 <template>
     <div id="article-card-area">
-        <!-- 引入cover组件，随卡片区域一起消失 -->
-        <transition name="cover-sink">
-            <Cover v-show="!SinkAllCards" v-bind="{CoverImg: CoverImg, CoverShowArticleDetail: false}"/>
-        </transition>
 
         <!-- 这里要记住article-card组件的滚动条位置，所以要keep-alive -->
         <keep-alive>
@@ -29,20 +25,23 @@
                                     </div>
                                     <div class="entry-footer">
                                         <router-link to="/author/测试用户">
-                                        <!-- stop阻止click冒泡，prevent阻止router-link -->
-                                        <div class="author" @click.stop="ClickAuthor(index)">
+                                            <!-- stop阻止click冒泡，prevent阻止router-link -->
                                             <div 
-                                                class="avatar"
-                                                :class="{
-                                                    'avatar-unclicked': !item.HideAvatar, 
-                                                    'avatar-clicked': item.HideAvatar
-                                                }"
-                                                ref="avatar"
+                                                class="author" 
+                                                @click.stop="$store.state.IfDisableClickAuthor? ScrollToTop(): ClickAuthor(index)"
                                             >
-                                            </div>
+                                                <div 
+                                                    class="avatar"
+                                                    :class="{
+                                                        'avatar-unclicked': !item.HideAvatar, 
+                                                        'avatar-clicked': item.HideAvatar
+                                                    }"
+                                                    ref="avatar"
+                                                >
+                                                </div>
 
-                                            <span class="name">测试用户</span>
-                                        </div>
+                                                <span class="name">测试用户</span>
+                                            </div>
                                         </router-link>
                                         <div class="published-date">August 31, 2020</div>
                                     </div>
@@ -87,33 +86,28 @@
         >
         </div>
 
-        <!-- 这是footer栏以及动画 -->
-        <transition name="footer-sink">
-            <Footer v-show="!SinkAllCards" />
-        </transition>
-
     </div>
 </template>
 
 <script>
-import Cover from '@/components/Cover.vue';
-import Footer from '@/components/Footer.vue';
 export default {
     data() {
         return {
             counts: [{index: '一'}, {index: '二'}, {index: '三'}, {index: '四'}, {index: '五'}, ],
-            SinkAllCards: false,
             ShowCopiedImg: false,
             CopiedFeaturedMoved: false,
             CopiedAvatarMoved: false,
             CopiedImgEnd: false,
-            // 传值给cover组件
-            CoverImg: require('../assets/cover.png')
         }
     },
-    components: {
-        Cover,
-        Footer
+    computed: {
+        SinkAllCards() {
+            return this.$store.state.IfSinkArticleCard
+        }
+    },
+    destroyed() {
+        // 离开card组件时，把vuex恢复原状，重新显示card和cover组件
+        this.$store.commit('SinkCoverAndArticle', false)
     },
     methods: {
         // 点击卡片后的一系列动画
@@ -163,6 +157,17 @@ export default {
             // 移动copied-avatar
             await this.MoveCopiedAvatar();
 
+        },
+
+        ScrollToTop() {
+            let top = document.documentElement.scrollTop || document.body.scrollTop;
+            // 实现滚动效果 
+            const timeTop = setInterval(() => {
+                document.body.scrollTop = document.documentElement.scrollTop = top -= 50;
+                if (top <= 0) {
+                clearInterval(timeTop);
+                }
+            }, 10);
         },
 
         // 找到被点击的那一张卡片，设为白底
@@ -257,11 +262,10 @@ export default {
         MoveArticleCardArea() {
             return new Promise((resolve) => {
                 resolve(
-                    this.SinkAllCards = true
+                    this.$store.commit('SinkCoverAndArticle', true)
                 )
             })
         },
-
     },
 }
 </script>
@@ -275,6 +279,10 @@ body {
 sink-time = 0.2s
 // copied-img的动画时间
 copied-img-time = 0.3s
+
+a {
+    color #999999
+}
 
 #article-card-area {
     width 100%
@@ -320,7 +328,7 @@ copied-img-time = 0.3s
         top calc(80px + (450 / 2) * 1px - 48px)
         width 96px
         height 96px
-        border 4px solid black
+        border 4px solid white
     }
     // avatar动画结束后
     .copied-avatar-end {
@@ -351,15 +359,6 @@ copied-img-time = 0.3s
     // avatar-background动画结束后
     .avatar-back-end {
         position static
-    }
-
-    // cover区域的动画
-    .cover-sink-leave-active {
-        transition all sink-time
-    }
-    .cover-sink-leave-to /* .fade-leave-active, 2.1.8 版本以下 */ {
-        transform translateY(100px)
-        opacity 0
     }
 
     // 卡片区域
@@ -445,6 +444,7 @@ copied-img-time = 0.3s
                         margin 0 auto
                         border-top 1px solid rgba(204, 204, 204, 0.3)
                         display flex
+                        justify-content space-between
                         align-items center
                         color #999999
                         font-size 12px
@@ -475,6 +475,13 @@ copied-img-time = 0.3s
                                 margin-left 10px
                             }
                         }
+                        // 鼠标悬停author时
+                        .author:hover {
+                            .name {
+                                color black
+                                font-weight bold
+                            }
+                        }
 
                         .published-date {
                             height 32px
@@ -490,19 +497,21 @@ copied-img-time = 0.3s
     .cards-sink-leave-active {
         transition: all sink-time
     }
-    .cards-sink-leave-to /* .fade-leave-active, 2.1.8 版本以下 */ {
+    .cards-sink-leave-to {
         transform translateY(100px)
         opacity 0
+    }
+    // 用于卡片出现时的动画
+    .cards-sink-enter {
+        opacity 0
+        transform translateY(100px)
+    }
+    .cards-sink-enter-active {
+        transition all sink-time
+    }
+    .cards-sink-enter-to {
     }
 
-    // 用于footer下沉的动画
-    .footer-sink-leave-active {
-        transition: all sink-time
-    }
-    .footer-sink-leave-to /* .fade-leave-active, 2.1.8 版本以下 */ {
-        transform translateY(100px)
-        opacity 0
-    }
 }
 
 // 这一部分是处理自适应的

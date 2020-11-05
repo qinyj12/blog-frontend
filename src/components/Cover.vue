@@ -1,7 +1,7 @@
 // 头图，放在首页和文章详情页
 <template>
-    <div id="cover">
-        <div class="homepage-cover" :style="{backgroundImage: 'url(' + CoverImg + ')'}">
+    <div class="cover-component">
+        <div class="cover" :style="{backgroundImage: 'url(' + CoverImg + ')'}">
 
             <!-- 以下是点击进入到文章详情页时展示的部分，包括标题、文章分类、作者、时间等 -->
             <transition name="article-detail-rise">
@@ -19,20 +19,30 @@
             <div class="author-avatar-detail" v-show="CoverShowAuthorDetail">
                 <transition-group name="author-detail-rise">
                     <div class="author-avatar" key="author-avatar"></div>
-                    <!-- 因为这个元素无论如何都会从上方飘下来，很难定位，所以干错做成一个空的占位元素 -->
-                    <div class="blank-author-detail" key="author-detail" v-show="IfShowAuthorDetail"></div>
-                    <!-- <span class="author-detail" key="author-detail" v-show="IfShowAuthorDetail">测试</span> -->
+                    <!-- 这个元素的动画默认会从上方飘下来，不知道是根据什么定位的-->
+                    <div class="author-detail" key="author-detail" v-show="IfShowAuthorDetail">
+                        <h1>测试用户</h1>
+                        <p>这是一个测试用户的介绍</p>
+                        <ul>
+                            <li v-for="item in AuthorContact" :key="item">
+                                <i :class="'fab fa-' + item"></i>
+                            </li>
+                            <span class="author-position">
+                                <i class="fas fa-map-marker-alt no-hover"></i>
+                                <span>无锡</span>
+                            </span>
+
+                        </ul>
+                    </div>
                 </transition-group>
             </div>
-
-            <!-- 真正的元素在这里 -->
-            <transition name="true-author-detail-move">
-                <div class="true-author-detail" v-show="IfShowAuthorDetailSon">测试</div>
-            </transition>
-
-            <button @click="demo()" style="position:fixed">测试</button>
-
         </div>
+
+        <!-- 给cover组件加一层遮罩，当显示article-detail和author-detail时显示 -->
+        <transition name="cover-mask-show">
+            <div class="cover-mask" v-show="IfShowArticleDetail || IfShowAuthorDetail"></div>
+        </transition>
+        
     </div>
 </template>
 <script>
@@ -44,8 +54,7 @@ export default {
             IfShowArticleDetail: false,
             // 这个字段用来判断要不要显示author detail的
             IfShowAuthorDetail: false,
-            // 在transition-group内部嵌套了一个transition，来达到平滑动画的目的
-            IfShowAuthorDetailSon: false
+            AuthorContact: ['weibo', 'qq', 'weixin', 'github']
         }
     },
     methods: {
@@ -77,10 +86,6 @@ export default {
                 }
             )
         },
-        // 
-        demo() {
-            this.IfShowAuthorDetailSon = !this.IfShowAuthorDetailSon
-        }
     },
     mounted() {
         // 监听父组件传值，用来判断要不要显示article-detail
@@ -96,8 +101,8 @@ export default {
 * {
     box-sizing border-box
 }
-#cover {
-    .homepage-cover {
+.cover-component {
+    .cover {
         width 100%
         height 450px
         background-repeat no-repeat
@@ -108,6 +113,11 @@ export default {
         justify-content center
         color white
         position relative
+
+        // 所有元素浮在遮罩上方
+        * {
+            z-index 1
+        }
 
         .article-category {
             height 24px
@@ -157,30 +167,75 @@ export default {
                 background-image url('../assets/avatar.png')
                 background-size cover
                 border-radius 50%
-                border 4px solid black
+                border 4px solid white
                 box-sizing border-box
                 margin 0 auto
                 transition all 0.2s
             }
 
-            .blank-author-detail {
-                border 1px solid
-                height 150px
-                // width 80vw
-                // word-break break-all
+            .author-detail {
+                width 100%
+                word-break break-all
                 transition all 0.2s
+                display block
+                font-size 14px
+
+                ul {
+                    list-style none
+                    margin 0
+                    padding 0
+                    display flex
+                    justify-content center
+                    height 20px
+                    align-items center
+
+                    i {
+                        margin-right 16px
+                        color white
+                        transition all 0.1s
+                    }
+
+                    i:hover:not(.no-hover) {
+                        color #19DDC4
+                        cursor pointer
+                    }
+
+                    .author-position {
+                        display flex
+                        align-items center
+                        line-height 14px
+
+                        i {
+                            margin-right 5px
+                        }
+                    }
+                }
             }
 
-        }
+            // 以下是author-detail的动画
+            .author-detail-rise-enter {
+                opacity 0
+                // 不知道默认是根据什么定位的，改成-450px暂时没有问题
+                transform translateY(-450px)
+            }
+            .author-detail-rise-enter-to {
 
-        // 这才是真正的author-detail，用absolute定位
-        .true-author-detail {
-            position absolute
-            top 0
-            left 0
-            border 1px solid green
+            }
         }
+    }
 
+    .cover-mask {
+        position absolute
+        top 80px
+        left 0
+        width 100%
+        height 450px
+        background-color rgba(0 ,0, 0, 0.4)
+        z-index 0
+    }
+
+    .cover-mask-show-enter {
+        opacity 0
     }
 
 }
