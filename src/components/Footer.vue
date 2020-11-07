@@ -44,7 +44,13 @@
                 <div class="footer-top-son footer-top-tags">
                     <h3>标签</h3>
                     <ul>
-                        <li v-for="(item, index) in tags" :key="index" @click="demo()"># {{item}}</li>
+                        <li 
+                            v-for="(item, index) in tags" 
+                            :key="index" 
+                            @click="ToTagPage(item)"
+                        >
+                            # {{item}}
+                        </li>
                     </ul>
                 </div>
                 
@@ -139,12 +145,22 @@ export default {
                 }
             }
         },
-        demo() {
-            this.$router.push('/tags')
+        ToTagPage(TargetTag) {
+            // footer => tag时，延迟0.5秒再进入路由，给动画缓冲时间
+            this.$store.commit('ChangeHomeBuffer', 500);
+            // footer => tag时，触发cover和card组件的sink动画
+            this.$store.commit('SinkCoverAndArticle', true);
+
+            this.$router.push('/tag/' + TargetTag)
         }
     },
     mounted() {
+        // 判断热门文章是否只有一篇
         this.IfSingleRecommended();
+    },
+    destroyed() {
+        this.$store.commit('ChangeHomeBuffer', 0);
+        this.$store.commit('SinkCoverAndArticle', false);
     },
 }
 </script>

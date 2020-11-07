@@ -31,6 +31,12 @@ const routes = [
         name: 'Author',
         component: () => import('../views/Author.vue'),
         meta: {title: 'author'}
+    },
+    {
+        path: '/tag/:tag',
+        name: 'Tag',
+        component: () => import('../views/Tag.vue'),
+        meta: {title: 'tag'}
     }
 ]
 
@@ -48,7 +54,7 @@ const router = new VueRouter({
 
 // 路由守卫
 router.beforeEach((to, from, next) => {
-    console.log(from.name, '=>', to.name)
+    // console.log(from.name, '=>', to.name)
 
     // 动态修改网页title
     document.title = to.meta.title;
@@ -60,7 +66,7 @@ router.beforeEach((to, from, next) => {
 
         // 如果home/author => content，给0.5秒动画时间
         // 本来可以在home页用settimeout router.push 来达到目的，但不能兼顾keep-alive，所以只能在路由守卫里来使用settimeout
-        if (to.name == 'Content' || to.name == 'Author') {
+        if (to.name == 'Content' || to.name == 'Author' || to.name == 'Tag') {
             setTimeout(() => {
                 next()
             // 从vuex仓库里取值，看看需要在home=>content时留多少时间用于动画效果
@@ -71,7 +77,6 @@ router.beforeEach((to, from, next) => {
     } else {
         next()
     }
-
 });
 
 export default router
