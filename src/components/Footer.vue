@@ -47,7 +47,7 @@
                         <li 
                             v-for="(item, index) in tags" 
                             :key="index" 
-                            @click="ToTagPage(item)"
+                            @click="ClickTag(item)"
                         >
                             # {{item}}
                         </li>
@@ -145,14 +145,33 @@ export default {
                 }
             }
         },
-        ToTagPage(TargetTag) {
-            // footer => tag时，延迟0.5秒再进入路由，给动画缓冲时间
-            this.$store.commit('ChangeHomeBuffer', 500);
-            // footer => tag时，触发cover和card组件的sink动画
-            this.$store.commit('SinkCoverAndArticle', true);
-
-            this.$router.push('/tag/' + TargetTag)
-        }
+        // 点击tag标签
+        ClickTag(TargetTag) {
+            let CurrentTag = this.$route.path.split('/')[this.$route.path.split('/').length - 1];
+            // 如果/tag/生活 => /tag/生活
+            if (CurrentTag == TargetTag) {
+                this.ScrollToTop();
+            // 如果/tag/生活 => /tag/旅游
+            } else {
+                // footer => tag时，延迟0.5秒再进入路由，给动画缓冲时间
+                this.$store.commit('ChangeHomeBuffer', 500);
+                // footer => tag时，触发cover和card组件的sink动画
+                this.$store.commit('SinkCoverAndArticle', true);
+                // 点击tag，进入到tag页面
+                this.$router.push('/tag/' + TargetTag)
+            }
+        },
+        // 滚动到顶部
+        ScrollToTop() {
+            let top = document.documentElement.scrollTop || document.body.scrollTop;
+            // 实现滚动效果 
+            const timeTop = setInterval(() => {
+                document.body.scrollTop = document.documentElement.scrollTop = top -= 50;
+                if (top <= 0) {
+                clearInterval(timeTop);
+                }
+            }, 10);
+        },
     },
     mounted() {
         // 判断热门文章是否只有一篇
