@@ -35,16 +35,17 @@ export default {
             return this.$store.state.IfSinkCover
         }
     },
+    mounted() {
+        // 恢复滚动条为默认
+        this.$store.commit('ChangeBodyScrollStatus', 'auto')
+    },
     // tag => tag时触发。其实不是tag=>tag，只是复用tag组件而已，router不会有任何变化
     beforeRouteUpdate (to, from, next) {
         // 给0.5s动画时间
         setTimeout(() => {
             next(
-                // 如果tag=>tag，vuex的状态恢复默认值，不然cover和card组件就消失不复现了
-                setTimeout(() => {
-                    this.$store.commit('ChangeHomeBuffer', 0),
-                    this.$store.commit('SinkCoverAndArticle', false)
-                }, 500)
+                this.$store.commit('ChangeHomeBuffer', 0),
+                this.$store.commit('SinkCoverAndArticle', false),
             )
         }, this.$store.state.HomeBuffer);
     }

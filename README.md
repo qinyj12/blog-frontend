@@ -8,5 +8,6 @@
 - [x] 点击avatar的动画，做一个动态节点放在cover组件内，这个节点是用来展示avatar的，以此达到cover组件和articlecard组件的衔接
 - [x] 当前要解决的是在cover组件内async computed的问题，在nextick之后再computed=>不解决了，不会做
 - [x] author=>content时的动画
-- [ ] 防止在author组件内再次点击author
-- [ ] 下一步：注册组件、登录组件、留言和展示组件
+- [x] 防止在author组件内再次点击author
+- [ ] 点击recommended card后的动画，解决img的src留空时显示默认图标的问题
+- [ ] 点击author card后的动画

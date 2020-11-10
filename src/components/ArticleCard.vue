@@ -13,7 +13,9 @@
                             <div class="single-card " @click="ClickCard(index)">
                                 <!-- 这是卡片的头图 -->
                                 <div class="featured-image" 
-                                    :class="{'featured-image-unclicked': !item.HideFeaturedImg, 'featured-image-clicked': item.HideFeaturedImg}" 
+                                    :class="{
+                                        'featured-image-unclicked': !item.HideFeaturedImg, 'featured-image-clicked': item.HideFeaturedImg
+                                    }" 
                                     ref="FeaturedImages"
                                 >
                                 </div>
@@ -107,7 +109,9 @@ export default {
     },
     destroyed() {
         // 离开card组件时，把vuex恢复原状，重新显示card和cover组件
-        this.$store.commit('SinkCoverAndArticle', false)
+        this.$store.commit('SinkCoverAndArticle', false);
+        // 离开card组件时，恢复滚动条为默认
+        this.$store.commit('ChangeBodyScrollStatus', 'auto');
     },
     methods: {
         // 点击卡片后的一系列动画
@@ -156,6 +160,9 @@ export default {
 
             // 移动copied-avatar
             await this.MoveCopiedAvatar();
+
+            // 显示滚动条
+            this.$store.commit('ChangeBodyScrollStatus', 'scroll');
 
         },
 
