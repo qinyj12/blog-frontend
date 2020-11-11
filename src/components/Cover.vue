@@ -50,9 +50,9 @@ export default {
     props: ['CoverImg', 'CoverShowArticleDetail', 'CoverShowAuthorDetail'],
     data() {
         return {
-            // 这个字段是用来判断要不要显示article detail的
+            // 这个字段是用来判断要不要显示article detail的，默认不显示
             IfShowArticleDetail: false,
-            // 这个字段用来判断要不要显示author detail的
+            // 这个字段用来判断要不要显示author detail的，默认不显示
             IfShowAuthorDetail: false,
             AuthorContact: ['weibo', 'qq', 'weixin', 'github']
         }
@@ -66,7 +66,7 @@ export default {
                     // 如果接收到的值CoverShowArticleDetail==true，说明进入的是文章详情页
                     if (this.CoverShowArticleDetail) {
                         // 那就动态修改v-show
-                        this.IfShowArticleDetail = true
+                        this.IfShowArticleDetail = true;
                     // 否则的话
                     } else {
                         // 啥也不干
@@ -92,8 +92,9 @@ export default {
         this.ShowArticleDetail();
         // 监听父组件传值，用来判断要不要显示author-detail
         this.ShowAuthorDetail();
-
-        
+    },
+    destroyed() {
+        console.log('cover destoryed')
     },
 }
 </script>

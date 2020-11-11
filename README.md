@@ -9,5 +9,6 @@
 - [x] 当前要解决的是在cover组件内async computed的问题，在nextick之后再computed=>不解决了，不会做
 - [x] author=>content时的动画
 - [x] 防止在author组件内再次点击author
-- [ ] 点击recommended card后的动画，解决img的src留空时显示默认图标的问题
+- [x] 点击recommended card后的动画，解决img的src留空时显示默认图标的问题
+- [ ] 点击热门后的动画，简单的下沉就可以了
 - [ ] 点击author card后的动画

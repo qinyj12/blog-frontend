@@ -52,6 +52,12 @@ const router = new VueRouter({
       }
 });
 
+// 隐藏路由重复时的报错
+const originalPush = VueRouter.prototype.push;
+VueRouter.prototype.push = function push(location) {
+    return originalPush.call(this, location).catch(err => {err; console.log('路由重复了')})
+};
+
 // 路由守卫
 router.beforeEach((to, from, next) => {
     // console.log(from.name, '=>', to.name)
