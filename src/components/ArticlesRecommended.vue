@@ -5,13 +5,17 @@
             <div class="wrap" v-show="!IfSink">
                 <h2>推荐阅读</h2>
                 <ul class="articles-recommended">
-                    <li v-for="(item, index) in RecommendArticles" :key="item.title" class="single-article-recommended">
+                    <li 
+                        v-for="(item, index) in RecommendArticles" 
+                        :key="item.title" 
+                        class="single-article-recommended"
+                        @click="ClickRecommended(index)"
+                    >
 
                         <!-- 封面图 -->
                         <div 
                             class="article-recommended-cover" 
                             :style="{backgroundImage: 'url(' + item.cover +')'}"
-                            @click="ClickCover(index)"
                             ref="RecommendedCover"
                         >
                         </div>
@@ -104,7 +108,7 @@ export default {
     },
 
     methods: {
-        async ClickCover(index) {
+        async ClickRecommended(index) {
             // 改变vuex仓库，当router:from.name==home 时，给500ms的缓冲时间，就是500ms之后才会触发路由
             // this.$store.commit('ChangeHomeBuffer', 500)
 
@@ -350,6 +354,11 @@ sink-time = 0.2
                 }
             }
         }
+
+        li.single-article-recommended:hover {
+            cursor pointer
+            box-shadow 3px 4px 7px 3px rgba(0,0,0,0.20)
+        }
     }
 
     // 复制的cover的默认样式
@@ -358,7 +367,7 @@ sink-time = 0.2
         background-size cover
         background-position 50% 50%
         border-radius recommended-radius 0 0 recommended-radius
-        transition all 0.5s
+        transition all 0.3s
     }
     // 复制的cover的默认样式
     .copied-img-default {

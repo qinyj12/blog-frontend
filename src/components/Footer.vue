@@ -19,7 +19,7 @@
 
                 <ul>
                     <swiper ref="mySwiper" :options="swiperOptions" @slideChange="onSlideChange">
-                        <li class="hot-article swiper-slide" v-for="(item, index) in HotArticles" :key="index">
+                        <li class="hot-article swiper-slide" v-for="(item, index) in HotArticles" :key="index"  @click="ClickHotArticle()">
                             <swiper-slide>
                                 <div class="hot-article-mask">
                                     <div class="hot-article-introduction">
@@ -172,6 +172,15 @@ export default {
                 }
             }, 10);
         },
+
+        // 点击hot article，从/content/1 => /content/2
+        ClickHotArticle() {
+            this.$router.push('/content/13')
+        },
+        // 修改vuex中的一个值，隐藏掉content组件中所有的子组件
+        HideAllThing() {
+            this.$store.commit('SinkSomething', true)
+        }
     },
     mounted() {
         // 判断热门文章是否只有一篇
