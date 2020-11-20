@@ -10,5 +10,6 @@
 - [x] author=>content时的动画
 - [x] 防止在author组件内再次点击author
 - [x] 点击recommended card后的动画，解决img的src留空时显示默认图标的问题
+- [ ] tag => content，动画没有
 - [ ] 点击热门后的动画，简单的下沉就可以了
 - [ ] 点击author card后的动画
