@@ -11,7 +11,7 @@
                     <div>关于</div>
                     <div>友链</div>
                     <router-link to="/test"><div>测试页</div></router-link>
-                    <div class="test"></div>
+                    <router-link to="/admin"><div>管理员</div></router-link>
                 </div>
             </div>
             <!-- 这是普通的注册、登录按钮，平时启用，窄屏时隐藏 -->

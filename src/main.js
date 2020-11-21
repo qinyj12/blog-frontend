@@ -9,6 +9,8 @@ import VueAwesomeSwiper from 'vue-awesome-swiper'
 import 'swiper/swiper-bundle.css'
 import VClamp from 'vue-clamp'
 import AsyncComputed from 'vue-async-computed'
+import mavonEditor from 'mavon-editor'
+import 'mavon-editor/dist/css/index.css'
 
 Vue.config.productionTip = false
 // 把waves.js挂载到vue原型链上
@@ -20,6 +22,9 @@ Vue.prototype.$Store = store
 Vue.use(VueAwesomeSwiper)
 // 使用asyncComputed
 Vue.use(AsyncComputed)
+// 使用mavon-editor
+Vue.use(mavonEditor)
+
 // 全局注册VClamp组件
 Vue.component('v-clamp', VClamp)
 

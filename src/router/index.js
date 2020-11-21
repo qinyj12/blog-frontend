@@ -6,7 +6,6 @@ import store from '../store'
 Vue.use(VueRouter)
 Vue.prototype.$Store = store
 
-
 const routes = [
     {
         path: '/',
@@ -37,6 +36,12 @@ const routes = [
         name: 'Tag',
         component: () => import('../views/Tag.vue'),
         meta: {title: 'tag'}
+    },
+    {
+        path: '/admin',
+        name: 'Admin',
+        component: () => import('../views/Admin.vue'),
+        meta: {title: 'admin'}
     }
 ]
 
