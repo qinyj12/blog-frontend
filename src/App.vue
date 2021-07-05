@@ -6,6 +6,8 @@
 </template>
 <script>
 import Nav from '@/components/Nav.vue';
+import { demo } from '@/request/api.js';
+// import axios from 'axios'
 // import Footer from '@/components/Footer.vue';
 export default {
     data() {
@@ -25,6 +27,18 @@ export default {
     },
     mounted() {
         this.ActivateWaves();
+        demo().then(res => {
+            console.log('调用 demo')
+            console.log(res)
+        })
+        // 测试跨域
+        // axios.get('/api/v2/users/22012465',
+        //     {
+        //         headers: {
+        //             'X-Auth-Token': 'IBVJsW3jFQaLbdbMA82Uf9Xg147djGUGFfnsEZZD'
+        //         }
+        //     }
+        // ).then(res => console.log(res))
     },
     computed: {
         BodyScrollStatus() {
