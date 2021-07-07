@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
-    "mavon-editor": "^2.9.0",
+    "element-ui": "^2.15.3",
     "swiper": "^6.3.3",
     "vue": "^2.6.11",
     "vue-async-computed": "^3.9.0",
@@ -26,8 +26,8 @@
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
     "lodash": "^4.17.20",
-    "stylus": "^0.54.7",
-    "stylus-loader": "^3.0.2",
+    "stylus": "^0.54.8",
+    "stylus-loader": "^6.1.0",
     "vue-template-compiler": "^2.6.11"
   },
   "eslintConfig": {
@@ -42,7 +42,9 @@
     "parserOptions": {
       "ecmaVersion": 2020
     },
-    "rules": {}
+    "rules": {
+      "no-unused-vars": 0
+    }
   },
   "browserslist": [
     "> 1%",

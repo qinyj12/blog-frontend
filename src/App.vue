@@ -6,7 +6,7 @@
 </template>
 <script>
 import Nav from '@/components/Nav.vue';
-import { demo } from '@/request/api.js';
+import { Repos, UserInfo } from '@/api/api.js';
 // import axios from 'axios'
 // import Footer from '@/components/Footer.vue';
 export default {
@@ -27,18 +27,13 @@ export default {
     },
     mounted() {
         this.ActivateWaves();
-        demo().then(res => {
-            console.log('调用 demo')
+        // 获取用户的repos列表（专栏1、专栏2）
+        Repos('qinyujie-067rz').then(res => {
+            console.log('调用 Repos')
             console.log(res)
         })
-        // 测试跨域
-        // axios.get('/api/v2/users/22012465',
-        //     {
-        //         headers: {
-        //             'X-Auth-Token': 'IBVJsW3jFQaLbdbMA82Uf9Xg147djGUGFfnsEZZD'
-        //         }
-        //     }
-        // ).then(res => console.log(res))
+        // 获取指定用户的信息
+        UserInfo('qinyujie-067rz').then(res => {console.log(res)})
     },
     computed: {
         BodyScrollStatus() {
