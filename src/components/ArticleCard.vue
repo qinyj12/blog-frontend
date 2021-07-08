@@ -23,7 +23,7 @@
                                 <div class="content-wrap">
                                     <div class="entry-header">
                                         <span class="category">案例</span>
-                                        <h3 class="title">这是第{{item.index}}个案例</h3>
+                                        <h3 class="title">{{item.title}}</h3>
                                     </div>
                                     <div class="entry-footer">
                                         <router-link to="/author/测试用户">
@@ -32,17 +32,20 @@
                                                 class="author" 
                                                 @click.stop="$store.state.IfDisableClickAuthor? ScrollToTop(): ClickAuthor(index)"
                                             >
-                                                <div 
-                                                    class="avatar"
-                                                    :class="{
-                                                        'avatar-unclicked': !item.HideAvatar, 
-                                                        'avatar-clicked': item.HideAvatar
-                                                    }"
-                                                    ref="avatar"
-                                                >
+                                                <div class="avatar" ref="avatar">
+                                                    <img 
+                                                        :src="item.last_editor.avatar_url" 
+                                                        alt="头像" 
+                                                        referrerpolicy="no-referrer"
+                                                        class="avatar-img"
+                                                        :class="{
+                                                            'avatar-unclicked': !item.HideAvatar, 
+                                                            'avatar-clicked': item.HideAvatar
+                                                        }"
+                                                    >
                                                 </div>
 
-                                                <span class="name">测试用户</span>
+                                                <span class="name">{{item.last_editor.name}}</span>
                                             </div>
                                         </router-link>
                                         <div class="published-date">August 31, 2020</div>
@@ -92,10 +95,12 @@
 </template>
 
 <script>
+import { RepoDocs } from '@/api/api.js';
 export default {
     data() {
         return {
-            counts: [{index: '一'}, {index: '二'}, {index: '三'}, {index: '四'}, {index: '五'}, ],
+            // counts: [{title: '一'}, {title: '二'}, {title: '三'}, {title: '四'}, {title: '五'}, ],
+            counts: [{title: '一'}],
             ShowCopiedImg: false,
             CopiedFeaturedMoved: false,
             CopiedAvatarMoved: false,
@@ -273,6 +278,17 @@ export default {
                 )
             })
         },
+
+        // 获取指定repo下的所有docs的基本信息，然后赋值给变量
+        async GetRepoDocs(namespace) {
+            await RepoDocs(namespace).then(res => {
+                this.counts = res.data
+            })
+        }
+    },
+    async mounted() {
+        await this.GetRepoDocs('qinyujie-067rz/rkckig')
+        console.log(this.counts)
     },
 }
 </script>
@@ -466,15 +482,22 @@ a {
                                 height 32px
                                 background-size cover
                                 border-radius 50%
+                                overflow hidden
+                                // background-color white
+
+                                .avatar-img {
+                                    width 100%
+                                    height 100%
+                                }
+                                .avatar-unclicked {
+                                    opacity 1
+                                }
+
+                                .avatar-clicked {
+                                    opacity 0
+                                }
                             }
 
-                            .avatar-unclicked {
-                                background-image url('../assets/avatar.png')
-                            }
-
-                            .avatar-clicked {
-                                background url('')
-                            }
 
                             .name {
                                 height 32px

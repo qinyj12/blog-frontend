@@ -43,7 +43,7 @@
     </div>
 </template>
 <script>
-import TouchJs from '../static/touch.js/touch-0.2.14.min.js'
+import TouchJs from '../utils/touch.js/touch-0.2.14.min.js'
 export default {
     data() {
         return {

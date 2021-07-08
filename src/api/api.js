@@ -10,7 +10,7 @@ export function Repos(usid) {
     })
 }
 
-// 指定用户信息
+// 获取指定用户的信息
 export function UserInfo(usid) {
     return request({
         methods: 'get',
@@ -19,3 +19,9 @@ export function UserInfo(usid) {
 }
 
 // 指定repo的所有文档信息（根据repo的namespace）
+export function RepoDocs(namespace) {
+    return request({
+        methods: 'get',
+        url: '/api/v2/repos/' + namespace + '/docs'
+    })
+}
