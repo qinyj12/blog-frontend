@@ -99,8 +99,7 @@ import { RepoDocs } from '@/api/api.js';
 export default {
     data() {
         return {
-            // counts: [{title: '一'}, {title: '二'}, {title: '三'}, {title: '四'}, {title: '五'}, ],
-            counts: [{title: '一'}],
+            counts: [{title: '', last_editor: {avatar_url: ''}}],
             ShowCopiedImg: false,
             CopiedFeaturedMoved: false,
             CopiedAvatarMoved: false,
@@ -488,6 +487,7 @@ a {
                                 .avatar-img {
                                     width 100%
                                     height 100%
+                                    transition 0s
                                 }
                                 .avatar-unclicked {
                                     opacity 1

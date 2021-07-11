@@ -2,6 +2,7 @@ import axios from 'axios'
 // 因为是外部js，不能继承vue实例，所以要单独引入element-ui
 import 'element-ui/lib/theme-chalk/index.css'
 import { Message } from "element-ui"
+import qs from 'qs'
 
 // 创建一个独立的axios实例
 const service = axios.create({ 
@@ -14,7 +15,7 @@ const service = axios.create({
     // 配置请求超时时间
     timeout: 10000, 
     // 如果用的JSONP，可以配置此参数带上cookie凭证，如果是代理和CORS不用设置
-    // withCredentials: true
+    withCredentials: true
 });
 
 // 请求拦截器

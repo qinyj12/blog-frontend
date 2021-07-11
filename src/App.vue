@@ -6,8 +6,8 @@
 </template>
 <script>
 import Nav from '@/components/Nav.vue';
-import { Repos, UserInfo, RepoDocs } from '@/api/api.js';
-// import axios from 'axios'
+import { Repos, UserInfo, RepoDocs, DocTags } from '@/api/api.js';
+import axios from 'axios'
 // import Footer from '@/components/Footer.vue';
 export default {
     data() {
@@ -27,15 +27,9 @@ export default {
     },
     mounted() {
         this.ActivateWaves();
-        // // 获取用户的repos列表（专栏1、专栏2）
-        // Repos('qinyujie-067rz').then(res => {
-        //     console.log('调用 Repos')
-        //     console.log(res)
-        // })
-        // // 获取指定用户的信息
-        // UserInfo('qinyujie-067rz').then(res => {console.log(res)})
-        // 获取指定repo的所有文档信息
-        // RepoDocs('qinyujie-067rz/rkckig').then(res => {console.log(res)})
+
+        DocTags('48301761').then(res => console.log(res))
+        // axios.get('')
     },
     computed: {
         BodyScrollStatus() {
