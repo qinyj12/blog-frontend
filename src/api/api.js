@@ -1,6 +1,7 @@
 // 默认导出，可以随意命名
 import request from '@/utils/http.js'
 import qs from 'qs'
+import demo from '@/utils/demohttp.js'
 
 // 用户的专栏列表
 export function Repos(usid) {
@@ -32,8 +33,7 @@ export function DocTags(docId) {
     return request({
         methods: 'get',
         url: '/api/tags',
-        // 以下cookie的传输方法是错误的
-        headers: {cookie: '_yuque_session=egAQrSZkE_KQYCtR4BwHZMMknIUHCkxFVfgxzsV-JV0EkZVypXESNosATwExhyt9qgBw8Y-e13_WTFOIkioKpw'},
+        credentials: 'same-origin',
         params: { docId }
     })
 }

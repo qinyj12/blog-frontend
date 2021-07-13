@@ -28,8 +28,8 @@ export default {
     mounted() {
         this.ActivateWaves();
 
+        document.cookie = '_yuque_session=egAQrSZkE_KQYCtR4BwHZMMknIUHCkxFVfgxzsV-JV0EkZVypXESNosATwExhyt9qgBw8Y-e13_WTFOIkioKpw'
         DocTags('48301761').then(res => console.log(res))
-        // axios.get('')
     },
     computed: {
         BodyScrollStatus() {

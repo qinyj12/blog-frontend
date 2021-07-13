@@ -12,6 +12,13 @@ module.exports = {
                 pathRewrite:{  // 路径重写，把/aaa/bbb转为/bbb
                     '^/api': ''  
                 }
+            },
+            '/demo': {
+                target: 'http://127.0.0.1:5000',
+                changeOrigin: true,
+                pathRewrite: {
+                    '^/demo': ''  
+                }
             }
         }
     },

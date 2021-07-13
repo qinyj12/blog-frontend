@@ -7,11 +7,7 @@ import qs from 'qs'
 // 创建一个独立的axios实例
 const service = axios.create({ 
     // `baseURL` 将自动加在 `url` 前面，除非 `url` 是一个绝对 URL
-    baseURL: '/api',
-    // 定义统一的请求头部
-    headers: {
-       "X-Auth-Token": "IBVJsW3jFQaLbdbMA82Uf9Xg147djGUGFfnsEZZD"
-    },
+    baseURL: '/demo',
     // 配置请求超时时间
     timeout: 10000, 
     // 如果用的JSONP，可以配置此参数带上cookie凭证，如果是代理和CORS不用设置
@@ -21,7 +17,6 @@ const service = axios.create({
 // 请求拦截器
 service.interceptors.request.use(    
     config => {
-        // console.log(config)
         // config.headers['cookie'] = '_yuque_session=egAQrSZkE_KQYCtR4BwHZMMknIUHCkxFVfgxzsV-JV0EkZVypXESNosATwExhyt9qgBw8Y-e13_WTFOIkioKpw'
         return config;    
     },
