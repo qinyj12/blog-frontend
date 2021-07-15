@@ -10,6 +10,8 @@ import VClamp from 'vue-clamp'
 import AsyncComputed from 'vue-async-computed'
 import 'element-ui/lib/theme-chalk/index.css'
 import ElementUI from 'element-ui'
+// 新加
+// import MyWorker from 'comlink-loader'
 
 Vue.config.productionTip = false
 // 把waves.js挂载到vue原型链上

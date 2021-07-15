@@ -16,7 +16,7 @@
             </div>
             <!-- 这是普通的注册、登录按钮，平时启用，窄屏时隐藏 -->
             <div id="nav-right">
-                <button class="login-and-signup login waves">登录</button>
+                <button class="login-and-signup login waves" @click="login">登录</button>
                 <button class="login-and-signup signup waves" ref="DemoColor">注册</button>
                 <i class="icon-menu waves" @click="ShowSideBar"></i>
             </div>
@@ -44,11 +44,17 @@
 </template>
 <script>
 import TouchJs from '../utils/touch.js/touch-0.2.14.min.js'
+// 新加
+import MyWorker from '../utils/comlink/worker'
+
 export default {
     data() {
         return {
             TouchJs,
-            ShowMaskAndSideBar: false
+            ShowMaskAndSideBar: false,
+            // 以下为新加
+            continuedCount: 0,
+            counter: 0
         }
     },
     mounted() {
@@ -70,6 +76,16 @@ export default {
         HideSideBarAndMask() {
             this.ShowMaskAndSideBar = !this.ShowMaskAndSideBar
         },
+        // 以下为新加
+        countP1(){
+            this.counter++
+        },
+        async login(){
+            const count = this.continuedCount;
+            const inst = new MyWorker();
+            const obj = await new inst.MyClass();
+            this.continuedCount = await obj.inc(count)
+        }
     },
 }
 </script>
