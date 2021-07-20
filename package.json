@@ -12,6 +12,7 @@
     "comlink-loader": "^2.0.0",
     "element-ui": "^2.15.3",
     "qs": "^6.10.1",
+    "random-int": "^3.0.0",
     "swiper": "^6.7.5",
     "vue": "^2.6.14",
     "vue-async-computed": "^3.9.0",

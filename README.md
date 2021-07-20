@@ -15,7 +15,8 @@
 - [x] 修改封装后的request库
 - [x] 解决全局动画下，点击头像后缓缓消失的问题。要立刻消失
 - [x] 解决cookie的传输问题
-- [ ] 引入comlink-loader
+- [ ] 引入comlink-loader的demo，当前已创建多个worker.js，并在main.js和app.vue内做了改动，要调整
+- [ ] 引入comlink-loader，多线程加载tag
 - [ ] 加载所有文章的tag
 - [ ] 分页
 - [ ] 多人编辑后的显示作者

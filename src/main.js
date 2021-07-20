@@ -13,11 +13,8 @@ import ElementUI from 'element-ui'
 // 新加
 // import MyWorker from 'comlink-loader'
 
-Vue.config.productionTip = false
-// 把waves.js挂载到vue原型链上
-Vue.prototype.$Waves = Waves
-// 把store挂在vue原型链上
-Vue.prototype.$Store = store
+import MyWorker from './worker'
+Vue.prototype.$MyWorker = MyWorker
 
 // 使用swiper
 Vue.use(VueAwesomeSwiper)
