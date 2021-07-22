@@ -9,7 +9,6 @@ import Nav from '@/components/Nav.vue';
 import { Repos, UserInfo, RepoDocs, DocTags } from '@/api/api.js';
 import axios from 'axios'
 // import Footer from '@/components/Footer.vue';
-import { meaningOfLife, MyClass } from './worker'
 export default {
     data() {
         return {
@@ -25,23 +24,38 @@ export default {
             this.$Waves.attach('.waves', null);
             this.$Waves.init(this.WaveConfig);
         },
-        async demo(){
-            // our module exports are exposed on the instance:
-            await meaningOfLife(); // 42
-            // instantiate a class in the worker (does not create a new worker).
-            // notice the `await` here:
-            const obj = await new MyClass(42);
-            await obj.increment();
-            await obj.getValue();
+        getPosts(){
+            // 存储所有http请求
+            let reqList = []
+
+            for(let i = 0; i < 30; i++) {
+                // 下一步测试doctag接口是否能正常调用
+                let req = axios.get('https://jsonplaceholder.typicode.com/posts/' + (i + 1))
+                reqList.push(req)
+            }
+            // 省略号是解构用法
+            return axios.all(reqList).then(axios.spread((...resList) => {
+                return resList // 拿到所有posts数据
+            }))
+        },
+        async renderPage() {
+            let posts = await this.getPosts()
+
+            for(let i = 0; i< posts.length; i++) {
+                if (posts[i] && posts[i].status === 200) {
+                    console.log(posts[i].data.title)
+                }
+            }
         }
     },
     mounted() {
-        // this.ActivateWaves();
+        this.ActivateWaves();
 
         document.cookie = '_yuque_session=egAQrSZkE_KQYCtR4BwHZMMknIUHCkxFVfgxzsV-JV0EkZVypXESNosATwExhyt9qgBw8Y-e13_WTFOIkioKpw'
         DocTags('48301761').then(res => console.log(res))
 
-        this.demo()
+        this.renderPage()
+        
     },
     computed: {
         BodyScrollStatus() {

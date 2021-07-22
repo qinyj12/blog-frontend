@@ -10,11 +10,6 @@ import VClamp from 'vue-clamp'
 import AsyncComputed from 'vue-async-computed'
 import 'element-ui/lib/theme-chalk/index.css'
 import ElementUI from 'element-ui'
-// 新加
-// import MyWorker from 'comlink-loader'
-
-import MyWorker from './worker'
-Vue.prototype.$MyWorker = MyWorker
 
 // 使用swiper
 Vue.use(VueAwesomeSwiper)
@@ -25,6 +20,9 @@ Vue.use(ElementUI)
 
 // 全局注册VClamp组件
 Vue.component('v-clamp', VClamp)
+
+// 把waves.js挂载到vue原型链上
+Vue.prototype.$Waves = Waves
 
 new Vue({
   router,

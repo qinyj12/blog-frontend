@@ -9,7 +9,6 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
-    "comlink-loader": "^2.0.0",
     "element-ui": "^2.15.3",
     "qs": "^6.10.1",
     "random-int": "^3.0.0",

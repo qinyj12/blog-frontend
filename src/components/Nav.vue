@@ -44,8 +44,6 @@
 </template>
 <script>
 import TouchJs from '../utils/touch.js/touch-0.2.14.min.js'
-// 新加
-import MyWorker from '../utils/comlink/worker'
 
 export default {
     data() {
@@ -81,10 +79,6 @@ export default {
             this.counter++
         },
         async login(){
-            const count = this.continuedCount;
-            const inst = new MyWorker();
-            const obj = await new inst.MyClass();
-            this.continuedCount = await obj.inc(count)
         }
     },
 }
