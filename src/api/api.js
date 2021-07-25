@@ -33,7 +33,14 @@ export function DocTags(docId) {
     return request({
         methods: 'get',
         url: '/api/tags',
-        credentials: 'same-origin',
         params: { docId }
+    })
+}
+
+// 测试axios.all的接口
+export function Demo(arg) {
+    return demo({
+        methods: 'get',
+        url: 'https://jsonplaceholder.typicode.com/posts/' + arg,
     })
 }

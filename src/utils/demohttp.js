@@ -26,18 +26,8 @@ service.interceptors.request.use(
 
 // 返回拦截
 service.interceptors.response.use((response)=>{
-    // 获取接口返回结果
-    const res = response.data;
-    const code = response.status;
-    // code为200
-    if(code === 200){
-        console.log('返回200')
-        return res;
-    // code不为200
-    }else{
-        console.log('返回不是200')
-        return res;
-    }
+    console.log('demo工作中')
+    return response
 },(error)=>{
     console.log('返回拦截器catch error')
     console.log(error)

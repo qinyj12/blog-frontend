@@ -6,7 +6,7 @@
 </template>
 <script>
 import Nav from '@/components/Nav.vue';
-import { Repos, UserInfo, RepoDocs, DocTags } from '@/api/api.js';
+import { Repos, UserInfo, RepoDocs, DocTags, Demo } from '@/api/api.js';
 import axios from 'axios'
 // import Footer from '@/components/Footer.vue';
 export default {
@@ -27,10 +27,9 @@ export default {
         getPosts(){
             // 存储所有http请求
             let reqList = []
-
-            for(let i = 0; i < 30; i++) {
-                // 下一步测试doctag接口是否能正常调用
-                let req = axios.get('https://jsonplaceholder.typicode.com/posts/' + (i + 1))
+            // 测试doc id 48639077，48301761
+            for(let i of [48639077, 48301761]) {
+                let req = DocTags(i)
                 reqList.push(req)
             }
             // 省略号是解构用法
@@ -42,9 +41,7 @@ export default {
             let posts = await this.getPosts()
 
             for(let i = 0; i< posts.length; i++) {
-                if (posts[i] && posts[i].status === 200) {
-                    console.log(posts[i].data.title)
-                }
+                console.log(posts[i].data[0])
             }
         }
     },
@@ -52,9 +49,9 @@ export default {
         this.ActivateWaves();
 
         document.cookie = '_yuque_session=egAQrSZkE_KQYCtR4BwHZMMknIUHCkxFVfgxzsV-JV0EkZVypXESNosATwExhyt9qgBw8Y-e13_WTFOIkioKpw'
-        DocTags('48301761').then(res => console.log(res))
+        // DocTags('48301761').then(res => console.log(res))
 
-        this.renderPage()
+        // this.renderPage()
         
     },
     computed: {

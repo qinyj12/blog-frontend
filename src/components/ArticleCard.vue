@@ -12,17 +12,21 @@
                         <router-link :to="'/content/' + item.index">
                             <div class="single-card " @click="ClickCard(index)">
                                 <!-- 这是卡片的头图 -->
-                                <div class="featured-image" 
-                                    :class="{
-                                        'featured-image-unclicked': !item.HideFeaturedImg, 'featured-image-clicked': item.HideFeaturedImg
-                                    }" 
-                                    ref="FeaturedImages"
-                                >
+                                <div class="featured-image" ref="FeaturedImages">
+                                    <img 
+                                        referrerpolicy="no-referrer" 
+                                        class="cover-img"
+                                        :class="{
+                                            'cover-unclicked': !item.HideFeaturedImg,
+                                            'cover-clicked': item.HideFeaturedImg
+                                        }"
+                                        :src="item.cover ? item.cover : require('../assets/featured-image.png')" 
+                                    >
                                 </div>
                                 <!-- 这是头图下方的文字部分 -->
                                 <div class="content-wrap">
                                     <div class="entry-header">
-                                        <span class="category">案例</span>
+                                        <span class="category">{{item.tags !== undefined ? item.tags : '未分类'}}</span>
                                         <h3 class="title">{{item.title}}</h3>
                                     </div>
                                     <div class="entry-footer">
@@ -48,7 +52,8 @@
                                                 <span class="name">{{item.last_editor.name}}</span>
                                             </div>
                                         </router-link>
-                                        <div class="published-date">August 31, 2020</div>
+                                        <!-- 格式为2021-07-08T15:23:00.000Z，截取从第0个开始后10位的字符串 -->
+                                        <div class="published-date">{{item.created_at.substr(0,10)}}</div>
                                     </div>
                                 </div>
                             </div>
@@ -95,11 +100,13 @@
 </template>
 
 <script>
-import { RepoDocs } from '@/api/api.js';
+import { RepoDocs, DocTags } from '@/api/api.js';
+import axios from 'axios';
 export default {
     data() {
         return {
-            counts: [{title: '', last_editor: {avatar_url: ''}}],
+            // 为防止console报错才定义一个初始值
+            counts: [{title: '', last_editor: {avatar_url: ''}, created_at: ''}],
             ShowCopiedImg: false,
             CopiedFeaturedMoved: false,
             CopiedAvatarMoved: false,
@@ -126,11 +133,14 @@ export default {
             // 找到被点击的那一张卡片，设卡片头图为白底
             this.CardClickedToBlank(index);
 
-            // 拿到点击的那张卡片的头图，以及宽、高、位置
+            // 拿到点击的那张卡片头图的宽、高、位置
             let TargetImgDom = this.GetClickedImgDom(this.$refs.FeaturedImages[index]);
 
+            // 拿到这张头图的src属性
+            let TargetImgSrc = this.$refs.FeaturedImages[index].getElementsByClassName('cover-img')[0].src
+
             // 把上面拿到的宽、高、位置赋值给 #copied-img，copied-img显示出来
-            await this.CopyClickedImg(TargetImgDom, this.$refs.CopiedImg, require('../assets/featured-image.png'));
+            await this.CopyClickedImg(TargetImgDom, this.$refs.CopiedImg, TargetImgSrc);
 
             // 卡片区域整体下沉，cover消失
             await this.MoveArticleCardArea();
@@ -150,14 +160,18 @@ export default {
             // 找到被点击的那一张卡片，设用户头像为白底
             this.AvatarClickedToBlank(index);
 
-            // 拿到点击的那张卡片的头像，以及宽、高、位置
+            // 拿到点击的那张卡片头像的宽、高、位置
             let TargetImgDom = this.GetClickedImgDom(this.$refs.avatar[index]);
 
+            // 拿到头像的src属性
+            let TargetAvatarSrc = this.$refs.avatar[index].getElementsByClassName('avatar-img')[0].src
             // 把上面拿到的宽、高、位置赋值给 copied-avatar，copied-avatar显示出来
-            await this.CopyClickedImg(TargetImgDom, this.$refs.CopiedAvatar, require('../assets/avatar.png'));
+            await this.CopyClickedImg(TargetImgDom, this.$refs.CopiedAvatar, TargetAvatarSrc);
 
+            // 拿到对应cover的src属性
+            let TargetCoverSrc = this.$refs.FeaturedImages[index].getElementsByClassName('cover-img')[0].src
             // 把上面拿到的宽、高、位置赋值给 avatar-back，avatar-back显示出来
-            await this.CopyClickedImg(TargetImgDom, this.$refs.AvatarBack, require('../assets/featured-image.png'));
+            await this.CopyClickedImg(TargetImgDom, this.$refs.AvatarBack, TargetCoverSrc);
 
             // 卡片区域整体下沉，cover消失
             await this.MoveArticleCardArea();
@@ -281,13 +295,51 @@ export default {
         // 获取指定repo下的所有docs的基本信息，然后赋值给变量
         async GetRepoDocs(namespace) {
             await RepoDocs(namespace).then(res => {
-                this.counts = res.data
+                // 用这个拿到docs的所有信息，此时还拿不到tag信息
+                let DocsInfo = res.data
+                // 先获取所有docs的id
+                let DocsIds = []
+                // 把id组成一个[]，用多线程接口获取tags
+                for (let i of DocsInfo) {
+                    DocsIds.push(i.id)
+                }
+                this.getTags(DocsIds).then(res => {
+                    // 获取到的数据格式为[{"data":[{"title":"xx","doc_id":xx}]},{"data":[{"title":"xx","doc_id":xx}]}]
+                    for (let i in res) {
+                        // 如果能获取到tag数据
+                        if (res[i].data[0]) {
+                            // 因为DocsInfo也是一个[]，所以也要挨个赋值tag值
+                            DocsInfo[i].tags = res[i].data[0].title
+                        // 如果获取不到tag数据，res[i].data[0]就是空值
+                        } else {
+                            DocsInfo[i].tags = undefined
+                        }
+                    }
+                    this.counts = DocsInfo
+                    console.log(this.counts)
+                })
             })
+        },
+
+        // 根据doc的id，获取tag
+        getTags(docsId){
+            // 存储所有http请求
+            let reqList = []
+            // 拿到所有docs的id
+            for(let i of docsId) {
+                let req = DocTags(i)
+                reqList.push(req)
+            }
+            // 省略号是解构用法
+            return axios.all(reqList).then(axios.spread((...resList) => {
+                return resList // 拿到所有posts数据
+            }))
         }
+
     },
     async mounted() {
         await this.GetRepoDocs('qinyujie-067rz/rkckig')
-        console.log(this.counts)
+        // console.log(this.counts)
     },
 }
 </script>
@@ -411,6 +463,22 @@ a {
                     background-repeat no-repeat
                     background-size cover
                     background-position 50% 50%
+                    overflow hidden
+
+                    .cover-img {
+                        width 100%
+                        height 100%
+                        object-fit cover // 必须有宽高，才能生效
+                        transition 0s
+                    }
+
+                    .cover-unclicked {
+                        opacity 1
+                    }
+
+                    .cover-clicked {
+                        opacity 0
+                    }
                 }
                 // 没点击卡片时，正常展示图片
                 .featured-image-unclicked {
