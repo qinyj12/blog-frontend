@@ -24,35 +24,12 @@ export default {
             this.$Waves.attach('.waves', null);
             this.$Waves.init(this.WaveConfig);
         },
-        getPosts(){
-            // 存储所有http请求
-            let reqList = []
-            // 测试doc id 48639077，48301761
-            for(let i of [48639077, 48301761]) {
-                let req = DocTags(i)
-                reqList.push(req)
-            }
-            // 省略号是解构用法
-            return axios.all(reqList).then(axios.spread((...resList) => {
-                return resList // 拿到所有posts数据
-            }))
-        },
-        async renderPage() {
-            let posts = await this.getPosts()
-
-            for(let i = 0; i< posts.length; i++) {
-                console.log(posts[i].data[0])
-            }
-        }
     },
     mounted() {
         this.ActivateWaves();
 
         document.cookie = '_yuque_session=egAQrSZkE_KQYCtR4BwHZMMknIUHCkxFVfgxzsV-JV0EkZVypXESNosATwExhyt9qgBw8Y-e13_WTFOIkioKpw'
-        // DocTags('48301761').then(res => console.log(res))
 
-        // this.renderPage()
-        
     },
     computed: {
         BodyScrollStatus() {

@@ -11,6 +11,7 @@ import AsyncComputed from 'vue-async-computed'
 import 'element-ui/lib/theme-chalk/index.css'
 import ElementUI from 'element-ui'
 
+
 // 使用swiper
 Vue.use(VueAwesomeSwiper)
 // 使用asyncComputed

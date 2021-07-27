@@ -37,6 +37,8 @@ export function DocTags(docId) {
     })
 }
 
+// python定制后端，用无头浏览器模拟点击登录，获取所有文章的标签
+
 // 测试axios.all的接口
 export function Demo(arg) {
     return demo({
