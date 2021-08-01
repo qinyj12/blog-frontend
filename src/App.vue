@@ -6,7 +6,7 @@
 </template>
 <script>
 import Nav from '@/components/Nav.vue';
-import { Repos, UserInfo, RepoDocs, DocTags, Demo } from '@/api/api.js';
+import { AllTags } from '@/api/api.js';
 import axios from 'axios'
 // import Footer from '@/components/Footer.vue';
 export default {
@@ -28,8 +28,9 @@ export default {
     mounted() {
         this.ActivateWaves();
 
-        document.cookie = '_yuque_session=egAQrSZkE_KQYCtR4BwHZMMknIUHCkxFVfgxzsV-JV0EkZVypXESNosATwExhyt9qgBw8Y-e13_WTFOIkioKpw'
+        document.cookie = '_yuque_session=W37o80DxDFYtgeJlvnGCRIAIruIf4G7abHm6D6oS6fnsHDAZlwqhFmLzsF0Lyz_k7qjC4sDeobNzAa3KfIwshg=='
 
+        // AllTags('qinyujie-067rz').then(resp => console.log(resp))
     },
     computed: {
         BodyScrollStatus() {

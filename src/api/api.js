@@ -1,11 +1,9 @@
-// 默认导出，可以随意命名
-import request from '@/utils/http.js'
-import qs from 'qs'
+import { yuque_service, backend } from '@/utils/http.js' // 默认导出，可以随意命名
 import demo from '@/utils/demohttp.js'
 
 // 用户的专栏列表
 export function Repos(usid) {
-    return request({
+    return yuque_service({
         methods: 'get',
         // 这里一定要用proxy转发，如果直接http://xxx这样就会被浏览器同源策略ban掉
         url: '/api/v2/users/' + usid + '/repos', 
@@ -14,7 +12,7 @@ export function Repos(usid) {
 
 // 获取指定用户的信息
 export function UserInfo(usid) {
-    return request({
+    return yuque_service({
         methods: 'get',
         url: '/api/v2/users/' + usid
     })
@@ -22,7 +20,7 @@ export function UserInfo(usid) {
 
 // 指定repo的所有文档信息（根据repo的namespace）
 export function RepoDocs(namespace) {
-    return request({
+    return yuque_service({
         methods: 'get',
         url: '/api/v2/repos/' + namespace + '/docs'
     })
@@ -30,7 +28,7 @@ export function RepoDocs(namespace) {
 
 // 获取指定文档的标签（根据doc的id）
 export function DocTags(docId) {
-    return request({
+    return yuque_service({
         methods: 'get',
         url: '/api/tags',
         params: { docId }
@@ -38,6 +36,13 @@ export function DocTags(docId) {
 }
 
 // python定制后端，用无头浏览器模拟点击登录，获取所有文章的标签
+export function AllTags(login) {
+    return backend({
+        methods: 'get',
+        url: '/yuque/tags',
+        params: { login }
+    })
+}
 
 // 测试axios.all的接口
 export function Demo(arg) {

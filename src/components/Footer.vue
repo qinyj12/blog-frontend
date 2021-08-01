@@ -43,7 +43,16 @@
             <div class="tags-about-wrap">
                 <div class="footer-top-son footer-top-tags">
                     <h3>标签</h3>
-                    <ul>
+                    <!-- 加载所有标签的过渡动画 -->
+                    <div class="tags-loading-box" v-show="!ShowTags">
+                        <span class="tags-loading-son tags-loading-1"></span>
+                        <span class="tags-loading-son tags-loading-2"></span>
+                        <span class="tags-loading-son tags-loading-3"></span>
+                        <span class="tags-loading-son tags-loading-4"></span>
+                        <span class="tags-loading-son tags-loading-5"></span>
+                    </div>
+                    <!-- 所有标签 -->
+                    <ul v-show="ShowTags">
                         <li 
                             v-for="(item, index) in tags" 
                             :key="index" 
@@ -52,6 +61,8 @@
                             # {{item}}
                         </li>
                     </ul>
+
+                    <div class="tags-tip">标签API更新频率：24小时一次</div>
                 </div>
                 
                 <div class="footer-top-son footer-top-about">
@@ -79,10 +90,12 @@
     </div>
 </template>
 <script>
+import { AllTags } from '@/api/api.js';
 export default {
     data() {
         return {
-            tags: ['案例', '生活', '旅游', '技术', '读书笔记', '玩乐', '美食', '见闻', '读书', '照片', '相册集'],
+            tags: [],
+            ShowTags: false,
             HotArticles: [
                 {title:'第一篇', time:'2020年10月11日', comments:'3', pageviews: '50'}, 
                 {title:'第二篇', time:'2020年10月10日', comments:'1', pageviews: '100'}, 
@@ -180,11 +193,21 @@ export default {
         // 修改vuex中的一个值，隐藏掉content组件中所有的子组件
         HideAllThing() {
             this.$store.commit('SinkSomething', true)
+        },
+        // 从后端获取所有docs的标签
+        async GetAllTags(login) {
+            return AllTags(login).then(resp => {
+                this.tags = resp.result
+            })
         }
     },
-    mounted() {
+    async mounted() {
         // 判断热门文章是否只有一篇
         this.IfSingleRecommended();
+        // 从后端获取所有docs的标签
+        await this.GetAllTags('qinyujie-067rz');
+
+        this.ShowTags = true;
     },
     destroyed() {
         this.$store.commit('ChangeHomeBuffer', 0);
@@ -325,6 +348,50 @@ export default {
 
             .footer-top-tags {
                 width calc((31 / 65.5) * 100%)
+                position relative
+
+                .tags-loading-box {
+                    display flex
+                    justify-content space-between
+                    flex-wrap wrap
+                    padding 0 10px
+
+                    .tags-loading-son {
+                        display inline-block
+                        height 15px
+                        // border 1px solid
+                        margin 5px 0
+                        // background: #eee;
+                        // background-size 100% 100%
+                        background linear-gradient(110deg, #ececec 8%, #ececec 33%)
+                        animation 2s shine linear infinite
+                    }
+                    @keyframes shine {
+                        0% {
+                            opacity 0.5
+                        } 50% {
+                            opacity 1
+                        } 100% {
+                            opacity 0.5
+                        }
+                    }
+
+                    .tags-loading-1 {
+                        width 50%
+                    }
+                    .tags-loading-2 {
+                        width 47%
+                    }
+                    .tags-loading-3 {
+                        width 20%
+                    }
+                    .tags-loading-4 {
+                        width 40%
+                    }
+                    .tags-loading-5 {
+                        width 34%
+                    }
+                }
 
                 ul {
                     list-style none
@@ -340,6 +407,8 @@ export default {
                         margin 0 8px 8px 0
                         padding 0 13px
                         transition all 0.1s
+                        height 25px
+                        line-height 25px
                     }
 
                     li:hover {
@@ -348,6 +417,15 @@ export default {
                         border 1px solid #19DDC4
                         cursor pointer
                     }
+                }
+
+                .tags-tip {
+                    display flex
+                    font-size small
+                    font-style italic
+                    color gray
+                    justify-content flex-end
+                    padding 0 10px
                 }
             }
 
@@ -509,5 +587,4 @@ export default {
         }
     }
 }
-
 </style>

@@ -4,7 +4,7 @@ module.exports = {
     transpileDependencies: ['vue-clamp', 'resize-detector'],
     devServer: {
         port: 8090,
-        // 测试跨域，但是失败
+        // 跨域转发
         proxy: {
             '/api': {
                 target: 'https://www.yuque.com',
