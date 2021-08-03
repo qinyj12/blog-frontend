@@ -1,13 +1,36 @@
 // 首页的文章卡片区域
 <template>
     <div id="article-card-area">
+        <ul class="loading-card-box" v-show="!LoadFinshed">
+            <li class="loading-single-card-li" v-for="(item, index) in Array(3)" :key="index">
+                <div class="loading-single-card">
+                    <div class="loading-featured-image"></div>
+                    <div class="loading-content-wrap">
+                        <div class="loading-entry-header">
+                            <span class="loading-category"></span>
+                            <h3 class="loading-title">
+                                <div class="loading-title-text"></div>
+                            </h3>
+                        </div>
+                        <div class="loading-entry-footer">
+                            <div class="loading-author">
+                                <div class="loading-avatar"></div>
+                                <span class="loading-name"></span>
+                            </div>
+                            <div class="loading-published-date"></div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+
+        </ul>
 
         <!-- 这里要记住article-card组件的滚动条位置，所以要keep-alive -->
         <keep-alive>
             <transition name="cards-sink">
                 <!-- 这是所有的卡片列表 -->
-                <ul v-show="!SinkAllCards">
-                    <li v-for="(item, index) in counts" :key="item.index">
+                <ul v-show="!SinkAllCards && LoadFinshed" class="loaded-card-box">
+                    <li v-for="(item, index) in counts" :key="item.index" class="loaded-single-card-li">
                         <!-- 加一层路由 -->
                         <router-link :to="'/content/' + item.index">
                             <div class="single-card " @click="ClickCard(index)">
@@ -107,6 +130,7 @@ export default {
         return {
             // 为防止console报错才定义一个初始值
             counts: [{title: '', last_editor: {avatar_url: ''}, created_at: ''}],
+            LoadFinshed: false, // 用于在api加载完成前展示过渡动画的
             ShowCopiedImg: false,
             CopiedFeaturedMoved: false,
             CopiedAvatarMoved: false,
@@ -317,6 +341,15 @@ export default {
                     }
                     this.counts = DocsInfo
                     console.log(this.counts)
+                    // 看看能不能从语雀api拿到哪怕一篇文档，如果可以
+                    if (this.counts[0].id) {
+                        // 给2秒钟展示loading动画
+                        setTimeout(() => {
+                            this.LoadFinshed = true
+                        }, 2000);
+                    } else {
+                        this.LoadFinshed = false
+                    }
                 })
             })
         },
@@ -338,8 +371,8 @@ export default {
 
     },
     async mounted() {
-        await this.GetRepoDocs('qinyujie-067rz/rkckig')
-        // console.log(this.counts)
+        await this.GetRepoDocs('qinyujie-067rz/rkckig');
+        
     },
 }
 </script>
@@ -353,9 +386,22 @@ body {
 sink-time = 0.2s
 // copied-img的动画时间
 copied-img-time = 0.3s
+// loading-card的闪动效果
+shine-duration = 2s
 
 a {
     color #999999
+}
+
+// 这是loading卡片的动画效果
+@keyframes shine {
+    0% {
+        opacity 0.5
+    } 50% {
+        opacity 1
+    } 100% {
+        opacity 0.5
+    }
 }
 
 #article-card-area {
@@ -436,7 +482,7 @@ a {
     }
 
     // 卡片区域
-    ul {
+    ul.loaded-card-box, ul.loading-card-box {
         list-style none
         padding 0
         display flex
@@ -445,18 +491,24 @@ a {
         max-width 1240px
         box-sizing border-box
 
-        li {
+        li.loaded-single-card-li, li.loading-single-card-li {
+            box-sizing border-box
             margin-bottom 60px
             width 345px
 
-            .single-card {
+            .single-card, .loading-single-card {
                 width 100%
                 height 429px
                 box-shadow 0px 1px 4px 0px rgba(0, 0, 0, 0.15)
                 border-radius 4px
                 overflow hidden
 
-                .featured-image {
+                .loading-featured-image {
+                    background linear-gradient(110deg, #ececec 8%, #ececec 33%)
+                    animation shine-duration shine linear infinite
+                }
+
+                .featured-image, .loading-featured-image {
                     width 100%
                     height 224px
                     // background-image url('../assets/featured-image.png')
@@ -480,30 +532,30 @@ a {
                         opacity 0
                     }
                 }
-                // 没点击卡片时，正常展示图片
-                .featured-image-unclicked {
-                    background-image url('../assets/featured-image.png')
-                }
-                // 点击卡片后，设为白底
-                .featured-image-clicked {
-                    background-image url()
-                }
 
-                .content-wrap {
+                .content-wrap, .loading-content-wrap {
+                    box-sizing border-box
                     width 100%
                     height 205px
 
-                    .entry-header {
+                    .entry-header, .loading-entry-header {
+                        box-sizing border-box
                         width 95%
                         height 92px
                         margin 24px auto
 
-                        .category {
+                        .category, .loading-category {
                             color #999999
                             height 24px
                             position relative
                             // 不知道为啥，用了relative后这个元素就在侧边栏及其蒙版的上方了，只能手动z-index来弥补
                             z-index -1
+                        }
+                        .loading-category {
+                            display inline-block
+                            width 30%
+                            background linear-gradient(110deg, #ececec 8%, #ececec 33%)
+                            animation shine-duration shine linear infinite
                         }
 
                         .category:before, .category:after {
@@ -522,13 +574,27 @@ a {
                             right -24px
                         }
 
-                        .title {
+                        .title, .loading-title {
                             height 56px
                             line-height 56px
                         }
+
+                        .loading-title {
+                            display flex
+                            justify-content center
+                            align-items center
+                            
+                            .loading-title-text {
+                                width 70%
+                                height 30px
+                                background linear-gradient(110deg, #ececec 8%, #ececec 33%)
+                                animation shine-duration shine linear infinite
+                            }
+                        }
                     }
 
-                    .entry-footer {
+                    .entry-footer, .loading-entry-footer {
+                        box-sizing border-box
                         width 95%
                         height 65px
                         margin 0 auto
@@ -539,12 +605,17 @@ a {
                         color #999999
                         font-size 12px
 
-                        .author {
+                        .author, .loading-author {
                             flex 1
                             height 32px
                             display flex
 
-                            .avatar {
+                            .loading-avatar {
+                                background linear-gradient(110deg, #ececec 8%, #ececec 33%)
+                                animation shine-duration shine linear infinite
+                            }
+
+                            .avatar, .loading-avatar {
                                 width 32px
                                 height 32px
                                 background-size cover
@@ -566,8 +637,13 @@ a {
                                 }
                             }
 
+                            .loading-name {
+                                width 40%
+                                background linear-gradient(110deg, #ececec 8%, #ececec 33%)
+                                animation shine-duration shine linear infinite
+                            }
 
-                            .name {
+                            .name, .loading-name {
                                 height 32px
                                 line-height 32px
                                 margin-left 10px
@@ -581,7 +657,7 @@ a {
                             }
                         }
 
-                        .published-date {
+                        .published-date, .loading-published-date {
                             height 32px
                             line-height 32px
                         }
@@ -600,15 +676,15 @@ a {
         opacity 0
     }
     // 用于卡片出现时的动画
-    .cards-sink-enter {
-        opacity 0
-        transform translateY(100px)
-    }
-    .cards-sink-enter-active {
-        transition all sink-time
-    }
-    .cards-sink-enter-to {
-    }
+    // .cards-sink-enter {
+    //     opacity 0
+    //     transform translateY(100px)
+    // }
+    // .cards-sink-enter-active {
+    //     transition all sink-time
+    // }
+    // .cards-sink-enter-to {
+    // }
 
 }
 
@@ -616,18 +692,18 @@ a {
 // 当屏幕宽度>992时，卡片变成三列
 @media screen and (min-width 992px) {
     #article-card-area {
-        ul {
+        ul.loaded-card-box, ul.loading-card-box {
             width 100%
             margin 0 auto
             // 屏幕越宽，卡片区域两边的留白越大
             padding 64px 4%
 
-            li {
+            li.loaded-single-card-li, li.loading-single-card-li {
                 // 屏幕越宽，卡片越宽
                 width 31%
             }
             // 父元素用了flex，为了在子元素间距相等的同时，保证最后一行的元素居左，就不能使用space-between，而是要让手动设置margin
-            li:not(:nth-child(3n)) {
+            li.loaded-single-card-li:not(:nth-child(3n)), li.loading-single-card-li:not(:nth-child(3n)) {
                 margin-right calc((100% - (31% * 3))/2)
             }
         }
@@ -637,14 +713,14 @@ a {
 // 当屏幕宽度<992时，卡片变成双列
 @media screen and (max-width 992px) {
     #article-card-area {
-        ul {
+        ul.loaded-card-box, ul.loading-card-box {
             // 设置双列以后，父元素width恒定为720px，卡片大小不变，只是两边留白自适应
             width 720px
             margin 0 auto
             padding 64px 0
 
             // 父元素用了flex，为了在子元素间距相等的同时，保证最后一行的元素居左，就不能使用space-between，而是要让手动设置margin
-            li:not(:nth-child(2n)) {
+            li.loaded-single-card-li:not(:nth-child(2n)), li.loading-single-card-li:not(:nth-child(2n)) {
                 margin-right calc((100% - (345 * 2) * 1px)/1)
             }
         }
@@ -654,7 +730,7 @@ a {
 // 当屏幕宽度<768时，卡片变成单列，并且卡片width=100%。此处只需要把父元素li改成100%
 @media screen and (max-width 768px) {
     #article-card-area {
-        ul {
+        ul.loaded-card-box, ul.loading-card-box {
             // 因为父元素已经有15px的padding，所以子元素直接100%接到头就好
             width 100%
             // 因为变成了单列，所以纵向陈列
@@ -662,7 +738,7 @@ a {
             // 即便变成了单列，两边仍然要留出15px空白
             padding 32px 15px
 
-            li {
+            li.loaded-single-card-li, li.loading-single-card-li {
                 // 因为是单列，所以直接100%
                 width 100%
             }

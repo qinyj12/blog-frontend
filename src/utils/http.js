@@ -84,8 +84,12 @@ backend.interceptors.response.use((response)=>{
         return res;
     }
 },(error)=>{
-    console.log('返回拦截器catch error')
+    console.log('backend返回拦截器catch error')
     console.log(error)
+    return {
+        'code': 500,
+        'message': 'error'
+    }
 });
 
 export {yuque_service, backend}

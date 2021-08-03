@@ -15,12 +15,12 @@
     </div>
 </template>
 <script>
-import ArticleCard from '@/components/ArticleCard.vue';
+// import ArticleCard from '@/components/ArticleCard.vue';
 import Cover from '@/components/Cover.vue';
 import Footer from '@/components/Footer.vue';
 export default {
     components: {
-        ArticleCard,
+        ArticleCard: resolve => {require(['@/components/ArticleCard.vue'], resolve)},
         Cover,
         Footer
     },

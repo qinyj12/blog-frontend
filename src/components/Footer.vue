@@ -44,7 +44,7 @@
                 <div class="footer-top-son footer-top-tags">
                     <h3>标签</h3>
                     <!-- 加载所有标签的过渡动画 -->
-                    <div class="tags-loading-box" v-show="!ShowTags">
+                    <div class="tags-loading-box" v-show="!ShowTags && !TagsFailed">
                         <span class="tags-loading-son tags-loading-1"></span>
                         <span class="tags-loading-son tags-loading-2"></span>
                         <span class="tags-loading-son tags-loading-3"></span>
@@ -52,7 +52,7 @@
                         <span class="tags-loading-son tags-loading-5"></span>
                     </div>
                     <!-- 所有标签 -->
-                    <ul v-show="ShowTags">
+                    <ul v-show="ShowTags && !TagsFailed">
                         <li 
                             v-for="(item, index) in tags" 
                             :key="index" 
@@ -61,6 +61,11 @@
                             # {{item}}
                         </li>
                     </ul>
+                    <!-- 加载失败后显示 -->
+                    <div v-show="TagsFailed" class="tags-failed-box">
+                        <span>失败了o(╥﹏╥)o</span>
+                        <span>点击<a @click="GetAllTags('qinyujie-067rz')">重试</a></span>
+                    </div>
 
                     <div class="tags-tip">标签API更新频率：24小时一次</div>
                 </div>
@@ -96,12 +101,12 @@ export default {
         return {
             tags: [],
             ShowTags: false,
+            TagsFailed: false,
             HotArticles: [
                 {title:'第一篇', time:'2020年10月11日', comments:'3', pageviews: '50'}, 
                 {title:'第二篇', time:'2020年10月10日', comments:'1', pageviews: '100'}, 
                 {title:'第三篇', time:'2020年10月12日', comments:'2', pageviews: '70'}, 
             ],
-
             swiperOptions: {
             },
 
@@ -196,8 +201,19 @@ export default {
         },
         // 从后端获取所有docs的标签
         async GetAllTags(login) {
+            this.ShowTags = false;
+            this.TagsFailed = false;
             return AllTags(login).then(resp => {
-                this.tags = resp.result
+                if (resp.code == 200) {
+                    this.tags = resp.result;
+                    this.ShowTags = true;
+                    this.TagsFailed = false
+                } else {
+                    console.log(resp.message)
+                    this.ShowTags = false;
+                    this.TagsFailed = true
+                }
+                
             })
         }
     },
@@ -207,7 +223,7 @@ export default {
         // 从后端获取所有docs的标签
         await this.GetAllTags('qinyujie-067rz');
 
-        this.ShowTags = true;
+        
     },
     destroyed() {
         this.$store.commit('ChangeHomeBuffer', 0);
@@ -419,13 +435,35 @@ export default {
                     }
                 }
 
+                .tags-failed-box {
+                    width 100%
+                    box-sizing border-box
+                    display flex
+                    align-items center
+                    justify-content center
+                    flex-direction column
+                    padding 0px 10px
+                    
+                    span {
+                        margin 0px 0px 5px
+
+                        a {
+                            text-decoration underline
+                            color CadetBlue
+                        }
+                        a:hover {
+                            cursor pointer
+                        }
+                    }
+                }
+
                 .tags-tip {
                     display flex
                     font-size small
                     font-style italic
                     color gray
                     justify-content flex-end
-                    padding 0 10px
+                    padding 10px 10px
                 }
             }
 
