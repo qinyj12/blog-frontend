@@ -10,7 +10,7 @@ import VClamp from 'vue-clamp'
 import AsyncComputed from 'vue-async-computed'
 import 'element-ui/lib/theme-chalk/index.css'
 import ElementUI from 'element-ui'
-
+import VueLazyComponent from '@xunlei/vue-lazy-component'
 
 // 使用swiper
 Vue.use(VueAwesomeSwiper)
@@ -18,6 +18,8 @@ Vue.use(VueAwesomeSwiper)
 Vue.use(AsyncComputed)
 // 使用element-ui
 Vue.use(ElementUI)
+// 使用VueLazyComponent
+Vue.use(VueLazyComponent)
 
 // 全局注册VClamp组件
 Vue.component('v-clamp', VClamp)

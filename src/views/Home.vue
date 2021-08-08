@@ -5,9 +5,12 @@
             <Cover v-show="!IfSinkCover" v-bind="{CoverImg: CoverImg, CoverShowArticleDetail: false}"/>
         </transition>
 
-        <!-- card组件的隐藏动画在组件内判断，不需要再home父组件中判断 -->
-        <ArticleCard />
-
+        <!-- 使用懒加载 -->
+        <vue-lazy-component>
+            <!-- card组件的隐藏动画在组件内判断，不需要再home父组件中判断 -->
+            <ArticleCard />
+        </vue-lazy-component>
+        
         <!-- 判断要不要隐藏footer组件，如果隐藏，给隐藏过程添加动画 -->
         <transition name="footer-sink">
             <Footer v-show="!IfSinkCover" />
@@ -17,12 +20,11 @@
 <script>
 // import ArticleCard from '@/components/ArticleCard.vue';
 import Cover from '@/components/Cover.vue';
-import Footer from '@/components/Footer.vue';
 export default {
     components: {
         ArticleCard: resolve => {require(['@/components/ArticleCard.vue'], resolve)},
         Cover,
-        Footer
+        Footer: resolve => {require(['@/components/Footer.vue'], resolve)}
     },
     data() {
         return {
