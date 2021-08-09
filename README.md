@@ -20,7 +20,7 @@
 - [x] 获取所有标签，首页展示所有标签
 - [x] 获取所有标签的后端接口加一个缓存
 - [x] 首页骨架屏
-- [ ] 懒加载骨架屏，vue-lazy-component、vue-clazy-load库(vue-lazy-component对footer不管用)
+- [x] 懒加载骨架屏，vue-lazy-component库
 - [ ] 点击进入文章详情
 - [ ] 点击头像进入作者详情
 - [ ] 点击标签展示所有tags的文章
