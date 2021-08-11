@@ -47,7 +47,16 @@
 </template>
 <script>
 export default {
-    props: ['CoverImg', 'CoverShowArticleDetail', 'CoverShowAuthorDetail'],
+    // props: ['CoverImg', 'CoverShowArticleDetail', 'CoverShowAuthorDetail'],
+    props: {
+        CoverShowArticleDetail: {type: Boolean},
+        CoverShowAuthorDetail: {type: Boolean},
+        CoverImg: {
+            default: function(val) {
+                return this.$store.state.CoverImg
+            }
+        }
+    },
     data() {
         return {
             // 这个字段是用来判断要不要显示article detail的，默认不显示

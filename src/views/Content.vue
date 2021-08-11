@@ -55,7 +55,7 @@ export default {
     data() {
         return {
             // 传值给cover组件
-            CoverImg: require('../assets/featured-image.png'),
+            CoverImg: undefined,
             // 这个值是用来重新渲染cover组件的
             ReRenderCover: 0,
         }
@@ -71,7 +71,13 @@ export default {
         // 从home=>content时的瞬间变成的scroll，目的是防止动画撕裂。进入content后，重新变成auto
         this.$store.commit('ChangeBodyScrollStatus', 'auto');
         // 从home=>content时会给home组件留500ms的缓冲时间，目的是给home留一些动画时间。进入content后清零
-        this.$store.commit('ChangeHomeBuffer', 0)
+        this.$store.commit('ChangeHomeBuffer', 0);
+        /////////////////////////
+        // 测试用的，可以删除 ///
+        ///////////////////////
+        setTimeout(() => {
+            this.CoverImg = require('../assets/test2.jpeg')
+        }, 2000);
     },
     // 路由复用时，即/content/1 => /content/2
     beforeRouteUpdate (to, from, next) {

@@ -32,7 +32,7 @@
                 <ul v-show="!SinkAllCards && LoadFinshed" class="loaded-card-box">
                     <li v-for="(item, index) in counts" :key="item.index" class="loaded-single-card-li">
                         <!-- 加一层路由 -->
-                        <router-link :to="'/content/' + item.index">
+                        <router-link :to="'/content/' + item.slug">
                             <div class="single-card " @click="ClickCard(index)">
                                 <!-- 这是卡片的头图 -->
                                 <div class="featured-image" ref="FeaturedImages">
@@ -43,7 +43,7 @@
                                             'cover-unclicked': !item.HideFeaturedImg,
                                             'cover-clicked': item.HideFeaturedImg
                                         }"
-                                        :src="item.cover ? item.cover : require('../assets/featured-image.png')" 
+                                        :src="item.cover ? item.cover : require('../assets/featured-image.png')"
                                     >
                                 </div>
                                 <!-- 这是头图下方的文字部分 -->
@@ -174,6 +174,9 @@ export default {
 
             // body的滚动条常显，防止cover高度太小，滚动条不显示，然后在进入content后动画会撕裂
             this.$store.commit('ChangeBodyScrollStatus', 'scroll');
+
+            // 接下来会进入详情页，需要更新cover的背景图
+            this.$store.commit('ChangeCoverImg', TargetImgSrc)
         },
 
         // 点击用户名字和头像后的一系列动画

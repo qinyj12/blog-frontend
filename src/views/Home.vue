@@ -28,8 +28,8 @@ export default {
     },
     data() {
         return {
-            // 传值给cover组件
-            CoverImg: require('../assets/cover.png'),
+            // 传值给cover组件，传入undefined，调用cover组件内部的默认值
+            CoverImg: undefined,
         }
     },
     computed: {
@@ -37,6 +37,12 @@ export default {
         IfSinkCover() {
             return this.$store.state.IfSinkCover
         }
+    },
+    mounted() {
+        // 当访问首页时，就在localstorage中设置cover的默认值。
+        localStorage.setItem('DefaultCoverImg', require('../assets/cover.png'))
+        // 然后强行让cover组件的背景图改成默认值。
+        this.CoverImg = localStorage.getItem('DefaultCoverImg')
     },
 }
 </script>
