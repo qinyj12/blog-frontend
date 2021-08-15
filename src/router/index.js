@@ -14,7 +14,7 @@ const routes = [
         meta: {title: '我的博客'}
     },
     {
-        path: '/content/:title',
+        path: '/content/:slug',
         name: 'Content',
         component: () => import( '../views/Content.vue'),
         meta: {title: '详情'}

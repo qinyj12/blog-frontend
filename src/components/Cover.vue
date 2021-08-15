@@ -6,11 +6,11 @@
             <!-- 以下是点击进入到文章详情页时展示的部分，包括标题、文章分类、作者、时间等 -->
             <transition name="article-detail-rise">
                 <div v-show="IfShowArticleDetail">
-                    <div><span class="article-category">案例</span></div>
-                    <h1 class="article-title">这是文章详情页</h1>
+                    <div><span class="article-category">{{Category}}</span></div>
+                    <h1 class="article-title">{{Title}}</h1>
                     <div class="article-author-time">
-                        <span>测试用户</span>
-                        <span>2020.10.23</span>
+                        <span>{{Author}}</span>
+                        <span>{{PublishDate}}</span>
                     </div>
                 </div>
             </transition>
@@ -49,13 +49,17 @@
 export default {
     // props: ['CoverImg', 'CoverShowArticleDetail', 'CoverShowAuthorDetail'],
     props: {
-        CoverShowArticleDetail: {type: Boolean},
-        CoverShowAuthorDetail: {type: Boolean},
+        CoverShowArticleDetail: Boolean,
+        CoverShowAuthorDetail: Boolean,
         CoverImg: {
             default: function(val) {
                 return this.$store.state.CoverImg
             }
-        }
+        },
+        Category: String,
+        Title: String,
+        Author: String,
+        PublishDate: String
     },
     data() {
         return {

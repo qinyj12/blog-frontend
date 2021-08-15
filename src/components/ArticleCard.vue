@@ -1,6 +1,7 @@
 // 首页的文章卡片区域
 <template>
     <div id="article-card-area">
+        <!-- 这是骨架屏 -->
         <ul class="loading-card-box" v-show="!LoadFinshed">
             <li class="loading-single-card-li" v-for="(item, index) in Array(3)" :key="index">
                 <div class="loading-single-card">

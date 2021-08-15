@@ -4,7 +4,15 @@
         <transition name="cover-move">
             <Cover 
                 v-show="!IfSink" 
-                v-bind="{CoverImg: CoverImg, CoverShowArticleDetail: true}"
+                v-bind="{
+                    CoverImg: CoverImg, 
+                    CoverShowArticleDetail: true,
+                    Category: Category,
+                    Title: Title,
+                    Author: Author,
+                    PublishDate: PublishDate
+
+                }"
                 :key="ReRenderCover"
             />
         </transition>
@@ -42,7 +50,8 @@ import Footer from '@/components/Footer.vue';
 import AuthorCard from '@/components/AuthorCard.vue';
 import ArticlesRecommended from '@/components/ArticlesRecommended.vue';
 import Comments from '@/components/Comments.vue';
-import ArticleContent from '@/components/ArticleContent.vue'
+import ArticleContent from '@/components/ArticleContent.vue';
+import { DocInfo, DocTags } from '@/api/api.js'
 export default {
     components: {
         Cover,
@@ -56,6 +65,10 @@ export default {
         return {
             // 传值给cover组件
             CoverImg: undefined,
+            Category: undefined,
+            Title: undefined,
+            Author: undefined,
+            PublishDate: undefined,
             // 这个值是用来重新渲染cover组件的
             ReRenderCover: 0,
         }
@@ -67,6 +80,23 @@ export default {
         },
 
     },
+    methods: {
+        GetDocInfo(namespace, slug) {
+            DocInfo(namespace, slug).then(resp => {
+                const { data } = resp
+                this.CoverImg = data.cover
+                this.Title = data.title
+                this.Author = data.book.user.name
+                this.PublishDate = data.created_at.substr(0,10) // 格式为2021-07-08T15:23:00.000Z，截取从第0个开始后10位的字符串
+                // console.log(data)
+
+                DocTags(data.id).then(resp => {
+                    this.Category = resp.data[0].title
+                })
+            });
+            
+        }
+    },
     mounted() {
         // 从home=>content时的瞬间变成的scroll，目的是防止动画撕裂。进入content后，重新变成auto
         this.$store.commit('ChangeBodyScrollStatus', 'auto');
@@ -75,9 +105,12 @@ export default {
         /////////////////////////
         // 测试用的，可以删除 ///
         ///////////////////////
-        setTimeout(() => {
-            this.CoverImg = require('../assets/test2.jpeg')
-        }, 2000);
+        // setTimeout(() => {
+        //     this.CoverImg = require('../assets/test2.jpeg')
+        // }, 2000);
+
+        // console.log(this.$route.params.slug)
+        this.GetDocInfo('qinyujie-067rz/rkckig', this.$route.params.slug)
     },
     // 路由复用时，即/content/1 => /content/2
     beforeRouteUpdate (to, from, next) {

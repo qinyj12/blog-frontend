@@ -26,6 +26,14 @@ export function RepoDocs(namespace) {
     })
 }
 
+// 获取某篇文档的信息（根据namespace/"docs"/slug）
+export function DocInfo(namespace, slug) {
+    return yuque_service({
+        methods: 'get',
+        url: '/api/v2/repos/' + namespace + '/docs/' + slug
+    })
+}
+
 // 获取指定文档的标签（根据doc的id）
 export function DocTags(docId) {
     return yuque_service({
