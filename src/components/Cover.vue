@@ -1,7 +1,7 @@
 // 头图，放在首页和文章详情页
 <template>
     <div class="cover-component">
-        <div class="cover" :style="{backgroundImage: 'url(' + CoverImg + ')'}">
+        <div class="cover">
 
             <!-- 以下是点击进入到文章详情页时展示的部分，包括标题、文章分类、作者、时间等 -->
             <transition name="article-detail-rise">
@@ -36,6 +36,9 @@
                     </div>
                 </transition-group>
             </div>
+
+            <!-- 这是模糊化后的背景图 -->
+            <div class="cover-background" :style="{backgroundImage: 'url(' + CoverImg + ')'}"></div>
         </div>
 
         <!-- 给cover组件加一层遮罩，当显示article-detail和author-detail时显示 -->
@@ -117,6 +120,32 @@ export default {
 }
 .cover-component {
     .cover {
+        .cover-background {
+            width 100%
+            height 100%
+            position absolute
+            z-index 0
+            // background-repeat no-repeat
+            background-size cover
+            background-position 50% 50%
+        }
+        // 解决模糊后白边问题
+        .cover-background:after {
+            content ""
+            width 100%
+            height 100%
+            top 0
+            left 0
+            position absolute
+            background inherit // 继承background
+            filter blur(5px)
+            -webkit-filter: blur(5px);
+            -moz-filter: blur(5px);
+            -o-filter: blur(5px);
+            -ms-filter: blur(5px);
+            filter: blur(5px);
+        }
+
         width 100%
         height 450px
         background-repeat no-repeat

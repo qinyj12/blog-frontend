@@ -40,7 +40,7 @@ export default {
     },
     mounted() {
         // 当访问首页时，就在localstorage中设置cover的默认值。
-        localStorage.setItem('DefaultCoverImg', require('../assets/cover.png'))
+        localStorage.setItem('DefaultCoverImg', '')
         // 然后强行让cover组件的背景图改成默认值。
         this.CoverImg = localStorage.getItem('DefaultCoverImg')
     },
