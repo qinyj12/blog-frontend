@@ -63,8 +63,18 @@ VueRouter.prototype.push = function push(location) {
     return originalPush.call(this, location).catch(err => {err; console.log('路由重复了')})
 };
 
+// 取消图片防盗链
+const NoReferrer = function() {
+    let head = document.getElementsByTagName('head');
+    let meta = document.createElement('meta');
+    meta.name = 'referrer';
+    meta.content = 'no-referrer';
+    head[0].appendChild(meta);
+};
+
 // 路由守卫
 router.beforeEach((to, from, next) => {
+    NoReferrer()
     // console.log(from.name, '=>', to.name)
 
     // 动态修改网页title

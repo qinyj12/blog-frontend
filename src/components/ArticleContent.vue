@@ -1,32 +1,19 @@
 <template>
-    <div class="article-content" v-show="ShowContent">
-    <transition name="content-move">
-        <div v-show="ShowContent">
-            <h1>这是文章详情页</h1>
-            <p>一些话一些话一些话一些话一些话一些话一些话一些话一些话一些话一些话一些话一些话一些话一些话一些话一些话一些话一些话一些话</p>
-            <p>一些话一些话一些话一些话一些话</p>
-            <p>一些话一些话一些话一些话一些话</p>
-            <p>一些话一些话一些话一些话一些话</p>
-            <p>一些话一些话一些话一些话一些话</p>
-            <p>一些话一些话一些话一些话一些话</p>
-            <p>一些话一些话一些话一些话一些话</p>
-            <p>一些话一些话一些话一些话一些话</p>
-            <p>一些话一些话一些话一些话一些话</p>
-            <p>一些话一些话一些话一些话一些话</p>
-            <p>一些话一些话一些话一些话一些话</p>
-            <p>一些话一些话一些话一些话一些话</p>
-            <p>一些话一些话一些话一些话一些话</p>
-            <p>一些话一些话一些话一些话一些话</p>
-        </div>
-    </transition>
-
+    <div class="article-content" v-show="ShowContent" ref="ContentBox">
+        <transition name="content-move">
+            <div v-show="ShowContent" v-html="ArticleContentByFather"></div>
+        </transition>
     </div>
 </template>
 <script>
 export default {
+    props: {
+        ArticleContentByFather: String
+    },
     data() {
         return {
-            ShowContent: false
+            ShowContent: false,
+            ArticleContent: undefined
         }
     },
     mounted() {
@@ -35,20 +22,28 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
-sink-time = 0.2s
-.article-content {
-    text-align left
+    sink-time = 0.2s
+    .article-content {
 
-    h1 {
-        text-align center
+        .content-move-enter-active, .content-move-leave-active {
+            transition all sink-time
+        }
+        .content-move-enter, .content-move-leave-to {
+            transform translateY(100px)
+            opacity 0
+        }
     }
+</style>
+<style lang="stylus">
+    .lake-engine {
+        text-align left
 
-    .content-move-enter-active, .content-move-leave-active {
-        transition all sink-time
+        * img {
+            max-width 100%
+        }
+
+        u, a {
+            color #096DD9
+        }
     }
-    .content-move-enter, .content-move-leave-to {
-        transform translateY(100px)
-        opacity 0
-    }
-}
 </style>

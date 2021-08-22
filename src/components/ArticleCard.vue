@@ -38,7 +38,6 @@
                                 <!-- 这是卡片的头图 -->
                                 <div class="featured-image" ref="FeaturedImages">
                                     <img 
-                                        referrerpolicy="no-referrer" 
                                         class="cover-img"
                                         :class="{
                                             'cover-unclicked': !item.HideFeaturedImg,
@@ -64,7 +63,6 @@
                                                     <img 
                                                         :src="item.last_editor.avatar_url" 
                                                         alt="头像" 
-                                                        referrerpolicy="no-referrer"
                                                         class="avatar-img"
                                                         :class="{
                                                             'avatar-unclicked': !item.HideAvatar, 

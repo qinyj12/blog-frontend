@@ -10,8 +10,8 @@
                     Category: Category,
                     Title: Title,
                     Author: Author,
-                    PublishDate: PublishDate
-
+                    PublishDate: PublishDate,
+                    CoverBlur: '5px'
                 }"
                 :key="ReRenderCover"
             />
@@ -20,12 +20,24 @@
         <div class="component-wrap">
             <!-- 判断要不要隐藏content，给隐藏过程添加动画 -->
             <transition name="components-move">
-                <ArticleContent v-show="!IfSink" />
+                <ArticleContent 
+                    v-show="!IfSink" 
+                    v-bind="{
+                        ArticleContentByFather: ArticleContentHtml
+                    }"
+                />
             </transition>
 
             <!-- 判断要不要隐藏author，给隐藏过程添加动画 -->
             <transition name="components-move">
-                <AuthorCard v-show="!IfSink" />
+                <AuthorCard 
+                    v-show="!IfSink" 
+                    v-bind="{
+                        avatar: AuthorAvatar,
+                        name: AuthorName,
+                        description: AuthorDescription
+                    }" 
+                />
             </transition>
 
             <!-- recommended组件的隐藏动画在组件内判断，不需要在content父组件中判断 -->
@@ -64,13 +76,17 @@ export default {
     data() {
         return {
             // 传值给cover组件
-            CoverImg: undefined,
+            CoverImg: undefined, // 不要传值给Cover组件，因为进入Cover组件时会先渲染props默认值，导致动画撕裂。要放到vuex里面
             Category: undefined,
             Title: undefined,
             Author: undefined,
             PublishDate: undefined,
             // 这个值是用来重新渲染cover组件的
             ReRenderCover: 0,
+            ArticleContentHtml: undefined, // 正文内容
+            AuthorAvatar: undefined, // 用户头像
+            AuthorName: undefined, // 用户昵称
+            AuthorDescription: undefined, // 用户简介
         }
     },
     computed: {
@@ -84,11 +100,25 @@ export default {
         GetDocInfo(namespace, slug) {
             DocInfo(namespace, slug).then(resp => {
                 const { data } = resp
-                this.CoverImg = data.cover
+                // this.CoverImg = data.cover
+                // 先存到vuex仓库里，这样Cover组件渲染时可以先从vuex仓库里找到对象，而不是因为调用props默认值导致动画撕裂
+                this.$store.commit('ChangeCoverImg', data.cover)
                 this.Title = data.title
                 this.Author = data.book.user.name
+
+                // 因为接口获取的img都自带width和height属性，会溢出容器，所以移除height属性
+                let TempDiv = document.createElement('div')
+                TempDiv.innerHTML = data.body_html
+                for (let i of TempDiv.getElementsByTagName('img')) {
+                    i.style.height = ''
+                }
+                this.ArticleContentHtml = TempDiv.innerHTML
+
                 this.PublishDate = data.created_at.substr(0,10) // 格式为2021-07-08T15:23:00.000Z，截取从第0个开始后10位的字符串
-                // console.log(data)
+                this.AuthorAvatar = data.creator.avatar_url
+                this.AuthorName = data.creator.name
+                this.AuthorDescription = data.creator.description
+                console.log(data)
 
                 DocTags(data.id).then(resp => {
                     this.Category = resp.data[0].title
@@ -102,12 +132,6 @@ export default {
         this.$store.commit('ChangeBodyScrollStatus', 'auto');
         // 从home=>content时会给home组件留500ms的缓冲时间，目的是给home留一些动画时间。进入content后清零
         this.$store.commit('ChangeHomeBuffer', 0);
-        /////////////////////////
-        // 测试用的，可以删除 ///
-        ///////////////////////
-        // setTimeout(() => {
-        //     this.CoverImg = require('../assets/test2.jpeg')
-        // }, 2000);
 
         // console.log(this.$route.params.slug)
         this.GetDocInfo('qinyujie-067rz/rkckig', this.$route.params.slug)

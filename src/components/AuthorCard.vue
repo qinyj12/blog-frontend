@@ -2,12 +2,12 @@
 <template>
     <div id="author-card">
         <div class="author-card">
-            <img src="../assets/avatar.png" alt="avatar" class="author-avatar">
+            <img :src="avatar" alt="avatar" class="author-avatar">
             <div class="author-introduction">
-                <h4 class="author-name">{{AboutAuthor.name}}</h4>
+                <h4 class="author-name">{{name}}</h4>
                 
                 <v-clamp :max-lines="2" max-height="calc(100% - 44px)" autoresize class="author-self-introduction">
-                    {{AboutAuthor.introduction}}
+                    {{description}}
                 </v-clamp>
                 
                 <ul>
@@ -22,12 +22,20 @@
 </template>
 <script>
 export default {
+    props: {
+        avatar: {
+            default: function(val) {
+                return require('@/assets/avatar.png')
+            }
+        },
+        name: String,
+        description: String
+    },
     data() {
+        // https://sm.ms/image/eOK5sgICNl3qRi1 图床，微信二维码cdn
         return {
             // 关于作者
             AboutAuthor: {
-                name: '测试用户', 
-                introduction: '这是一段关于文章作者的介绍这是一段关于文章作者的介绍这是一段关于文章作者的介绍这是一段关于文章作者的介绍这是一段关于文章作者的介绍这是一段关于文章作者的介绍这是一段关于文章作者的介绍', 
                 contact: ['weibo', 'qq', 'weixin', 'github']
             }
         }

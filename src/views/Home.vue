@@ -29,7 +29,7 @@ export default {
     data() {
         return {
             // 传值给cover组件，传入undefined，调用cover组件内部的默认值
-            CoverImg: undefined,
+            CoverImg: require('@/assets/test2.jpeg'),
         }
     },
     computed: {
@@ -39,10 +39,6 @@ export default {
         }
     },
     mounted() {
-        // 当访问首页时，就在localstorage中设置cover的默认值。
-        localStorage.setItem('DefaultCoverImg', '')
-        // 然后强行让cover组件的背景图改成默认值。
-        this.CoverImg = localStorage.getItem('DefaultCoverImg')
     },
 }
 </script>

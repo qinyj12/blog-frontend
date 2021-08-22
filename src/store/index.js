@@ -12,7 +12,7 @@ export default new Vuex.Store({
         IfDisableClickAuthor: false, // 这是用来判断card组件内的用户头像能不能被点击的，已经进入author路由后，这个头像就不能再被点击
         IfSinkSomething: false, // 用来隐藏一些组件
         IfHideCopiedImg: false, // 用于判断recommended组件内的copied-img是否要隐藏
-        CoverImg: localStorage.getItem('DefaultCoverImg'), // 这是cover组件的背景图，从localstorage中获取默认值
+        CoverImg: undefined, // 这是cover组件的默认背景图。进入cover组件时，先调用本默认值。
     },
     mutations: {
         ChangeBodyScrollStatus(state, status) {

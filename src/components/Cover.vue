@@ -38,7 +38,7 @@
             </div>
 
             <!-- 这是模糊化后的背景图 -->
-            <div class="cover-background" :style="{backgroundImage: 'url(' + CoverImg + ')'}"></div>
+            <div class="cover-background" :style="{backgroundImage: 'url(' + CoverImg + ')', '--CoverBlur': CoverBlur}"></div>
         </div>
 
         <!-- 给cover组件加一层遮罩，当显示article-detail和author-detail时显示 -->
@@ -56,13 +56,25 @@ export default {
         CoverShowAuthorDetail: Boolean,
         CoverImg: {
             default: function(val) {
+                // 默认值要从vuex仓库里拿，不能在本组件中设置，
+                // 因为本组件加载时会先调用default默认值，然后再引入父组件的传值，导致动画撕裂
+                // 如果先从父组件传值到vuex，然后进入到cover组件，这样cover组件就可以先从vuex里拿值，再从父组件拿值，动画就不会撕裂
                 return this.$store.state.CoverImg
             }
         },
-        Category: String,
+        Category: {
+            default: function(val) {
+                return 'loading'
+            }
+        },
         Title: String,
         Author: String,
-        PublishDate: String
+        PublishDate: String,
+        CoverBlur: {
+            default: function(val) {
+                return '0px'
+            }
+        }
     },
     data() {
         return {
@@ -138,12 +150,12 @@ export default {
             left 0
             position absolute
             background inherit // 继承background
-            filter blur(5px)
-            -webkit-filter: blur(5px);
-            -moz-filter: blur(5px);
-            -o-filter: blur(5px);
-            -ms-filter: blur(5px);
-            filter: blur(5px);
+            filter blur(var(--CoverBlur))
+            // -webkit-filter: blur(5px);
+            // -moz-filter: blur(5px);
+            // -o-filter: blur(5px);
+            // -ms-filter: blur(5px);
+            // filter: blur(5px);
         }
 
         width 100%
