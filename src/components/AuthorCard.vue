@@ -11,13 +11,14 @@
                 </v-clamp>
                 
                 <ul>
-                    <li v-for="item in AboutAuthor.contact" :key="item">
+                    <li v-for="(value, name) in contacts" :key="value">
                         <!-- 动态添加微博、微信、github等icon -->
-                        <i :class="'fab fa-' + item"></i>
+                        <i :class="'fab fa-' + name" @click="VisitUrl(value)"></i>
                     </li>
                 </ul>
             </div>
         </div>
+        <div>{{contacts}}</div>
     </div>
 </template>
 <script>
@@ -29,15 +30,17 @@ export default {
             }
         },
         name: String,
-        description: String
+        description: String,
+        contacts: Object
+    },
+    methods: {
+        VisitUrl(url) {
+            window.open(url);
+        }
     },
     data() {
         // https://sm.ms/image/eOK5sgICNl3qRi1 图床，微信二维码cdn
         return {
-            // 关于作者
-            AboutAuthor: {
-                contact: ['weibo', 'qq', 'weixin', 'github']
-            }
         }
     },
 }

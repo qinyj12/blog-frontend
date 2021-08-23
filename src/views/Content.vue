@@ -35,7 +35,8 @@
                     v-bind="{
                         avatar: AuthorAvatar,
                         name: AuthorName,
-                        description: AuthorDescription
+                        description: AuthorDescription,
+                        contacts: AuthorContacts
                     }" 
                 />
             </transition>
@@ -87,6 +88,8 @@ export default {
             AuthorAvatar: undefined, // 用户头像
             AuthorName: undefined, // 用户昵称
             AuthorDescription: undefined, // 用户简介
+            AuthorContacts: {}, // 用户通讯录
+            AuthorLogin: undefined, // 用户在语雀的login
         }
     },
     computed: {
@@ -118,13 +121,51 @@ export default {
                 this.AuthorAvatar = data.creator.avatar_url
                 this.AuthorName = data.creator.name
                 this.AuthorDescription = data.creator.description
+                this.AuthorLogin = data.creator.login
                 console.log(data)
 
                 DocTags(data.id).then(resp => {
                     this.Category = resp.data[0].title
                 })
             });
-            
+        },
+        // 获取所有作者的通讯录（微信二维码、微博地址等）
+        GetAuthorContacts(namespace, slug) {
+            DocInfo(namespace, slug).then(resp => {
+                // 因为通讯录是以<table></table>的形式，所以先转化成html，再获取
+                let TempDiv = document.createElement('div')
+                TempDiv.innerHTML = resp.data.body_html
+                let TempTable = TempDiv.getElementsByTagName('table')[0]
+
+                // 代表表头，格式[id, weixin, weibo]
+                let TableHeader = []
+                for (let i of TempTable.rows.item(0).cells) {
+                    TableHeader.push(i.innerText)
+                }
+                // 代表表身，格式[{id:xx, weixin:xx, weibo:xx}]
+                let TableBody = []
+                // 从表身第一行开始，循环获取每行的数据(rows为行)
+                for (let i = 1; i < TempTable.rows.length; i++) {
+                    // 代表每一行，格式{id:xx, weixin:xx}
+                    let EveRow = {}
+                    // 代表获取第几列
+                    let EveCell = 0
+                    // 循环获取当前这一行的所有单元格（cells为列）
+                    for (let j of TempTable.rows.item(i).cells) {
+                        // 把表头[EveCell]和单元格的数据结合起来赋值给EveRow，格式{id:xx, weixin:xx}
+                        EveRow[TableHeader[EveCell]] = j.outerText
+                        // 表头[EveCell+1]
+                        EveCell ++
+                    }
+                    // 把每一行的数据添加给TableBody，构成所有作者的contacts[{id:xx, weixin:xx, weibo:xx}]
+                    TableBody.push(EveRow)
+                }
+                // 从所有作者的contacts中，找到当前作者的信息，格式为{id:xx, weixin:xx, weibo:xx}
+                let TargetAuthorContacts = TableBody.find(o => o.id == this.AuthorLogin)
+                // 删除id的键值对
+                delete TargetAuthorContacts.id
+                this.AuthorContacts = TargetAuthorContacts
+            })
         }
     },
     mounted() {
@@ -133,8 +174,12 @@ export default {
         // 从home=>content时会给home组件留500ms的缓冲时间，目的是给home留一些动画时间。进入content后清零
         this.$store.commit('ChangeHomeBuffer', 0);
 
-        // console.log(this.$route.params.slug)
-        this.GetDocInfo('qinyujie-067rz/rkckig', this.$route.params.slug)
+        this.GetDocInfo('qinyujie-067rz/rkckig', this.$route.params.slug);
+
+        setTimeout(() => {
+            this.GetAuthorContacts('qinyujie-067rz/yfezmc', 'xoql7l')
+        }, 1000);
+        // this.GetAuthorContacts('qinyujie-067rz/yfezmc', 'xoql7l')
     },
     // 路由复用时，即/content/1 => /content/2
     beforeRouteUpdate (to, from, next) {

@@ -23,7 +23,9 @@
 - [x] 懒加载骨架屏，vue-lazy-component库
 - [x] 点击进入文章详情，加载cover图（在content组件中获取文章的详细信息，然后通过prop传值给子组件，在前端展示内容(title,category,author,date)，category要单独调用api
 - [x] 给cover也加一个骨架，因为读取加载的时候读取数据也要时间。并给cover加模糊
-- [ ] 加载文章详情
+- [x] 加载文章详情
+- [ ] author，显示社交网络账号。（父组件content向子组件authorcard传值，好像涉及到async问题）
+- [ ] author，点击icon后浮窗显示二维码或网址。
 - [ ] 点击头像进入作者详情
 - [ ] 点击标签展示所有tags的文章
 - [x] 首页加载模板，所有标签加载模板
