@@ -164,6 +164,12 @@ export default {
                 let TargetAuthorContacts = TableBody.find(o => o.id == this.AuthorLogin)
                 // 删除id的键值对
                 delete TargetAuthorContacts.id
+                // 删除值为空的键值对，因为空值代表没有这个社交账号
+                Object.keys(TargetAuthorContacts).forEach(item => {
+                    if(!TargetAuthorContacts[item]) {
+                        delete TargetAuthorContacts[item];
+                    }
+                })
                 this.AuthorContacts = TargetAuthorContacts
             })
         }

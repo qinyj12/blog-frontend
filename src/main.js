@@ -21,7 +21,6 @@ Vue.use(ElementUI)
 // 使用VueLazyComponent
 Vue.use(VueLazyComponent)
 
-
 // 全局注册VClamp组件
 Vue.component('v-clamp', VClamp)
 
