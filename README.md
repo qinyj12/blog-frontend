@@ -26,8 +26,8 @@
 - [x] 加载文章详情
 - [x] author，显示社交网络账号。（！还得保证空值不读取）
 - [x] author，点击icon后浮窗显示二维码或网址。
-- [ ] 父组件content向子组件authorcard传值，好像涉及到async问题
-- [ ] 把contact社交账号做成单独的组件
+- [x] 父组件content向子组件authorcard传值，好像涉及到async问题
+- [x] 把contact社交账号做成单独的组件
 - [ ] 点击头像进入作者详情
 - [ ] 点击标签展示所有tags的文章
 - [ ] 热门文章组件
@@ -38,6 +38,7 @@
 - [ ] 首页banner位的slogan
 - [ ] http.js的判断还需要优化
 - [ ] 评论组件
+- [ ] 选中console报错
 
 ## 以前的
 - [ ] tag => content，动画没有

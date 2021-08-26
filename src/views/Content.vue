@@ -100,92 +100,90 @@ export default {
 
     },
     methods: {
-        GetDocInfo(namespace, slug) {
-            DocInfo(namespace, slug).then(resp => {
-                const { data } = resp
-                // this.CoverImg = data.cover
-                // 先存到vuex仓库里，这样Cover组件渲染时可以先从vuex仓库里找到对象，而不是因为调用props默认值导致动画撕裂
-                this.$store.commit('ChangeCoverImg', data.cover)
-                this.Title = data.title
-                this.Author = data.book.user.name
+        // 承接docInfo api返回的值，加工后赋值给各个参数（doc的内容（正文、作者、时间等））
+        GetDocInfo(resp) {
+            const { data } = resp
+            // this.CoverImg = data.cover
+            // 先存到vuex仓库里，这样Cover组件渲染时可以先从vuex仓库里找到对象，而不是因为调用props默认值导致动画撕裂
+            this.$store.commit('ChangeCoverImg', data.cover)
+            this.Title = data.title
+            this.Author = data.book.user.name
 
-                // 因为接口获取的img都自带width和height属性，会溢出容器，所以移除height属性
-                let TempDiv = document.createElement('div')
-                TempDiv.innerHTML = data.body_html
-                for (let i of TempDiv.getElementsByTagName('img')) {
-                    i.style.height = ''
-                }
-                this.ArticleContentHtml = TempDiv.innerHTML
+            // 因为接口获取的img都自带width和height属性，会溢出容器，所以移除height属性
+            let TempDiv = document.createElement('div')
+            TempDiv.innerHTML = data.body_html
+            for (let i of TempDiv.getElementsByTagName('img')) {
+                i.style.height = ''
+            }
+            this.ArticleContentHtml = TempDiv.innerHTML
 
-                this.PublishDate = data.created_at.substr(0,10) // 格式为2021-07-08T15:23:00.000Z，截取从第0个开始后10位的字符串
-                this.AuthorAvatar = data.creator.avatar_url
-                this.AuthorName = data.creator.name
-                this.AuthorDescription = data.creator.description
-                this.AuthorLogin = data.creator.login
-                console.log(data)
+            this.PublishDate = data.created_at.substr(0,10) // 格式为2021-07-08T15:23:00.000Z，截取从第0个开始后10位的字符串
+            this.AuthorAvatar = data.creator.avatar_url
+            this.AuthorName = data.creator.name
+            this.AuthorDescription = data.creator.description
+            this.AuthorLogin = data.creator.login
+            console.log(data)
 
-                DocTags(data.id).then(resp => {
-                    this.Category = resp.data[0].title
-                })
-            });
-        },
-        // 获取所有作者的通讯录（微信二维码、微博地址等）
-        GetAuthorContacts(namespace, slug) {
-            DocInfo(namespace, slug).then(resp => {
-                // 因为通讯录是以<table></table>的形式，所以先转化成html，再获取
-                let TempDiv = document.createElement('div')
-                TempDiv.innerHTML = resp.data.body_html
-                let TempTable = TempDiv.getElementsByTagName('table')[0]
-
-                // 代表表头，格式[id, weixin, weibo]
-                let TableHeader = []
-                for (let i of TempTable.rows.item(0).cells) {
-                    TableHeader.push(i.innerText)
-                }
-                // 代表表身，格式[{id:xx, weixin:xx, weibo:xx}]
-                let TableBody = []
-                // 从表身第一行开始，循环获取每行的数据(rows为行)
-                for (let i = 1; i < TempTable.rows.length; i++) {
-                    // 代表每一行，格式{id:xx, weixin:xx}
-                    let EveRow = {}
-                    // 代表获取第几列
-                    let EveCell = 0
-                    // 循环获取当前这一行的所有单元格（cells为列）
-                    for (let j of TempTable.rows.item(i).cells) {
-                        // 把表头[EveCell]和单元格的数据结合起来赋值给EveRow，格式{id:xx, weixin:xx}
-                        EveRow[TableHeader[EveCell]] = j.outerText
-                        // 表头[EveCell+1]
-                        EveCell ++
-                    }
-                    // 把每一行的数据添加给TableBody，构成所有作者的contacts[{id:xx, weixin:xx, weibo:xx}]
-                    TableBody.push(EveRow)
-                }
-                // 从所有作者的contacts中，找到当前作者的信息，格式为{id:xx, weixin:xx, weibo:xx}
-                let TargetAuthorContacts = TableBody.find(o => o.id == this.AuthorLogin)
-                // 删除id的键值对
-                delete TargetAuthorContacts.id
-                // 删除值为空的键值对，因为空值代表没有这个社交账号
-                Object.keys(TargetAuthorContacts).forEach(item => {
-                    if(!TargetAuthorContacts[item]) {
-                        delete TargetAuthorContacts[item];
-                    }
-                })
-                this.AuthorContacts = TargetAuthorContacts
+            DocTags(data.id).then(resp => {
+                this.Category = resp.data[0].title
             })
+        },
+        // 承接docInfo api返回的值，加工后赋值给各个参数（作者的通讯录）
+        GetAuthorContacts(resp) {
+            // 因为通讯录是以<table></table>的形式，所以先转化成html，再获取
+            let TempDiv = document.createElement('div')
+            TempDiv.innerHTML = resp.data.body_html
+            let TempTable = TempDiv.getElementsByTagName('table')[0]
+
+            // 代表表头，格式[id, weixin, weibo]
+            let TableHeader = []
+            for (let i of TempTable.rows.item(0).cells) {
+                TableHeader.push(i.innerText)
+            }
+            // 代表表身，格式[{id:xx, weixin:xx, weibo:xx}]
+            let TableBody = []
+            // 从表身第一行开始，循环获取每行的数据(rows为行)
+            for (let i = 1; i < TempTable.rows.length; i++) {
+                // 代表每一行，格式{id:xx, weixin:xx}
+                let EveRow = {}
+                // 代表获取第几列
+                let EveCell = 0
+                // 循环获取当前这一行的所有单元格（cells为列）
+                for (let j of TempTable.rows.item(i).cells) {
+                    // 把表头[EveCell]和单元格的数据结合起来赋值给EveRow，格式{id:xx, weixin:xx}
+                    EveRow[TableHeader[EveCell]] = j.outerText
+                    // 表头[EveCell+1]
+                    EveCell ++
+                }
+                // 把每一行的数据添加给TableBody，构成所有作者的contacts[{id:xx, weixin:xx, weibo:xx}]
+                TableBody.push(EveRow)
+            }
+            // 从所有作者的contacts中，找到当前作者的信息，格式为{id:xx, weixin:xx, weibo:xx}
+            let TargetAuthorContacts = TableBody.find(o => o.id == this.AuthorLogin)
+            // 删除id的键值对
+            delete TargetAuthorContacts.id
+            // 删除值为空的键值对，因为空值代表没有这个社交账号
+            Object.keys(TargetAuthorContacts).forEach(item => {
+                if(!TargetAuthorContacts[item]) {
+                    delete TargetAuthorContacts[item];
+                }
+            })
+            this.AuthorContacts = TargetAuthorContacts
         }
     },
-    mounted() {
+    async mounted() {
         // 从home=>content时的瞬间变成的scroll，目的是防止动画撕裂。进入content后，重新变成auto
         this.$store.commit('ChangeBodyScrollStatus', 'auto');
         // 从home=>content时会给home组件留500ms的缓冲时间，目的是给home留一些动画时间。进入content后清零
         this.$store.commit('ChangeHomeBuffer', 0);
-
-        this.GetDocInfo('qinyujie-067rz/rkckig', this.$route.params.slug);
-
-        setTimeout(() => {
-            this.GetAuthorContacts('qinyujie-067rz/yfezmc', 'xoql7l')
-        }, 1000);
-        // this.GetAuthorContacts('qinyujie-067rz/yfezmc', 'xoql7l')
+        // 先调用docInfo api，获取到doc的各种信息
+        let DocResp = await DocInfo('qinyujie-067rz/rkckig', this.$route.params.slug)
+        // 使用GetDocInfo函数，加工doc信息
+        await this.GetDocInfo(DocResp)
+        // 再调用docInfo api，获取作者的contacts通讯录
+        let ContactsResp = await DocInfo('qinyujie-067rz/yfezmc', 'xoql7l')
+        // 使用GetAuthorContacts函数，加工contact信息
+        await this.GetAuthorContacts(ContactsResp)
     },
     // 路由复用时，即/content/1 => /content/2
     beforeRouteUpdate (to, from, next) {
