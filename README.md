@@ -28,6 +28,7 @@
 - [x] author，点击icon后浮窗显示二维码或网址。
 - [x] 父组件content向子组件authorcard传值，好像涉及到async问题
 - [x] 把contact社交账号做成单独的组件
+- [ ] cover组件的destroyed顺序有问题
 - [ ] 点击头像进入作者详情
 - [ ] 点击标签展示所有tags的文章
 - [ ] 热门文章组件

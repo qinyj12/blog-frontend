@@ -53,27 +53,25 @@
                                         <h3 class="title">{{item.title}}</h3>
                                     </div>
                                     <div class="entry-footer">
-                                        <router-link to="/author/测试用户">
-                                            <!-- stop阻止click冒泡，prevent阻止router-link -->
-                                            <div 
-                                                class="author" 
-                                                @click.stop="$store.state.IfDisableClickAuthor? ScrollToTop(): ClickAuthor(index)"
-                                            >
-                                                <div class="avatar" ref="avatar">
-                                                    <img 
-                                                        :src="item.last_editor.avatar_url" 
-                                                        alt="头像" 
-                                                        class="avatar-img"
-                                                        :class="{
-                                                            'avatar-unclicked': !item.HideAvatar, 
-                                                            'avatar-clicked': item.HideAvatar
-                                                        }"
-                                                    >
-                                                </div>
-
-                                                <span class="name">{{item.last_editor.name}}</span>
+                                        <!-- stop阻止click冒泡，prevent阻止router-link -->
+                                        <div 
+                                            class="author" 
+                                            @click.stop.prevent="GoToAuthor(index)"
+                                        >
+                                            <div class="avatar" ref="avatar">
+                                                <img 
+                                                    :src="item.last_editor.avatar_url" 
+                                                    alt="头像" 
+                                                    class="avatar-img"
+                                                    :class="{
+                                                        'avatar-unclicked': !item.HideAvatar, 
+                                                        'avatar-clicked': item.HideAvatar
+                                                    }"
+                                                >
                                             </div>
-                                        </router-link>
+
+                                            <span class="name">{{item.last_editor.name}}</span>
+                                        </div>
                                         <!-- 格式为2021-07-08T15:23:00.000Z，截取从第0个开始后10位的字符串 -->
                                         <div class="published-date">{{item.created_at.substr(0,10)}}</div>
                                     </div>
@@ -124,6 +122,7 @@
 <script>
 import { RepoDocs, DocTags } from '@/api/api.js';
 import axios from 'axios';
+import EventBus from '@/api/EventBus.js'
 export default {
     data() {
         return {
@@ -148,6 +147,24 @@ export default {
         this.$store.commit('ChangeBodyScrollStatus', 'auto');
     },
     methods: {
+        ChangeAvatarPlaceholder() {
+            // this.$emit('ChangeAvatarPlaceholder', require('@/assets/avatar.png'))
+            // this.$emit('ChangeAvatarPlaceholder', '@/assets/avatar.png')
+            EventBus.$emit('demo', 'haha')
+        },
+        GoToAuthor(index) {
+            // 先判断头像可不可点击，如果已在author组件内则头像不再可点击（点击后滚动到top）
+            if(this.$store.state.IfDisableClickAuthor) {
+                this.ScrollToTop()
+            } else {
+                this.ClickAuthor(index)
+            }
+            this.ChangeAvatarPlaceholder()
+            setTimeout(() => {
+                this.$router.push('/author/' + this.counts[index].user_id)
+            }, 1000);
+            
+        },
         // 点击卡片后的一系列动画
         async ClickCard(index) {
             // 改变vuex仓库，当router:from.name==home 时，给500ms的缓冲时间，就是500ms之后才会触发路由
@@ -330,7 +347,6 @@ export default {
                     DocsIds.push(i.id)
                 }
                 this.getTags(DocsIds).then(res => {
-                    // 获取到的数据格式为[{"data":[{"title":"xx","doc_id":xx}]},{"data":[{"title":"xx","doc_id":xx}]}]
                     for (let i in res) {
                         // 如果能获取到tag数据
                         if (res[i].data[0]) {
@@ -345,10 +361,10 @@ export default {
                     console.log(this.counts)
                     // 看看能不能从语雀api拿到哪怕一篇文档，如果可以
                     if (this.counts[0].id) {
-                        // 给2秒钟展示loading动画
-                        setTimeout(() => {
-                            this.LoadFinshed = true
-                        }, 2000);
+                        // 给0.5秒钟展示loading动画
+                        // setTimeout(() => {
+                        this.LoadFinshed = true
+                        // }, 500);
                     } else {
                         this.LoadFinshed = false
                     }

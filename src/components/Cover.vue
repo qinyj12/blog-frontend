@@ -18,10 +18,17 @@
             <!-- 以下是点击进入到作者页时展示的部分，包括头像、名字等 -->
             <div class="author-avatar-detail" v-show="CoverShowAuthorDetail">
                 <transition-group name="author-detail-rise">
-                    <div class="author-avatar" key="author-avatar"></div>
+                    <div class="author-avatar" key="author-avatar">
+                        <el-image :src="AuthorDetailAvatar">
+                            <!-- 头像加载过程中的占位内容 -->
+                            <div slot="placeholder" class="image-slot">
+                                <img :src="AuthorAvatarPlaceholder">
+                            </div>
+                        </el-image>
+                    </div>
                     <!-- 这个元素的动画默认会从上方飘下来，不知道是根据什么定位的-->
                     <div class="author-detail" key="author-detail" v-show="IfShowAuthorDetail">
-                        <h1>测试用户</h1>
+                        <h1>{{AuthorDetailName}}</h1>
                         <p>这是一个测试用户的介绍</p>
                         <ul>
                             <li v-for="item in AuthorContact" :key="item">
@@ -33,6 +40,7 @@
                             </span>
 
                         </ul>
+                        
                     </div>
                 </transition-group>
             </div>
@@ -46,9 +54,11 @@
             <div class="cover-mask" v-show="IfShowArticleDetail || IfShowAuthorDetail"></div>
         </transition>
         
+        <div>{{demo}}</div>
     </div>
 </template>
 <script>
+import EventBus from '@/api/EventBus.js'
 export default {
     // props: ['CoverImg', 'CoverShowArticleDetail', 'CoverShowAuthorDetail'],
     props: {
@@ -74,7 +84,11 @@ export default {
             default: function(val) {
                 return '0px'
             }
-        }
+        },
+        AuthorDetailName: String,
+        AuthorDetailAvatar: String,
+        AuthorAvatarPlaceholder: String || Object,
+        AuthorDetailIntroduction: String,
     },
     data() {
         return {
@@ -82,7 +96,8 @@ export default {
             IfShowArticleDetail: false,
             // 这个字段用来判断要不要显示author detail的，默认不显示
             IfShowAuthorDetail: false,
-            AuthorContact: ['weibo', 'qq', 'weixin', 'github']
+            AuthorContact: ['weibo', 'qq', 'weixin', 'github'],
+            demo: '1'
         }
     },
     methods: {
@@ -120,9 +135,29 @@ export default {
         this.ShowArticleDetail();
         // 监听父组件传值，用来判断要不要显示author-detail
         this.ShowAuthorDetail();
+
+        EventBus.$on('demo', (message) => {
+            console.log('m:first this.demo = ', this.demo)
+            console.log('m:message = ', message)
+            this.demo = message
+            console.log('m:this.demo = ', this.demo)
+        })
+        console.log('m:out demo = ', this.demo)
+    },
+    beforeDestroy() {
+        console.log('before destroy')
     },
     destroyed() {
         console.log('cover destoryed')
+        console.log('destroyed:demo = ', this.demo)
+    },
+    updated() {
+        EventBus.$on('demo', (message) => {
+            console.log('u:first this.demo = ', this.demo)
+            console.log('u:message = ', message)
+            this.demo = message
+            console.log('u:this.demo = ', this.demo)
+        })
     },
 }
 </script>
@@ -214,26 +249,30 @@ export default {
         }
 
         .author-avatar-detail {
-            // position relative
+            position relative
 
             .author-avatar {
                 width 96px
                 height 96px
-                background-image url('../assets/avatar.png')
-                background-size cover
                 border-radius 50%
                 border 4px solid white
                 box-sizing border-box
                 margin 0 auto
                 transition all 0.2s
+                overflow hidden
             }
 
             .author-detail {
                 width 100%
                 word-break break-all
-                transition all 0.2s
+                transition 0s
                 display block
                 font-size 14px
+                position relative
+
+                h1 {
+                    height 36px
+                }
 
                 ul {
                     list-style none
@@ -267,15 +306,15 @@ export default {
                 }
             }
 
-            // 以下是author-detail的动画
-            .author-detail-rise-enter {
-                opacity 0
-                // 不知道默认是根据什么定位的，改成-450px暂时没有问题
-                transform translateY(-450px)
-            }
-            .author-detail-rise-enter-to {
+            // // 以下是author-detail的动画
+            // .author-detail-rise-enter {
+            //     opacity 0
+            //     // 不知道默认是根据什么定位的，改成-450px暂时没有问题
+            //     transform translateY(-450px)
+            // }
+            // .author-detail-rise-enter-to {
 
-            }
+            // }
         }
     }
 
