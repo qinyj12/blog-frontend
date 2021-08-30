@@ -67,6 +67,7 @@
                                                         'avatar-unclicked': !item.HideAvatar, 
                                                         'avatar-clicked': item.HideAvatar
                                                     }"
+                                                    ref="avatarImg"
                                                 >
                                             </div>
 
@@ -122,7 +123,7 @@
 <script>
 import { RepoDocs, DocTags } from '@/api/api.js';
 import axios from 'axios';
-import EventBus from '@/api/EventBus.js'
+import domtoimage from 'dom-to-image';
 export default {
     data() {
         return {
@@ -133,6 +134,7 @@ export default {
             CopiedFeaturedMoved: false,
             CopiedAvatarMoved: false,
             CopiedImgEnd: false,
+            DomFinished: false, // 代表所有dom都加载完了
         }
     },
     computed: {
@@ -147,22 +149,20 @@ export default {
         this.$store.commit('ChangeBodyScrollStatus', 'auto');
     },
     methods: {
-        ChangeAvatarPlaceholder() {
-            // this.$emit('ChangeAvatarPlaceholder', require('@/assets/avatar.png'))
-            // this.$emit('ChangeAvatarPlaceholder', '@/assets/avatar.png')
-            EventBus.$emit('demo', 'haha')
-        },
-        GoToAuthor(index) {
+        async GoToAuthor(index) {
+            // await domtoimage.toBlob(this.$refs.avatarImg[0]).then(blob => {
+            //     this.$store.commit('ChangeAvatarStored', blob)
+            // })
             // 先判断头像可不可点击，如果已在author组件内则头像不再可点击（点击后滚动到top）
             if(this.$store.state.IfDisableClickAuthor) {
                 this.ScrollToTop()
             } else {
                 this.ClickAuthor(index)
             }
-            this.ChangeAvatarPlaceholder()
-            setTimeout(() => {
-                this.$router.push('/author/' + this.counts[index].user_id)
-            }, 1000);
+            // setTimeout(() => {
+            //     this.$router.push('/author/' + this.counts[index].user_id)
+            // }, 200);
+            this.$router.push('/author/' + this.counts[index].user_id)
             
         },
         // 点击卡片后的一系列动画
@@ -335,40 +335,40 @@ export default {
             })
         },
 
-        // 获取指定repo下的所有docs的基本信息，然后赋值给变量
-        async GetRepoDocs(namespace) {
-            await RepoDocs(namespace).then(res => {
-                // 用这个拿到docs的所有信息，此时还拿不到tag信息
-                let DocsInfo = res.data
-                // 先获取所有docs的id
-                let DocsIds = []
-                // 把id组成一个[]，用多线程接口获取tags
-                for (let i of DocsInfo) {
-                    DocsIds.push(i.id)
-                }
-                this.getTags(DocsIds).then(res => {
-                    for (let i in res) {
-                        // 如果能获取到tag数据
-                        if (res[i].data[0]) {
-                            // 因为DocsInfo也是一个[]，所以也要挨个赋值tag值
-                            DocsInfo[i].tags = res[i].data[0].title
-                        // 如果获取不到tag数据，res[i].data[0]就是空值
-                        } else {
-                            DocsInfo[i].tags = undefined
-                        }
-                    }
-                    this.counts = DocsInfo
-                    console.log(this.counts)
-                    // 看看能不能从语雀api拿到哪怕一篇文档，如果可以
-                    if (this.counts[0].id) {
-                        // 给0.5秒钟展示loading动画
-                        // setTimeout(() => {
-                        this.LoadFinshed = true
-                        // }, 500);
+        // res是通过api获取的docs返回值，把返回值传入以下函数，拿出docs的各个参数
+        async GetRepoDocs(res) {
+            // 用这个拿到docs的所有信息，此时还拿不到tag信息
+            let DocsInfo = res.data
+            // 先获取所有docs的id
+            let DocsIds = []
+            // 把id组成一个[]，用多线程接口获取tags
+            for (let i of DocsInfo) {
+                DocsIds.push(i.id)
+            }
+            this.getTags(DocsIds).then(res => {
+                for (let i in res) {
+                    // 如果能获取到tag数据
+                    if (res[i].data[0]) {
+                        // 因为DocsInfo也是一个[]，所以也要挨个赋值tag值
+                        DocsInfo[i].tags = res[i].data[0].title
+                    // 如果获取不到tag数据，res[i].data[0]就是空值
                     } else {
-                        this.LoadFinshed = false
+                        DocsInfo[i].tags = undefined
                     }
-                })
+                }
+                this.counts = DocsInfo
+                console.log(this.counts)
+                // 看看能不能从语雀api拿到哪怕一篇文档，如果可以
+                // 这里有bug，似乎是顺序问题
+                if (this.counts[0].id) {
+                    // 给0.5秒钟展示loading动画
+                    // setTimeout(() => {
+                    this.LoadFinshed = true
+                    // this.DomFinished = true // 给一个信号，代表所有dom都加载完了
+                    // }, 500);
+                } else {
+                    this.LoadFinshed = false
+                }
             })
         },
 
@@ -389,8 +389,23 @@ export default {
 
     },
     async mounted() {
-        await this.GetRepoDocs('qinyujie-067rz/rkckig');
-        
+        let DocsRes = await RepoDocs('qinyujie-067rz/rkckig');
+        await this.GetRepoDocs(DocsRes);
+    },
+    watch: {
+        // DomFinished() {
+        //     let AvatarStored = []
+        //     this.$nextTick(() => {
+        //         for (let i = 0; i < this.$refs.avatarImg.length; ++i) {
+        //             domtoimage.toBlob(this.$refs.avatarImg[i]).then(blob => {
+        //                 AvatarStored.push(blob)
+        //             })
+        //         }
+        //         this.$store.commit('ChangeAvatarStored', AvatarStored)
+        //     })            
+            
+            
+        // }
     },
 }
 </script>

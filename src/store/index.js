@@ -13,6 +13,7 @@ export default new Vuex.Store({
         IfSinkSomething: false, // 用来隐藏一些组件
         IfHideCopiedImg: false, // 用于判断recommended组件内的copied-img是否要隐藏
         CoverImg: undefined, // 这是cover组件的默认背景图。进入cover组件时，先调用本默认值。
+        AvatarStored: undefined, // 这是存到vuex里的头像缓存，用来home=>author页面时，由author页面读取。
     },
     mutations: {
         ChangeBodyScrollStatus(state, status) {
@@ -35,6 +36,9 @@ export default new Vuex.Store({
         },
         ChangeCoverImg(state, img) {
             state.CoverImg = img
+        },
+        ChangeAvatarStored(state, avatar) {
+            state.AvatarStored = avatar
         }
     },
     actions: {},

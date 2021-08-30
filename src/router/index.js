@@ -89,7 +89,8 @@ router.beforeEach((to, from, next) => {
         // 本来可以在home页用settimeout router.push 来达到目的，但不能兼顾keep-alive，所以只能在路由守卫里来使用settimeout
         if (to.name == 'Content' || to.name == 'Author' || to.name == 'Tag') {
             setTimeout(() => {
-                next()
+                // next()
+                demo(next)
             // 从vuex仓库里取值，看看需要在home=>content时留多少时间用于动画效果
             }, store.state.HomeBuffer);
         } else {
@@ -99,5 +100,15 @@ router.beforeEach((to, from, next) => {
         next()
     }
 });
+
+function demo(callback) {
+    new Promise(function(resolve, reject) {
+        setTimeout(() => {
+            localStorage.setItem("demo", require('@/assets/0.png'))
+            // alert('路由守卫：完成')
+            callback()
+        }, 1000);
+    })
+}
 
 export default router

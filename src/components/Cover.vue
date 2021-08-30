@@ -19,11 +19,12 @@
             <div class="author-avatar-detail" v-show="CoverShowAuthorDetail">
                 <transition-group name="author-detail-rise">
                     <div class="author-avatar" key="author-avatar">
-                        <el-image :src="AuthorDetailAvatar">
+                        <!-- 此处为demo临时变量，需在路由守卫里/或者author页面里设置，把头像存放在localstorage里 -->
+                        <el-image :src="demo">
                             <!-- 头像加载过程中的占位内容 -->
-                            <div slot="placeholder" class="image-slot">
+                            <!-- <div slot="placeholder" class="image-slot">
                                 <img :src="AuthorAvatarPlaceholder">
-                            </div>
+                            </div> -->
                         </el-image>
                     </div>
                     <!-- 这个元素的动画默认会从上方飘下来，不知道是根据什么定位的-->
@@ -54,11 +55,9 @@
             <div class="cover-mask" v-show="IfShowArticleDetail || IfShowAuthorDetail"></div>
         </transition>
         
-        <div>{{demo}}</div>
     </div>
 </template>
 <script>
-import EventBus from '@/api/EventBus.js'
 export default {
     // props: ['CoverImg', 'CoverShowArticleDetail', 'CoverShowAuthorDetail'],
     props: {
@@ -97,7 +96,7 @@ export default {
             // 这个字段用来判断要不要显示author detail的，默认不显示
             IfShowAuthorDetail: false,
             AuthorContact: ['weibo', 'qq', 'weixin', 'github'],
-            demo: '1'
+            demo: localStorage.getItem('demo')
         }
     },
     methods: {
@@ -136,28 +135,6 @@ export default {
         // 监听父组件传值，用来判断要不要显示author-detail
         this.ShowAuthorDetail();
 
-        EventBus.$on('demo', (message) => {
-            console.log('m:first this.demo = ', this.demo)
-            console.log('m:message = ', message)
-            this.demo = message
-            console.log('m:this.demo = ', this.demo)
-        })
-        console.log('m:out demo = ', this.demo)
-    },
-    beforeDestroy() {
-        console.log('before destroy')
-    },
-    destroyed() {
-        console.log('cover destoryed')
-        console.log('destroyed:demo = ', this.demo)
-    },
-    updated() {
-        EventBus.$on('demo', (message) => {
-            console.log('u:first this.demo = ', this.demo)
-            console.log('u:message = ', message)
-            this.demo = message
-            console.log('u:this.demo = ', this.demo)
-        })
     },
 }
 </script>

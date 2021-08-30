@@ -10,7 +10,6 @@
                     CoverShowAuthorDetail: true,
                     AuthorDetailName: AuthorName,
                     AuthorDetailAvatar: AuthorAvatar,
-                    AuthorAvatarPlaceholder: AvatarPlaceholder
                 }" 
             />
         </transition>
@@ -38,7 +37,6 @@ export default {
         return {
             AuthorName: '……',
             AuthorAvatar: undefined,
-            AvatarPlaceholder: undefined,
         }
     },
     destroyed() {
