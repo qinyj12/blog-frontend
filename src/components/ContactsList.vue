@@ -32,9 +32,6 @@
 </template>
 <script>
 export default {
-    props: {
-        // contacts: Object
-    },
     methods: {
         VisitUrl(url) {
             window.open(url);
@@ -54,13 +51,12 @@ export default {
 
         i {
             margin-right 16px
-            color gray
             transition all 0.1s
             position relative
+            color inherit
         }
 
         i:hover {
-            color #19DDC4
             cursor pointer
         }
     }

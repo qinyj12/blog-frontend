@@ -103,9 +103,9 @@ export default {
         // 承接docInfo api返回的值，加工后赋值给各个参数（doc的内容（正文、作者、时间等））
         GetDocInfo(resp) {
             const { data } = resp
-            // this.CoverImg = data.cover
             // 先存到vuex仓库里，这样Cover组件渲染时可以先从vuex仓库里找到对象，而不是因为调用props默认值导致动画撕裂
-            this.$store.commit('ChangeCoverImg', data.cover)
+            // 从语雀api读取文章cover，如果有，赋值给vuex（cover组件再从vuex里读取）。如果没有，就赋值默认的cover
+            this.$store.commit('ChangeCoverImg', data.cover? data.cover : require('@/assets/featured-image.png'))
             this.Title = data.title
             this.Author = data.book.user.name
 

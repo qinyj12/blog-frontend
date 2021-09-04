@@ -9,7 +9,8 @@
                     CoverShowArticleDetail: false, 
                     CoverShowAuthorDetail: true,
                     AuthorDetailName: AuthorName,
-                    AuthorDetailAvatar: AuthorAvatar,
+                    AuthorDetailIntroduction: AuthorIntroduction,
+                    contacts: AuthorContacts
                 }" 
             />
         </transition>
@@ -26,7 +27,7 @@
 import Cover from '@/components/Cover.vue';
 import ArticleCard from '@/components/ArticleCard.vue';
 import Footer from '@/components/Footer.vue';
-import { UserInfo } from '@/api/api.js'
+import { UserInfo, DocInfo } from '@/api/api.js'
 export default {
     components: {
         Cover,
@@ -36,7 +37,9 @@ export default {
     data() {
         return {
             AuthorName: '……',
-            AuthorAvatar: undefined,
+            AuthorIntroduction: undefined,
+            AuthorContacts: {},
+            AuthorLogin: undefined
         }
     },
     destroyed() {
@@ -50,19 +53,66 @@ export default {
         }
     },
     methods: {
-        GetUserInfo(usid) {
-            UserInfo(usid).then(res => {
-                const data = res.data
-                this.AuthorName = data.name
-                this.AuthorAvatar = data.avatar_url
-            })
+        GetUserInfo(resp) {
+            const { data } = resp
+            this.AuthorName = data.name;
+            this.AuthorIntroduction = data.description;
+            this.AuthorLogin = data.login
         },
-    },
-    mounted() {
-        // 加载author页面时，使得author头像不能被点击，因为已经在author页面里了
-        this.$store.commit('DisableClickAuthor', true),
+        // 承接docInfo api返回的值，加工后赋值给各个参数（作者的通讯录）
+        GetAuthorContacts(resp) {
+            // 因为通讯录是以<table></table>的形式，所以先转化成html，再获取
+            let TempDiv = document.createElement('div')
+            TempDiv.innerHTML = resp.data.body_html
+            let TempTable = TempDiv.getElementsByTagName('table')[0]
 
-        this.GetUserInfo('22012465')
+            // 代表表头，格式[id, weixin, weibo]
+            let TableHeader = []
+            for (let i of TempTable.rows.item(0).cells) {
+                TableHeader.push(i.innerText)
+            }
+            // 代表表身，格式[{id:xx, weixin:xx, weibo:xx}]
+            let TableBody = []
+            // 从表身第一行开始，循环获取每行的数据(rows为行)
+            for (let i = 1; i < TempTable.rows.length; i++) {
+                // 代表每一行，格式{id:xx, weixin:xx}
+                let EveRow = {}
+                // 代表获取第几列
+                let EveCell = 0
+                // 循环获取当前这一行的所有单元格（cells为列）
+                for (let j of TempTable.rows.item(i).cells) {
+                    // 把表头[EveCell]和单元格的数据结合起来赋值给EveRow，格式{id:xx, weixin:xx}
+                    EveRow[TableHeader[EveCell]] = j.outerText
+                    // 表头[EveCell+1]
+                    EveCell ++
+                }
+                // 把每一行的数据添加给TableBody，构成所有作者的contacts[{id:xx, weixin:xx, weibo:xx}]
+                TableBody.push(EveRow)
+            }
+            // 从所有作者的contacts中，找到当前作者的信息，格式为{id:xx, weixin:xx, weibo:xx}
+            let TargetAuthorContacts = TableBody.find(o => o.id == this.AuthorLogin)
+            // 删除id的键值对
+            delete TargetAuthorContacts.id
+            // 删除值为空的键值对，因为空值代表没有这个社交账号
+            Object.keys(TargetAuthorContacts).forEach(item => {
+                if(!TargetAuthorContacts[item]) {
+                    delete TargetAuthorContacts[item];
+                }
+            })
+            this.AuthorContacts = TargetAuthorContacts
+        }
+    },
+    async mounted() {
+        // 加载author页面时，使得author头像不能被点击，因为已经在author页面里了
+        this.$store.commit('DisableClickAuthor', true);
+
+        let userResp = await UserInfo('22012465');
+        await this.GetUserInfo(userResp);
+
+        // 再调用docInfo api，获取作者的contacts通讯录
+        let ContactsResp = await DocInfo('qinyujie-067rz/yfezmc', 'xoql7l');
+        // 使用GetAuthorContacts函数，加工contact信息
+        await this.GetAuthorContacts(ContactsResp)
     },
 }
 </script>

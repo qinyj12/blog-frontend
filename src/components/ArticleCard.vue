@@ -208,13 +208,18 @@ export default {
 
             // 拿到头像的src属性
             let TargetAvatarSrc = this.$refs.avatar[index].getElementsByClassName('avatar-img')[0].src
+
+            // 把头像的src存入到vuex里，供下一个页面调用
+            this.$store.commit('ChangeAvatarImg', TargetAvatarSrc)
+
             // 把上面拿到的宽、高、位置赋值给 copied-avatar，copied-avatar显示出来
             await this.CopyClickedImg(TargetImgDom, this.$refs.CopiedAvatar, TargetAvatarSrc);
 
             // 拿到对应cover的src属性
-            let TargetCoverSrc = this.$refs.FeaturedImages[index].getElementsByClassName('cover-img')[0].src
+            let TargetAuthorCoverSrc = this.$store.state.AuthorCoverImg;
+            // let TargetCoverSrc = this.$refs.FeaturedImages[index].getElementsByClassName('cover-img')[0].src
             // 把上面拿到的宽、高、位置赋值给 avatar-back，avatar-back显示出来
-            await this.CopyClickedImg(TargetImgDom, this.$refs.AvatarBack, TargetCoverSrc);
+            await this.CopyClickedImg(TargetImgDom, this.$refs.AvatarBack, TargetAuthorCoverSrc);
 
             // 卡片区域整体下沉，cover消失
             await this.MoveArticleCardArea();

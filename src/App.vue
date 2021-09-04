@@ -29,6 +29,8 @@ export default {
         this.ActivateWaves();
 
         document.cookie = '_yuque_session=W37o80DxDFYtgeJlvnGCRIAIruIf4G7abHm6D6oS6fnsHDAZlwqhFmLzsF0Lyz_k7qjC4sDeobNzAa3KfIwshg=='
+        // 赋值一个AuthorcoverImg的默认值，如果用户没有设置authorcover，就调用这个默认值
+        this.$store.commit('ChangeAuthorCoverImg', require('@/assets/featured-image.png'))
 
         // AllTags('qinyujie-067rz').then(resp => console.log(resp))
     },

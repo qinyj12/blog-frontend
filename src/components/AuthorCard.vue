@@ -10,7 +10,7 @@
                     {{description}}
                 </v-clamp>
                 <!-- 从祖元素拿到值，不用props，直接用$attrs传给孙元素 -->
-                <ContactsList v-bind="$attrs" v-on="$listeners"/>
+                <ContactsList v-bind="$attrs" v-on="$listeners" IconColor="gray"/>
             </div>
         </div>
 
@@ -77,6 +77,14 @@ export default {
                 padding 5px 0
             }
         }
+    }
+}
+</style>
+<style lang="stylus">
+// 设置awesome font的颜色
+#contacts-list {
+    i.fab:hover {
+        color #19DDC4
     }
 }
 </style>

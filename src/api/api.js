@@ -43,6 +43,15 @@ export function DocTags(docId) {
     })
 }
 
+// 获取指定标签的文档（https://www.yuque.com/api/tags/docs?tags=标签名&userId=xxx）
+export function TagDocs(tags, userId = '22012465') {
+    return yuque_service({
+        methods: 'get',
+        url: '/api/tags/docs',
+        params: {tags, userId}
+    })
+}
+
 // python定制后端，用无头浏览器模拟点击登录，获取所有文章的标签
 export function AllTags(login) {
     return backend({

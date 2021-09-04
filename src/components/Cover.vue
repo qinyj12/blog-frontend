@@ -18,29 +18,21 @@
             <!-- 以下是点击进入到作者页时展示的部分，包括头像、名字等 -->
             <div class="author-avatar-detail" v-show="CoverShowAuthorDetail">
                 <transition-group name="author-detail-rise">
-                    <div class="author-avatar" key="author-avatar">
-                        <!-- 此处为demo临时变量，需在路由守卫里/或者author页面里设置，把头像存放在localstorage里 -->
-                        <el-image :src="demo">
-                            <!-- 头像加载过程中的占位内容 -->
-                            <!-- <div slot="placeholder" class="image-slot">
-                                <img :src="AuthorAvatarPlaceholder">
-                            </div> -->
-                        </el-image>
+                    <!-- 此页avatar和上一页的avatar会形成连贯的动画，如果用ajax来获取头像的话，动画就撕裂了。放在css里就没问题，应该是css比js更优先执行的原因 -->
+                    <div 
+                        class="author-avatar" 
+                        key="author-avatar"
+                        :style="{backgroundImage: 'url(' + AvatarImg + ')'}"
+                    >
                     </div>
                     <!-- 这个元素的动画默认会从上方飘下来，不知道是根据什么定位的-->
                     <div class="author-detail" key="author-detail" v-show="IfShowAuthorDetail">
                         <h1>{{AuthorDetailName}}</h1>
-                        <p>这是一个测试用户的介绍</p>
-                        <ul>
-                            <li v-for="item in AuthorContact" :key="item">
-                                <i :class="'fab fa-' + item"></i>
-                            </li>
-                            <span class="author-position">
-                                <i class="fas fa-map-marker-alt no-hover"></i>
-                                <span>无锡</span>
-                            </span>
+                        <p>{{AuthorDetailIntroduction}}</p>
 
-                        </ul>
+                        <div class="contacts-list-box">
+                            <ContactsList v-bind="$attrs" v-on="$listeners" />
+                        </div>
                         
                     </div>
                 </transition-group>
@@ -58,8 +50,9 @@
     </div>
 </template>
 <script>
+import { UserInfo } from '@/api/api.js';
+import ContactsList from '@/components/ContactsList.vue';
 export default {
-    // props: ['CoverImg', 'CoverShowArticleDetail', 'CoverShowAuthorDetail'],
     props: {
         CoverShowArticleDetail: Boolean,
         CoverShowAuthorDetail: Boolean,
@@ -85,9 +78,10 @@ export default {
             }
         },
         AuthorDetailName: String,
-        AuthorDetailAvatar: String,
-        AuthorAvatarPlaceholder: String || Object,
         AuthorDetailIntroduction: String,
+    },
+    components: {
+        ContactsList
     },
     data() {
         return {
@@ -96,7 +90,7 @@ export default {
             // 这个字段用来判断要不要显示author detail的，默认不显示
             IfShowAuthorDetail: false,
             AuthorContact: ['weibo', 'qq', 'weixin', 'github'],
-            demo: localStorage.getItem('demo')
+            AvatarImg: undefined
         }
     },
     methods: {
@@ -117,11 +111,15 @@ export default {
             )
         },
         // 监听父组件传值，用来判断要不要显示author-detail
-        ShowAuthorDetail() {
+        async ShowAuthorDetail() {
             this.$nextTick(
-                () => {
+                async () => {
                     if (this.CoverShowAuthorDetail) {
+                        // let UserResp = await UserInfo(this.$route.params.author)
+                        // console.log(UserResp.data)
+                        // this.AvatarSaved = UserResp.data.avatar_url
                         this.IfShowAuthorDetail = true
+                        // this.IfShowAuthorDetail = true
                     } else {
                         // 啥也不干
                     }
@@ -129,12 +127,28 @@ export default {
             )
         },
     },
+    // 在mounted之前，就把avatar存在css里
+    async beforeMount() {
+        // 判断进入的是不是用户详情页，如果是
+        if (this.CoverShowAuthorDetail) {
+            // 判断vuex里是不是已有值（如果有，代表是home=>author时，由home传入到vuex里的）
+            if (this.$store.state.AvatarImg) {
+                // 如果有，优先用vuex里的值
+                this.AvatarImg = this.$store.state.AvatarImg
+            } else {
+                // 如果没有，就从语雀api获取值
+                let UserResp = await UserInfo(this.$route.params.author)
+                this.AvatarImg = UserResp.data.avatar_url
+            }
+        } else {
+            // 啥也不干
+        }
+    },
     mounted() {
         // 监听父组件传值，用来判断要不要显示article-detail
         this.ShowArticleDetail();
         // 监听父组件传值，用来判断要不要显示author-detail
         this.ShowAuthorDetail();
-
     },
 }
 </script>
@@ -237,6 +251,8 @@ export default {
                 margin 0 auto
                 transition all 0.2s
                 overflow hidden
+                background-size cover
+                background-position 50% 50%
             }
 
             .author-detail {
@@ -251,35 +267,11 @@ export default {
                     height 36px
                 }
 
-                ul {
-                    list-style none
-                    margin 0
-                    padding 0
+                .contacts-list-box {
                     display flex
                     justify-content center
-                    height 20px
                     align-items center
-
-                    i {
-                        margin-right 16px
-                        color white
-                        transition all 0.1s
-                    }
-
-                    i:hover:not(.no-hover) {
-                        color #19DDC4
-                        cursor pointer
-                    }
-
-                    .author-position {
-                        display flex
-                        align-items center
-                        line-height 14px
-
-                        i {
-                            margin-right 5px
-                        }
-                    }
+                    color white
                 }
             }
 
@@ -309,5 +301,13 @@ export default {
         opacity 0
     }
 
+}
+</style>
+<style lang="stylus">
+// 设置awesome font的颜色
+#contacts-list {
+    i.fab:hover {
+        color white
+    }
 }
 </style>
