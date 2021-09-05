@@ -23,6 +23,7 @@
 import Cover from '@/components/Cover.vue';
 import ArticleCard from '@/components/ArticleCard.vue';
 import Footer from '@/components/Footer.vue';
+import { TagDocs } from '@/api/api.js';
 export default {
     components: {
         Cover,
@@ -37,7 +38,9 @@ export default {
     },
     mounted() {
         // 恢复滚动条为默认
-        this.$store.commit('ChangeBodyScrollStatus', 'auto')
+        this.$store.commit('ChangeBodyScrollStatus', 'auto');
+
+        TagDocs('标签1').then(resp => console.log(resp))
     },
     // tag => tag时触发。其实不是tag=>tag，只是复用tag组件而已，router不会有任何变化
     beforeRouteUpdate (to, from, next) {

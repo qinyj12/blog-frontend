@@ -395,22 +395,8 @@ export default {
     },
     async mounted() {
         let DocsRes = await RepoDocs('qinyujie-067rz/rkckig');
+        console.log(DocsRes)
         await this.GetRepoDocs(DocsRes);
-    },
-    watch: {
-        // DomFinished() {
-        //     let AvatarStored = []
-        //     this.$nextTick(() => {
-        //         for (let i = 0; i < this.$refs.avatarImg.length; ++i) {
-        //             domtoimage.toBlob(this.$refs.avatarImg[i]).then(blob => {
-        //                 AvatarStored.push(blob)
-        //             })
-        //         }
-        //         this.$store.commit('ChangeAvatarStored', AvatarStored)
-        //     })            
-            
-            
-        // }
     },
 }
 </script>
