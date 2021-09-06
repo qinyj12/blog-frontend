@@ -11,8 +11,8 @@
                 }" 
                 key="cover"
             />
-
-            <ArticleCard v-show="!IfSink" key="card" />
+            <!-- 一定要加vif，等待父组件tag拿到api返回的值后，子组件articlecard才能加载 -->
+            <ArticleCard v-show="!IfSink" :key="$route.fullPath" :DocsRes="RepoDocsFromAPI" v-if="RepoDocsFromAPI" />
 
         <!-- 判断要不要隐藏footer组件，如果隐藏，给隐藏过程添加动画 -->
             <Footer v-show="!IfSink" key="footer" />
@@ -23,12 +23,35 @@
 import Cover from '@/components/Cover.vue';
 import ArticleCard from '@/components/ArticleCard.vue';
 import Footer from '@/components/Footer.vue';
-import { TagDocs } from '@/api/api.js';
+import { RepoDocs, TagDocs, UserInfo } from '@/api/api.js';
 export default {
     components: {
         Cover,
         ArticleCard,
         Footer
+    },
+    data() {
+        return {
+            RepoDocsFromAPI: undefined,
+        }
+    },
+    async created() {
+        // 从语雀api拿到值，复制给子组件articlecard
+        let DocsResp = await TagDocs(this.$route.params.tag);
+        // 此时拿到的结构为{data:[0:{doc:{id:xx,...}}, 1:{doc:{id:xx,...}}]}，要转为[0:{id:xx,...},...]
+        let TempArr = new Array();
+        // 遍历[0:{doc:{id:xx,...}}]
+        for (let i in DocsResp.data) {
+            // 因为这个语雀api（tagDocs）拿到的返回值是不带last_editor字段的，这会让articlecard出错，因为articlecard组件靠此字段拿到用户信息
+            // 所以再凭借usid去调用userinfo api，获取用户信息
+            let TempUserInfo = await UserInfo(DocsResp.data[i].doc.user_id)
+            // 直接把用户信息赋值到docsresp中
+            DocsResp.data[i].doc.last_editor = TempUserInfo.data
+            // 最后组成一个复合articlecard要求的新数组
+            TempArr.push(DocsResp.data[i].doc)
+        }
+        // 把数组传给articlecard组件
+        this.RepoDocsFromAPI = TempArr;
     },
     computed: {
         // 判断要不要隐藏cover和footer组件
@@ -40,16 +63,18 @@ export default {
         // 恢复滚动条为默认
         this.$store.commit('ChangeBodyScrollStatus', 'auto');
 
-        TagDocs('标签1').then(resp => console.log(resp))
     },
     // tag => tag时触发。其实不是tag=>tag，只是复用tag组件而已，router不会有任何变化
     beforeRouteUpdate (to, from, next) {
         // 给0.5s动画时间
         setTimeout(() => {
             next(
-                this.$store.commit('ChangeHomeBuffer', 0),
-                this.$store.commit('SinkCoverAndArticle', false),
+                // this.$store.commit('ChangeHomeBuffer', 0),
+                // this.$store.commit('SinkCoverAndArticle', false)
+                // this.$router.push()
+                
             )
+            // location.reload()
         }, this.$store.state.HomeBuffer);
     }
 }

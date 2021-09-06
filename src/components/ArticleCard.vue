@@ -121,10 +121,13 @@
 </template>
 
 <script>
-import { RepoDocs, DocTags } from '@/api/api.js';
+import { DocTags } from '@/api/api.js';
 import axios from 'axios';
 import domtoimage from 'dom-to-image';
 export default {
+    props: {
+        DocsRes: Array
+    },
     data() {
         return {
             // 为防止console报错才定义一个初始值
@@ -340,10 +343,8 @@ export default {
             })
         },
 
-        // res是通过api获取的docs返回值，把返回值传入以下函数，拿出docs的各个参数
-        async GetRepoDocs(res) {
-            // 用这个拿到docs的所有信息，此时还拿不到tag信息
-            let DocsInfo = res.data
+        // res是通过api获取的docs返回值，把返回值传入以下函数，拿出docs的各个参数，此时还拿不到tag信息
+        async GetRepoDocs(DocsInfo) {
             // 先获取所有docs的id
             let DocsIds = []
             // 把id组成一个[]，用多线程接口获取tags
@@ -394,9 +395,7 @@ export default {
 
     },
     async mounted() {
-        let DocsRes = await RepoDocs('qinyujie-067rz/rkckig');
-        console.log(DocsRes)
-        await this.GetRepoDocs(DocsRes);
+        await this.GetRepoDocs(this.DocsRes);
     },
 }
 </script>

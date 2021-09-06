@@ -30,7 +30,9 @@
 - [x] 把contact社交账号做成单独的组件
 - [x] 点击头像进入作者详情
 - [x] 如果文章没有设置cover，单独访问文章页会没有背景
-- [ ] 点击标签展示所有tags的文章(要把获取语雀api文档的逻辑从articlecard中提取到父组件（home和tag）中)
+- [x] 点击标签展示所有tags的文章(要把获取语雀api文档的逻辑从articlecard中提取到父组件（home和tag）中)。
+- [ ] 切换tag，只重新生成articlecard组件（那又要把逻辑重新放进articlecard里）
+- [ ] author页从父组件给值到子组件articlecard中
 - [ ] 多个标签
 - [ ] 热门文章组件
 - [x] 首页加载模板，所有标签加载模板

@@ -8,7 +8,8 @@
         <!-- 使用懒加载 -->
         <vue-lazy-component>
             <!-- card组件的隐藏动画在组件内判断，不需要再home父组件中判断 -->
-            <ArticleCard />
+            <!-- 一定要加vif，等待父组件Home拿到api返回的值后，子组件articlecard才能加载 -->
+            <ArticleCard :DocsRes="RepoDocsFromAPI" v-if="RepoDocsFromAPI" />
         </vue-lazy-component>
         
         <!-- 判断要不要隐藏footer组件，如果隐藏，给隐藏过程添加动画 -->
@@ -20,6 +21,7 @@
 <script>
 // import ArticleCard from '@/components/ArticleCard.vue';
 import Cover from '@/components/Cover.vue';
+import { RepoDocs } from '@/api/api.js';
 export default {
     components: {
         ArticleCard: resolve => {require(['@/components/ArticleCard.vue'], resolve)},
@@ -30,6 +32,7 @@ export default {
         return {
             // 传值给cover组件，传入undefined，调用cover组件内部的默认值
             CoverImg: require('@/assets/test2.jpeg'),
+            RepoDocsFromAPI: undefined
         }
     },
     computed: {
@@ -38,7 +41,10 @@ export default {
             return this.$store.state.IfSinkCover
         }
     },
-    mounted() {
+    async created() {
+        // 从语雀api拿到值，复制给子组件articlecard
+        let DocsResp = await RepoDocs('qinyujie-067rz/rkckig');
+        this.RepoDocsFromAPI = DocsResp.data
     },
 }
 </script>
