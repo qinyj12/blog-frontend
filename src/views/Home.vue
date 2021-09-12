@@ -43,7 +43,8 @@ export default {
     },
     async created() {
         // 从语雀api拿到值，复制给子组件articlecard
-        let DocsResp = await RepoDocs('qinyujie-067rz/rkckig');
+        let DocsResp = await RepoDocs('20285594');
+        // console.log(DocsResp)
         this.RepoDocsFromAPI = DocsResp.data
     },
 }

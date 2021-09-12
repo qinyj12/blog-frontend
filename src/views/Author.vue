@@ -15,7 +15,7 @@
             />
         </transition>
 
-        <ArticleCard />
+        <ArticleCard :DocsRes="RepoDocsFromAPI" v-if="RepoDocsFromAPI" />
 
         <!-- 判断要不要隐藏footer组件，如果隐藏，给隐藏过程添加动画 -->
         <transition name="cover-footer-sink">
@@ -27,7 +27,7 @@
 import Cover from '@/components/Cover.vue';
 import ArticleCard from '@/components/ArticleCard.vue';
 import Footer from '@/components/Footer.vue';
-import { UserInfo, DocInfo } from '@/api/api.js'
+import { RepoDocs, UserInfo, DocInfo } from '@/api/api.js'
 export default {
     components: {
         Cover,
@@ -39,7 +39,8 @@ export default {
             AuthorName: '……',
             AuthorIntroduction: undefined,
             AuthorContacts: {},
-            AuthorLogin: undefined
+            AuthorLogin: undefined,
+            RepoDocsFromAPI: undefined
         }
     },
     destroyed() {
@@ -102,11 +103,17 @@ export default {
             this.AuthorContacts = TargetAuthorContacts
         }
     },
+    async created() {
+        // 从语雀api拿到值，复制给子组件articlecard
+        let DocsResp = await RepoDocs('20285594');
+        // console.log(DocsResp)
+        this.RepoDocsFromAPI = DocsResp.data
+    },
     async mounted() {
         // 加载author页面时，使得author头像不能被点击，因为已经在author页面里了
         this.$store.commit('DisableClickAuthor', true);
-
-        let userResp = await UserInfo('22012465');
+        // 把usid传给api，去调取这个用户的信息
+        let userResp = await UserInfo(this.$route.params.author);
         await this.GetUserInfo(userResp);
 
         // 再调用docInfo api，获取作者的contacts通讯录

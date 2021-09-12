@@ -23,7 +23,6 @@
                     </div>
                 </div>
             </li>
-
         </ul>
 
         <!-- 这里要记住article-card组件的滚动条位置，所以要keep-alive -->
@@ -60,7 +59,7 @@
                                         >
                                             <div class="avatar" ref="avatar">
                                                 <img 
-                                                    :src="item.last_editor.avatar_url" 
+                                                    :src="item.user.avatar_url" 
                                                     alt="头像" 
                                                     class="avatar-img"
                                                     :class="{
@@ -71,7 +70,7 @@
                                                 >
                                             </div>
 
-                                            <span class="name">{{item.last_editor.name}}</span>
+                                            <span class="name">{{item.user.name}}</span>
                                         </div>
                                         <!-- 格式为2021-07-08T15:23:00.000Z，截取从第0个开始后10位的字符串 -->
                                         <div class="published-date">{{item.created_at.substr(0,10)}}</div>
@@ -131,7 +130,7 @@ export default {
     data() {
         return {
             // 为防止console报错才定义一个初始值
-            counts: [{title: '', last_editor: {avatar_url: ''}, created_at: ''}],
+            counts: [{title: '', user: {avatar_url: ''}, created_at: ''}],
             LoadFinshed: false, // 用于在api加载完成前展示过渡动画的
             ShowCopiedImg: false,
             CopiedFeaturedMoved: false,
@@ -363,7 +362,7 @@ export default {
                     }
                 }
                 this.counts = DocsInfo
-                console.log(this.counts)
+                // console.log(this.counts)
                 // 看看能不能从语雀api拿到哪怕一篇文档，如果可以
                 // 这里有bug，似乎是顺序问题
                 if (this.counts[0].id) {

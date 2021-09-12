@@ -19,10 +19,10 @@ export function UserInfo(usid) {
 }
 
 // 指定repo的所有文档信息（根据repo的namespace）
-export function RepoDocs(namespace) {
+export function RepoDocs(bookid) {
     return yuque_service({
         methods: 'get',
-        url: '/api/v2/repos/' + namespace + '/docs'
+        url: '/api/books/' + bookid + '/docs'
     })
 }
 
