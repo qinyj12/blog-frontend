@@ -42,7 +42,7 @@
             </transition>
 
             <!-- recommended组件的隐藏动画在组件内判断，不需要在content父组件中判断 -->
-            <ArticlesRecommended />
+            <ArticlesRecommended :slug="$route.params.slug" />
 
             <!-- 判断要不要隐藏comments，给隐藏过程添加动画 -->
             <transition name="components-move">
@@ -122,7 +122,7 @@ export default {
             this.AuthorName = data.creator.name
             this.AuthorDescription = data.creator.description
             this.AuthorLogin = data.creator.login
-            console.log(data)
+            // console.log(data)
 
             DocTags(data.id).then(resp => {
                 this.Category = resp.data[0].title

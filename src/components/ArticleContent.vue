@@ -35,7 +35,7 @@ export default {
     }
 </style>
 <style lang="stylus">
-    .lake-engine {
+    .lake-engine, .lake-content {
         text-align left
 
         * img {

@@ -34,6 +34,23 @@ export function DocInfo(namespace, slug) {
     })
 }
 
+// 使用V1 版的api，获取更全的信息，可以拿到推荐文章
+export function FullDocInfo(slug, book_id = '20285594') {
+    return yuque_service({
+        methods: 'get',
+        url: '/api/docs/' + slug,
+        params: {
+            book_id, 
+            include_contributors: 'true', 
+            include_hits: 'true', 
+            include_like: 'true', 
+            include_pager: 'true',
+            include_suggests: 'true',
+            merge_dynamic_data: 'false'
+        }
+    })
+}
+
 // 获取指定文档的标签（根据doc的id）
 export function DocTags(docId) {
     return yuque_service({

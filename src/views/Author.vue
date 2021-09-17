@@ -106,8 +106,9 @@ export default {
     async created() {
         // 从语雀api拿到值，复制给子组件articlecard
         let DocsResp = await RepoDocs('20285594');
-        // console.log(DocsResp)
-        this.RepoDocsFromAPI = DocsResp.data
+        // 筛选出指定用户（根据路由判断usid）创建的文档
+        let CurrentUserDocs = DocsResp.data.filter(item => {return item.user_id == this.$route.params.author? true: false})
+        this.RepoDocsFromAPI = CurrentUserDocs
     },
     async mounted() {
         // 加载author页面时，使得author头像不能被点击，因为已经在author页面里了
@@ -119,7 +120,7 @@ export default {
         // 再调用docInfo api，获取作者的contacts通讯录
         let ContactsResp = await DocInfo('qinyujie-067rz/yfezmc', 'xoql7l');
         // 使用GetAuthorContacts函数，加工contact信息
-        await this.GetAuthorContacts(ContactsResp)
+        await this.GetAuthorContacts(ContactsResp);
     },
 }
 </script>

@@ -6,7 +6,7 @@
                 <h2>推荐阅读</h2>
                 <ul class="articles-recommended">
                     <li 
-                        v-for="(item, index) in RecommendArticles" 
+                        v-for="(item, index) in RecommendArticlesV2" 
                         :key="item.title" 
                         class="single-article-recommended"
                         @click="ClickRecommended(index)"
@@ -69,7 +69,9 @@
     </div>
 </template>
 <script>
+import { FullDocInfo } from '@/api/api.js'
 export default {
+    props: ['slug'],
     data() {
         return {
             RecommendArticles:[
@@ -90,6 +92,15 @@ export default {
                     path: '/content/' + Math.round(Math.random()*10)
                 }
             ],
+            RecommendArticlesV2: [
+                {
+                    title: 'title',
+                    tag: '案例-tag-',
+                    author: 'author',
+                    views: '100',
+                    cover: undefined,
+                }
+            ],
             CopiedImgStart: false, // recommended-cover的初始状态
             CopiedImgMoved: false, // recommended-cover的移动状态
             CopiedImgEnd: false // recommended-cover的结束状态
@@ -108,6 +119,15 @@ export default {
     },
 
     methods: {
+        async GetArticlesRecommended(SuggestList) {
+            // this.RecommendArticlesV2 = SuggestList
+            for (let i of SuggestList) {
+                if (!i.cover) {
+                    i.cover = require('@/assets/featured-image.png')
+                }
+            }
+            this.RecommendArticlesV2 = SuggestList
+        },
         async ClickRecommended(index) {
             // 改变vuex仓库，当router:from.name==home 时，给500ms的缓冲时间，就是500ms之后才会触发路由
             // this.$store.commit('ChangeHomeBuffer', 500)
@@ -238,6 +258,11 @@ export default {
             // 清除copied-recommended-cover的结束状态
             this.CopiedImgEnd = false
         }
+    },
+    async mounted() {
+        let demo = await FullDocInfo(this.slug);
+        await this.GetArticlesRecommended(demo.data.suggests)
+        console.log(this.RecommendArticlesV2)
     },
 
 }

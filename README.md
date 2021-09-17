@@ -33,7 +33,9 @@
 - [x] 点击标签展示所有tags的文章(要把获取语雀api文档的逻辑从articlecard中提取到父组件（home和tag）中)。
 - [x] 切换tag，只重新生成articlecard组件（切换路由后，重新生成cover,card,footer,给card一个骨架屏）
 - [x] 因为重构了articlecard，author组件也要重新写逻辑
-- [ ] author页
+- [x] author页
+- [ ] 文章内推荐模块（tag标签，根据接口获取的suggests没有tags标签，需要再根据接口拿到tags）
+- [ ] 未分类标签未展示仍然loading
 - [ ] 多个标签
 - [ ] 热门文章组件
 - [x] 首页加载模板，所有标签加载模板
