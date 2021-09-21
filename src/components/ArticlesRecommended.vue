@@ -45,7 +45,7 @@
                                 </v-clamp>
 
                                 <i class="far fa-eye"></i>
-                                <div>{{item.views}}</div>
+                                <div>{{item.hits}}</div>
                             </div>
                         </div>
                     </li>
@@ -69,7 +69,7 @@
     </div>
 </template>
 <script>
-import { FullDocInfo } from '@/api/api.js'
+import { FullDocInfo, DocTags, UserInfo } from '@/api/api.js'
 export default {
     props: ['slug'],
     data() {
@@ -95,9 +95,9 @@ export default {
             RecommendArticlesV2: [
                 {
                     title: 'title',
-                    tag: '案例-tag-',
+                    tag: 'tag',
                     author: 'author',
-                    views: '100',
+                    hits: 'hits',
                     cover: undefined,
                 }
             ],
@@ -122,10 +122,29 @@ export default {
         async GetArticlesRecommended(SuggestList) {
             // this.RecommendArticlesV2 = SuggestList
             for (let i of SuggestList) {
+                // 赋予标签
+                let TempTags = await DocTags(i.id)
+                // 如果能获取到标签
+                if (TempTags.data[0]) {
+                    i.tag = TempTags.data[0].title
+                // 如果获取不到标签，即后端没设置标签
+                } else {
+                    i.tag = '未分类'
+                }
+                // 如果没有封面图的话，就设置默认封面图
                 if (!i.cover) {
                     i.cover = require('@/assets/featured-image.png')
                 }
+
+                // 获取点击量
+                let TempDocInfo = await FullDocInfo(i.id)
+                i.hits = TempDocInfo.data.hits
+
+                // 获取用户名
+                let TempUserInfo = await UserInfo(i.user_id)
+                i.author = TempUserInfo.data.name
             }
+            // console.log(SuggestList)
             this.RecommendArticlesV2 = SuggestList
         },
         async ClickRecommended(index) {
@@ -262,7 +281,7 @@ export default {
     async mounted() {
         let demo = await FullDocInfo(this.slug);
         await this.GetArticlesRecommended(demo.data.suggests)
-        console.log(this.RecommendArticlesV2)
+        // console.log(this.RecommendArticlesV2)
     },
 
 }

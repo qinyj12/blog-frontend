@@ -26,7 +26,7 @@ export function RepoDocs(bookid) {
     })
 }
 
-// 获取某篇文档的信息（根据namespace/"docs"/slug）
+// 使用V2版的api，获取某篇文档的信息（根据namespace/"docs"/slug）
 export function DocInfo(namespace, slug) {
     return yuque_service({
         methods: 'get',
@@ -34,7 +34,7 @@ export function DocInfo(namespace, slug) {
     })
 }
 
-// 使用V1 版的api，获取更全的信息，可以拿到推荐文章
+// 使用V1版的api，获取更全的信息，可以拿到推荐文章
 export function FullDocInfo(slug, book_id = '20285594') {
     return yuque_service({
         methods: 'get',
