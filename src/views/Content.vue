@@ -193,7 +193,7 @@ export default {
             // sinksomething是用来判断要不要隐藏除recommended之外的其他组件的，路由复用后，这些组件要回复原位
             this.$store.commit('SinkSomething', false),
             // 改变key，强制重新渲染cover组件，触发cover组件内部定义的mounted时的动画
-            this.ReRenderCover += 1
+            this.ReRenderCover += 1,
         )
     },
 }

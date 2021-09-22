@@ -13,11 +13,12 @@
                     >
 
                         <!-- 封面图 -->
-                        <div 
-                            class="article-recommended-cover" 
-                            :style="{backgroundImage: 'url(' + item.cover +')'}"
-                            ref="RecommendedCover"
-                        >
+                        <div class="article-recommended-cover">
+                            <img 
+                                class="recommended-cover-img"
+                                ref="RecommendedCover"
+                                :src="item.cover"
+                            >
                         </div>
 
                         <!-- 文字部分 -->
@@ -35,7 +36,11 @@
                             </v-clamp>
 
                             <div class="recommended-avatar-views">
-                                <div class="recommended-avatar"></div>
+                                <div class="avatar">
+                                    <el-avatar :size="32" :src="item.avatar_url">
+                                        <img src="https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png"/>
+                                    </el-avatar>
+                                </div>
 
                                 <v-clamp 
                                     :max-lines="1" 
@@ -74,36 +79,20 @@ export default {
     props: ['slug'],
     data() {
         return {
-            RecommendArticles:[
-                {
-                    title: '第'+Math.round(Math.random()*10)+'篇', 
-                    tag: '案例', 
-                    author: '测试用户', 
-                    views: '50', 
-                    cover: require('../assets/test'+Math.round(Math.random()*5)+'.jpeg'),
-                    path: '/content/' + Math.round(Math.random()*10)
-                },
-                {
-                    title: '第'+ Math.random() +'篇', 
-                    tag: '生活end', 
-                    author: '第二个测试用户hahaha', 
-                    views: '150', 
-                    cover: require('../assets/test'+Math.round(Math.random()*5)+'.jpeg'),
-                    path: '/content/' + Math.round(Math.random()*10)
-                }
-            ],
             RecommendArticlesV2: [
                 {
                     title: 'title',
                     tag: 'tag',
                     author: 'author',
+                    // avatar_url: ,
                     hits: 'hits',
                     cover: undefined,
                 }
             ],
             CopiedImgStart: false, // recommended-cover的初始状态
             CopiedImgMoved: false, // recommended-cover的移动状态
-            CopiedImgEnd: false // recommended-cover的结束状态
+            CopiedImgEnd: false, // recommended-cover的结束状态
+            CoverClicked: '', // 被点击卡片的头图
 
         }
     },
@@ -135,16 +124,18 @@ export default {
                 if (!i.cover) {
                     i.cover = require('@/assets/featured-image.png')
                 }
-
                 // 获取点击量
                 let TempDocInfo = await FullDocInfo(i.id)
                 i.hits = TempDocInfo.data.hits
-
-                // 获取用户名
+                // 获取文章slug
+                // i.slug = TempDocInfo
+                // 获取用户名和头像
                 let TempUserInfo = await UserInfo(i.user_id)
                 i.author = TempUserInfo.data.name
+                i.avatar_url = TempUserInfo.data.avatar_url
+
             }
-            // console.log(SuggestList)
+            console.log(SuggestList)
             this.RecommendArticlesV2 = SuggestList
         },
         async ClickRecommended(index) {
@@ -156,9 +147,9 @@ export default {
 
             // 拿到点击的那张卡片的头图，以及宽、高、位置
             let TargetImgDom = this.GetClickedImgDom(this.$refs.RecommendedCover[index]);
-
+            
             // 把上面拿到的宽、高、位置赋值给 #copied-img，copied-img显示出来
-            await this.CopyClickedImg(TargetImgDom, this.$refs.CopiedImg, require('../assets/featured-image.png'));
+            await this.CopyClickedImg(TargetImgDom, this.$refs.CopiedImg, this.CoverClicked);
 
             // 其他区域全部消失
             await this.SinkExceptRecommendedCover();
@@ -177,8 +168,9 @@ export default {
         },
 
         // 找到被点击的那一张卡片，设为白底
-        CardClickedToBlank(index) {
-            let TargetItem = this.RecommendArticles[index];
+        async CardClickedToBlank(index) {
+            this.CoverClicked = this.$refs.RecommendedCover[index].src;
+            let TargetItem = await this.RecommendArticlesV2[index];
             TargetItem.cover = ''
         },
 
@@ -244,31 +236,14 @@ export default {
         // recommended => content时，延时一段时间再触发，给本页面一个完成动画的时间
         RecommendedToContent(index, delay) {
             setTimeout(() => {
-                this.$router.push(this.RecommendArticles[index].path)
+                // 此处会导致路由复用问题，无法重新获取内容
+                this.$router.push('/content/' + this.RecommendArticlesV2[index].slug)
             }, delay);
         }
     },
     watch: {
         // eslint-disable-next-line no-unused-vars
         '$route'(to, from) {
-            this.RecommendArticles = [
-                {
-                    title: '第'+Math.round(Math.random()*10)+'篇', 
-                    tag: '案例', 
-                    author: '测试用户', 
-                    views: '50', 
-                    cover: require('../assets/test'+Math.round(Math.random()*5)+'.jpeg'),
-                    path: '/content/' + Math.round(Math.random()*10)
-                },
-                {
-                    title: '第'+ Math.random() +'篇', 
-                    tag: '生活end', 
-                    author: '第二个测试用户hahaha', 
-                    views: '150', 
-                    cover: require('../assets/test'+Math.round(Math.random()*5)+'.jpeg'),
-                    path: '/content/' + Math.round(Math.random()*10)
-                }
-            ];
             this.$store.commit('HideCopiedImg', true);
             // 清除copied-recommended-cover的初始状态
             this.CopiedImgStart = false;
@@ -278,9 +253,25 @@ export default {
             this.CopiedImgEnd = false
         }
     },
+    async beforeMount() {
+        // 判断进入的是不是用户详情页，如果是
+        // if (this.CoverShowAuthorDetail) {
+        //     // 判断vuex里是不是已有值（如果有，代表是home=>author时，由home传入到vuex里的）
+        //     if (this.$store.state.AvatarImg) {
+        //         // 如果有，优先用vuex里的值
+        //         this.AvatarImg = this.$store.state.AvatarImg
+        //     } else {
+        //         // 如果没有，就从语雀api获取值
+        //         let UserResp = await UserInfo(this.$route.params.author)
+        //         this.AvatarImg = UserResp.data.avatar_url
+        //     }
+        // } else {
+        //     // 啥也不干
+        // }
+    },
     async mounted() {
-        let demo = await FullDocInfo(this.slug);
-        await this.GetArticlesRecommended(demo.data.suggests)
+        let TempInfo = await FullDocInfo(this.slug);
+        await this.GetArticlesRecommended(TempInfo.data.suggests)
         // console.log(this.RecommendArticlesV2)
     },
 
@@ -320,6 +311,14 @@ sink-time = 0.2
                 background-size cover
                 background-position 50% 50%
                 box-sizing border-box
+                background-color Gainsboro
+
+                .recommended-cover-img {
+                    overflow hidden
+                    width 100%
+                    height 100%
+                    object-fit cover
+                }
             }
 
             .article-recommended-introduction {
