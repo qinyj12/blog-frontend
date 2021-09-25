@@ -141,11 +141,13 @@ export default {
         async ClickRecommended(index) {
             // 改变vuex仓库，当router:from.name==home 时，给500ms的缓冲时间，就是500ms之后才会触发路由
             // this.$store.commit('ChangeHomeBuffer', 500)
+            // 拿到点击的那张卡片的头图
+            // //////////////////////
 
             // 找到被点击的那一张卡片，设卡片头图为白底
             this.CardClickedToBlank(index);
 
-            // 拿到点击的那张卡片的头图，以及宽、高、位置
+            // 拿到点击的那张卡片头图的宽、高、位置
             let TargetImgDom = this.GetClickedImgDom(this.$refs.RecommendedCover[index]);
             
             // 把上面拿到的宽、高、位置赋值给 #copied-img，copied-img显示出来
@@ -169,7 +171,9 @@ export default {
 
         // 找到被点击的那一张卡片，设为白底
         async CardClickedToBlank(index) {
+            // 在设为白底之前，先拿到图片src，存入vuex
             this.CoverClicked = this.$refs.RecommendedCover[index].src;
+            this.$store.commit('ChangeCoverImg', this.CoverClicked);
             let TargetItem = await this.RecommendArticlesV2[index];
             TargetItem.cover = ''
         },

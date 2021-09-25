@@ -13,7 +13,7 @@
                     PublishDate: PublishDate,
                     CoverBlur: '5px'
                 }"
-                :key="ReRenderCover"
+                :key="$route.fullPath"
             />
         </transition>
 
@@ -82,8 +82,6 @@ export default {
             Title: undefined,
             Author: undefined,
             PublishDate: undefined,
-            // 这个值是用来重新渲染cover组件的
-            ReRenderCover: 0,
             ArticleContentHtml: undefined, // 正文内容
             AuthorAvatar: undefined, // 用户头像
             AuthorName: undefined, // 用户昵称
@@ -192,8 +190,7 @@ export default {
             this.$store.commit('ChangeHomeBuffer', 0),
             // sinksomething是用来判断要不要隐藏除recommended之外的其他组件的，路由复用后，这些组件要回复原位
             this.$store.commit('SinkSomething', false),
-            // 改变key，强制重新渲染cover组件，触发cover组件内部定义的mounted时的动画
-            this.ReRenderCover += 1,
+            // this.$store.commit('ChangeCoverImg', undefined)
         )
     },
 }
