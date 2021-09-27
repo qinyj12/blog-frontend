@@ -2,7 +2,6 @@ import axios from 'axios'
 // 因为是外部js，不能继承vue实例，所以要单独引入element-ui
 import 'element-ui/lib/theme-chalk/index.css'
 import { Message } from "element-ui"
-import qs from 'qs'
 
 /*
 以下为语雀的axios实例
@@ -40,16 +39,16 @@ yuque_service.interceptors.response.use((response)=>{
     const code = response.status;
     // code为200
     if(code === 200){
-        console.log('返回200')
+        // console.log('返回200')
         return res;
     // code不为200
     }else{
-        console.log('返回不是200')
+        // console.log('返回不是200')
         return res;
     }
 },(error)=>{
-    console.log('返回拦截器catch error')
-    console.log(error)
+    // console.log('返回拦截器catch error')
+    // console.log(error)
 });
 
 /*
@@ -77,15 +76,15 @@ backend.interceptors.response.use((response)=>{
     // 获取接口返回结果
     const res = response.data;
     if(res.code === 200) {
-        console.log('backend返回200')
+        // console.log('backend返回200')
         return res;
     } else {
-        console.log('backend返回不是200')
+        // console.log('backend返回不是200')
         return res;
     }
 },(error)=>{
-    console.log('backend返回拦截器catch error')
-    console.log(error)
+    // console.log('backend返回拦截器catch error')
+    // console.log(error)
     return {
         'code': 500,
         'message': 'error'

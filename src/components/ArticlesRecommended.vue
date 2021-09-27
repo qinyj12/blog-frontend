@@ -135,7 +135,7 @@ export default {
                 i.avatar_url = TempUserInfo.data.avatar_url
 
             }
-            console.log(SuggestList)
+            // console.log(SuggestList)
             this.RecommendArticlesV2 = SuggestList
         },
         async ClickRecommended(index) {

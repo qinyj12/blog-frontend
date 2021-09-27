@@ -1,7 +1,10 @@
 <template>
     <div id="app">
         <Nav />
-        <router-view :key="$route.fullPath" />
+        <keep-alive>
+            <router-view :key="$route.fullPath" />
+        </keep-alive>
+        
     </div>
 </template>
 <script>

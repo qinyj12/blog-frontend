@@ -11,7 +11,7 @@ const routes = [
         path: '/',
         name: 'Home',
         component: Home,
-        meta: {title: '我的博客'}
+        meta: {title: '我的博客', keepAlive: false}
     },
     {
         path: '/content/:slug',

@@ -120,10 +120,11 @@ export default {
             this.AuthorName = data.creator.name
             this.AuthorDescription = data.creator.description
             this.AuthorLogin = data.creator.login
-            // console.log(data)
 
             DocTags(data.id).then(resp => {
                 this.Category = resp.data[0].title
+            }).catch(() => {
+                this.Category = '未分类'
             })
         },
         // 承接docInfo api返回的值，加工后赋值给各个参数（作者的通讯录）
