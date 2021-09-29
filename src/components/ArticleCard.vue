@@ -89,7 +89,6 @@
                 'copied-featured-default': true,
                 'copied-img-start': ShowCopiedImg, 
                 'copied-featured-move': CopiedFeaturedMoved, 
-                'copied-img-end': CopiedImgEnd
             }"
         >
         </div>
@@ -100,7 +99,6 @@
                 'copied-avatar-default': true,
                 'copied-img-start': ShowCopiedImg, 
                 'copied-avatar-move': CopiedAvatarMoved, 
-                'copied-img-end': CopiedImgEnd
             }"
         >
         </div>
@@ -111,7 +109,6 @@
                 'avatar-back-default': true,
                 'copied-img-start': ShowCopiedImg,
                 'avatar-back-move': CopiedAvatarMoved,
-                'avatar-back-end': CopiedImgEnd
             }"
         >
         </div>
@@ -135,20 +132,14 @@ export default {
             ShowCopiedImg: false,
             CopiedFeaturedMoved: false,
             CopiedAvatarMoved: false,
-            CopiedImgEnd: false,
             DomFinished: false, // 代表所有dom都加载完了
+            IndexBeenClicked: undefined, // 代表已经被点击过的那张卡片序号
         }
     },
     computed: {
         SinkAllCards() {
             return this.$store.state.IfSinkArticleCard
         }
-    },
-    destroyed() {
-        // 离开card组件时，把vuex恢复原状，重新显示card和cover组件
-        this.$store.commit('SinkCoverAndArticle', false);
-        // 离开card组件时，恢复滚动条为默认
-        this.$store.commit('ChangeBodyScrollStatus', 'auto');
     },
     methods: {
         async GoToAuthor(index) {
@@ -250,6 +241,7 @@ export default {
             let TargetItem = this.counts[index];
             TargetItem.HideFeaturedImg = !TargetItem.HideFeaturedImg;
             this.$set(this.counts, index, TargetItem);
+            this.IndexBeenClicked = index
         },
 
         // 找到被点击的那个头像，设为白底
@@ -394,8 +386,28 @@ export default {
 
     },
     async mounted() {
+        console.log('####ArticleCard Mounted')
         await this.GetRepoDocs(this.DocsRes);
     },
+    destroyed() {
+        console.log('####ArticleCard Destroyed')
+
+    },
+    // card组件activated时（keep-alive重新进入到card组件）
+    activated() {
+        console.log('####ArticleCard Activated')
+        // 把vuex恢复原状，重新显示card和cover组件
+        this.$store.commit('SinkCoverAndArticle', false);
+        // 恢复滚动条为默认
+        this.$store.commit('ChangeBodyScrollStatus', 'auto');
+        // 隐藏CopiedFeatured
+        this.CopiedFeaturedMoved = false;
+        // 隐藏copiedImg
+        this.ShowCopiedImg = false;
+        // 之前点击卡片时会隐藏那张卡片的头图，现在显示出来
+        this.counts[this.IndexBeenClicked].HideFeaturedImg = false
+
+    }
 }
 </script>
 <style lang="stylus">

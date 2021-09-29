@@ -9,7 +9,7 @@
         <vue-lazy-component>
             <!-- card组件的隐藏动画在组件内判断，不需要再home父组件中判断 -->
             <!-- 一定要加vif，等待父组件Home拿到api返回的值后，子组件articlecard才能加载 -->
-            <ArticleCardForHome :DocsRes="RepoDocsFromAPI" v-if="RepoDocsFromAPI" />
+            <ArticleCard :DocsRes="RepoDocsFromAPI" v-if="RepoDocsFromAPI" />
         </vue-lazy-component>
         
         <!-- 判断要不要隐藏footer组件，如果隐藏，给隐藏过程添加动画 -->
@@ -21,11 +21,11 @@
 <script>
 // import ArticleCard from '@/components/ArticleCard.vue';
 import Cover from '@/components/Cover.vue';
-import ArticleCardForHome from '@/components/ArticleCardForHome.vue';
+import ArticleCard from '@/components/ArticleCard.vue';
 import { RepoDocs } from '@/api/api.js';
 export default {
     components: {
-        ArticleCardForHome,
+        ArticleCard,
         Cover,
         Footer: resolve => {require(['@/components/Footer.vue'], resolve)}
     },
@@ -34,6 +34,7 @@ export default {
             // 传值给cover组件，传入undefined，调用cover组件内部的默认值
             CoverImg: require('@/assets/test2.jpeg'),
             RepoDocsFromAPI: undefined,
+            ScrollPosition: 0 // 记录滚动条位置
         }
     },
     computed: {
@@ -58,9 +59,14 @@ export default {
         console.log('####Home Destroyed')
     },
     activated() {
-        console.log('####Home Activated')
-        console.log('RepoDocsFromAPI: ',this.RepoDocsFromAPI)
-        console.log('IfSinkCover: ',this.IfSinkCover)
+        console.log('####Home Activated');
+        console.log('RepoDocsFromAPI: ',this.RepoDocsFromAPI);
+        console.log('IfSinkCover: ',this.IfSinkCover);
+        // 从Home组件离开时，router已记录下滚动条位置。返回Home时，回到滚动条位置
+        this.$nextTick(() => {
+            document.documentElement.scrollTop = this.$route.meta.savedPosition
+            document.body.scrollTop = this.$route.meta.savedPosition  
+        })
     }
 }
 </script>
