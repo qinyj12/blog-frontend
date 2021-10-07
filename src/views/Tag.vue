@@ -56,17 +56,17 @@ export default {
             this.ArticleCardKey ++
         },
         async InitializeData(api) {
-            // 从语雀api拿到值，复制给子组件articlecard
+            // 从语雀api拿到值，赋值给子组件articlecard
             let DocsResp = await TagDocs(api);
             // 此时拿到的结构为{data:[0:{doc:{id:xx,...}}, 1:{doc:{id:xx,...}}]}，要转为[0:{id:xx,...},...]
             let TempArr = new Array();
             // 遍历[0:{doc:{id:xx,...}}]
             for (let i in DocsResp.data) {
-                // 因为这个语雀api（tagDocs）拿到的返回值是不带last_editor字段的，这会让articlecard出错，因为articlecard组件靠此字段拿到用户信息
+                // 因为这个语雀api（tagDocs）拿到的返回值是不带user字段的，这会让articlecard出错，因为articlecard组件靠此字段拿到用户信息
                 // 所以再凭借usid去调用userinfo api，获取用户信息
                 let TempUserInfo = await UserInfo(DocsResp.data[i].doc.user_id)
                 // 直接把用户信息赋值到docsresp中
-                DocsResp.data[i].doc.last_editor = TempUserInfo.data
+                DocsResp.data[i].doc.user = TempUserInfo.data
                 // 最后组成一个复合articlecard要求的新数组
                 TempArr.push(DocsResp.data[i].doc)
             }

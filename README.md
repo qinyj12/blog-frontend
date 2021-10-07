@@ -38,7 +38,7 @@
 - [x] 点击推荐模块后的跳转（路由复用问题）
 - [x] 未分类标签未展示仍然loading
 - [x] 解决home页keep-alive的问题，分析dom中
-- [ ] 标签页坏了
+- [ ] 标签页坏了（tag=>tag时有问题，提示HideFeaturedImg undefined）
 - [ ] 多个标签
 - [ ] 热门文章组件
 - [x] 首页加载模板，所有标签加载模板

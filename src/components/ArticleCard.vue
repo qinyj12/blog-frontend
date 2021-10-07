@@ -354,7 +354,6 @@ export default {
                     }
                 }
                 this.counts = DocsInfo
-                // console.log(this.counts)
                 // 看看能不能从语雀api拿到哪怕一篇文档，如果可以
                 // 这里有bug，似乎是顺序问题
                 if (this.counts[0].id) {
@@ -386,7 +385,7 @@ export default {
 
     },
     async mounted() {
-        console.log('####ArticleCard Mounted')
+        console.log('####ArticleCard Mounted');
         await this.GetRepoDocs(this.DocsRes);
     },
     destroyed() {
